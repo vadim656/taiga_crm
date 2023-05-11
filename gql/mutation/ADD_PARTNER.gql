@@ -1,0 +1,15 @@
+mutation ADD_PARTNER($PHONE: String, $FIO: String, $ACTIVE: Boolean){
+  createPartner(data: {
+    Phone: $PHONE
+    FIO: $FIO
+    Active: $ACTIVE
+  }) {
+    data{
+      attributes{
+        Phone
+        FIO
+        Active
+      }
+    }
+  }
+}

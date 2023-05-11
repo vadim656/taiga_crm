@@ -1,0 +1,16 @@
+query ADMINS_USERS {
+  usersPermissionsUsers(filters: { role: { description: { eq: "Admin" } } }) {
+    data {
+      attributes {
+        role {
+          data {
+            attributes {
+              description
+            }
+          }
+        }
+        username
+      }
+    }
+  }
+}

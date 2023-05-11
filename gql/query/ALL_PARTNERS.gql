@@ -1,0 +1,12 @@
+query ALL_PARTNERS{
+  partners{
+    data{
+      attributes{
+        FIO
+        UID
+        Phone
+        Active
+      }
+    }
+  }
+}

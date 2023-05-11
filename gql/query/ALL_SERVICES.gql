@@ -1,0 +1,13 @@
+query ALL_SERVICES {
+  services {
+    data{
+      id
+      attributes{
+        Name
+        Price
+        UID
+        Active
+      }
+    }
+  }
+}
