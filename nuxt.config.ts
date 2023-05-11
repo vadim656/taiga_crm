@@ -22,8 +22,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     githubToken: process.env.GITHUB_TOKEN,
     public: {
-      graphqlURL: 'http://localhost:1337/graphql',
-      strapiURL: 'http://localhost:1337'
+      graphqlURL: 'https://api.zhivayataiga.ru/graphql',
+      strapiURL: 'https://api.zhivayataiga.ru'
     }
   },
   modules: [
@@ -54,7 +54,7 @@ export default defineNuxtConfig({
     tokenStorage: 'cookie',
     clients: {
       default: {
-        httpEndpoint: 'http://localhost:1337/graphql',
+        httpEndpoint: 'https://api.zhivayataiga.ru/graphql',
         httpLinkOptions: {
           credentials: 'include'
         }
