@@ -1,5 +1,5 @@
 <script setup>
-import ALL_SERVICES from '~/gql/query/ALL_SERVICES.gql'
+import { ALL_SERVICES } from '~/gql/query/ALL_SERVICES'
 useHead({
   title: 'TAIGA CRM - Услуги'
 })
@@ -138,7 +138,7 @@ let dataAddService = ref({
             <InputsInputDef
               label="Цена"
               id="price"
-              type=number
+              type="number"
               placeholder="100"
               v-model="dataAddService.price"
             />

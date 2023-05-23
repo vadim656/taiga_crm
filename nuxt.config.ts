@@ -14,7 +14,7 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
         {
           rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=PT+Sans+Caption:wght@400;700&display=swap'
+          href: 'https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@400;500;600;700&display=swap'
         }
       ]
     }
@@ -23,31 +23,48 @@ export default defineNuxtConfig({
     githubToken: process.env.GITHUB_TOKEN,
     public: {
       graphqlURL: 'https://api.zhivayataiga.ru/graphql',
-      strapiURL: 'https://api.zhivayataiga.ru'
+      strapiURL: 'https://api.zhivayataiga.ru',
+      skladToken: 'ac4cefd7530e6a05d53170ae38d7267259bfd527'
     }
   },
   modules: [
-    '@nuxtjs/tailwindcss',
     '@vueuse/nuxt',
     '@nuxtjs/apollo',
     '@pinia/nuxt',
-    '@pinia-plugin-persistedstate/nuxt'
+    '@pinia-plugin-persistedstate/nuxt',
+    '@nuxtjs/strapi',
+    // '@nuxt-alt/proxy'
   ],
-  tailwindcss: {
-    cssPath: '~/assets/css/input.css'
-  },
+
   pinia: {
-    autoImports: [
-      // automatically imports `defineStore`
-      'defineStore', // import { defineStore } from 'pinia'
-      ['defineStore', 'definePiniaStore'] // import { defineStore as definePiniaStore } from 'pinia'
-    ]
+    autoImports: ['defineStore', ['defineStore', 'definePiniaStore']]
   },
+
   css: [
+    '~/assets/css/main.css',
     'primevue/resources/themes/md-dark-indigo/theme.css',
     'primevue/resources/primevue.css',
     'primeicons/primeicons.css'
   ],
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {}
+    }
+  },
+  components: {
+    global: true,
+    dirs: ['~/components/global', '~/components']
+  },
+  strapi: {
+    url: 'https://api.zhivayataiga.ru',
+    prefix: '/api',
+    version: 'v4',
+    cookie: {
+      sameSite: 'strict'
+    },
+    cookieName: 'strapi_jwt'
+  },
   apollo: {
     authType: 'Bearer',
     authHeader: 'Authorization',

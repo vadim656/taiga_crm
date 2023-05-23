@@ -1,9 +1,7 @@
 <script setup>
 import { MASTERS_USERS } from '@/gql/query/MASTERS_USERS'
 
-const { result: masters } = useQuery(MASTERS_USERS, null, {
-  pollInterval: 2000
-})
+const { result: masters } = useQuery(MASTERS_USERS)
 
 const dataMasters = computed(() => {
   return masters.value?.usersPermissionsUsers.data

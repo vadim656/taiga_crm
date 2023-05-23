@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+   
+    .radio-check{
+        @apply w-4 h-4 text-blue-600  border-gray-300 rounded  ring-offset-gray-800  bg-gray-700 ;
+    }
+}
+
+@layer components {
+    .anime {
+        @apply motion-safe:transition duration-[.3s] ease-in-out ;
+      }
+      .cc{
+        @apply justify-center items-center ;
+      }
+      .brd{
+        @apply border border-red-400;
+      }
+      .blockT{
+        @apply p-4 rounded-md bg-[#292929];
+      }
+      .blockM{
+        @apply  rounded-md bg-[#212121];
+      }
+}
+
+.p-checkbox .p-checkbox-box.p-highlight .p-checkbox-icon.pi-check::before {
+  top: 8px !important;
+  left: 2px !important;
+}
+
+html,
+body, .p-component {
+  font-family: 'Wix Madefor Display', sans-serif !important;
+  letter-spacing: 0.05rem;
+}
+
+
+
+.p-paginator .p-dropdown {
+  height: auto !important;
+}
+
+.p-inputtext {
+  padding: 0.7rem 0.7rem !important;
+  font-size: 14px !important;
+}
+
+.p-dialog .p-dialog-header, .p-dialog .p-dialog-content, .p-dialog .p-dialog-footer{
+  background: #1e1e1e !important;
+}
+
+
+
