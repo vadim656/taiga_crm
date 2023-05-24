@@ -204,6 +204,7 @@ const selectedCities = ref()
 // })
 
 const headers = ref({
+  "Accept": "*/*",
   authorization: 'Basic  YWRtaW5AdmFmb3VyMjAxNjM6NGY1NjIwMzViNA=='
   // 'Content-Type': 'application/json',
   // 'Lognex-Pretty-Print-JSON': true
@@ -216,7 +217,7 @@ const headers2 = ref({
 async function test () {
   await useFetch('https://online.moysklad.ru/api/remap/1.2/security/token', {
     method: 'POST',
-    // mode: 'no-cors',
+    mode: 'no-cors',
     initialCache: false,
     headers: headers.value
   })
