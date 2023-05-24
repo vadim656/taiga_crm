@@ -100,7 +100,7 @@
     </div>
 
     <span v-else>Загрузка...</span>
-    <pre>{{ dataProducts }} --- {{ error }}</pre>
+    <pre>{{ dataProducts }} --- {{ dataProductsError }}</pre>
   </div>
   <Dialog
     v-model:visible="modalAddDeal"
@@ -193,34 +193,32 @@ const selectedCities = ref()
 
 // sklad
 
-// const { data: dataProducts, error: dataProductsError } = await useFetch(
-//   'https://online.moysklad.ru/api/remap/1.2/entity/retaildemand',
-//   {
-//     headers: {
-//       authorization: 'Bearer ac4cefd7530e6a05d53170ae38d7267259bfd527'
-//     }
-//   }
-// )
-
-const useMyFetch = createFetch({
-  baseUrl: 'https://online.moysklad.ru/api/remap/1.2/entity',
-  options: {
-    async beforeFetch ({ options }) {
-      options.headers.Authorization = `Bearer ac4cefd7530e6a05d53170ae38d7267259bfd527`
-
-      return { options }
+const { data: dataProducts, error: dataProductsError } = await useFetch(
+  'https://online.moysklad.ru/api/remap/1.2/entity/retaildemand',
+  {
+    method: 'GET',
+    mode: 'cors',
+    initialCache: false,
+    headers: {
+      "Authorization": 'Bearer ac4cefd7530e6a05d53170ae38d7267259bfd527',
+      "content-type": "application/json",
+      "Access-Control-Allow-Origin": "*"
+    },
+    onResponse ({ request, response, options }) {
+      console.log(response);
     }
-  },
-  fetchOptions: {
-    mode: 'cors'
   }
-})
 
-const {
-  isFetching,
-  error,
-  data: dataProducts
-} = useMyFetch('/retaildemand')
+  // {
+  //   headers: {
+  //     Authorization: 'Bearer ac4cefd7530e6a05d53170ae38d7267259bfd527',
+  //     'Access-Control-Allow-Origin': '*',
+  //     'Access-Control-Allow-Credentials': 'true',
+  //     'Access-Control-Allow-Headers': '*',
+  //     'Access-Control-Expose-Headers': '*'
+  //   }
+  // }
+)
 </script>
 
 <style>
