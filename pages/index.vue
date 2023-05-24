@@ -100,7 +100,7 @@
     </div>
 
     <span v-else>Загрузка...</span>
-    <pre>---- error {{ dataProductsError }}</pre>
+    <pre>---- error {{ users }}</pre>
     <pre>---- data{{ dataProducts }} </pre>
     <button class="p-2 border bg-red-400" @click="test()">test</button>
     <button class="p-2 border bg-green-400" @click="test2()">test2</button>
@@ -157,6 +157,7 @@
 <script setup>
 import { useFetch, createFetch } from '@vueuse/core'
 import { CREATE_DEAL } from '@/gql/query/DASHBOARD'
+
 definePageMeta({
   middleware: 'auth'
 })
@@ -196,61 +197,15 @@ const selectedCities = ref()
 
 // sklad
 
-// import Moysklad from 'moysklad'
 
-// const moysklad = Moysklad({
-//   login: 'admin@vafour20163',
-//   password: '4f562035b4'
-// })
 
-const headers = ref({
-  "Accept": "*/*",
-  authorization: 'Basic  YWRtaW5AdmFmb3VyMjAxNjM6NGY1NjIwMzViNA=='
-  // 'Content-Type': 'application/json',
-  // 'Lognex-Pretty-Print-JSON': true
-})
-const headers2 = ref({
-  authorization:
-    'Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjg0OTI1OTM3LCJleHAiOjE2ODc1MTc5Mzd9.vo7wgCKZJndD1JBDensPmJ-U1J_xxSJEsMbjTkzlf2U'
-})
+import http from '@/apis/http'
 
-async function test () {
-  await useFetch('https://online.moysklad.ru/api/remap/1.2/security/token', {
-    method: 'POST',
-    mode: 'no-cors',
-    initialCache: false,
-    headers: headers.value
-  })
+
+function test2 () {
+  return http.post(`/security/token`)
 }
 
-async function test2 () {
-  await useFetch('https://api.zhivayataiga.ru/api/products', {
-    method: 'GET',
-    // mode: 'no-cors',
-    initialCache: false,
-    headers: headers2.value
-  })
-}
-
-// const { data: dataProducts, error: dataProductsError } = await useFetch(
-//   'https://online.moysklad.ru/api/remap/1.2/entity/retaildemand',
-//   {
-//     method: 'GET',
-//     mode: 'no-cors',
-//     initialCache: false,
-//     headers: headers.value,
-//     onResponse ({ request, response, options }) {
-//       console.log('onResponse', response, request)
-//     },
-//     onRequest ({ request, options }) {
-//       console.log('onRequest', response, request)
-//       options.headers.authorization =
-//         'Basic YWRtaW5AdmFmb3VyMjAxNjM6NGY1NjIwMzViNA=='
-//       request.headers.authorization =
-//         'Basic YWRtaW5AdmFmb3VyMjAxNjM6NGY1NjIwMzViNA=='
-//     }
-//   }
-// )
 </script>
 
 <style>

@@ -1,14 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  routeRules: {
-    // Homepage pre-rendered at build time
-    '/': {
-      cors: true,
-      // headers: {
-      //   authorization: 'Basic YWRtaW5AdmFmb3VyMjAxNjM6NGY1NjIwMzViNA=='
-      // }
-    }
-  },
+
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },
     head: {
