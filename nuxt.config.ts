@@ -1,6 +1,14 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  ssr: false,
+  routeRules: {
+    // Homepage pre-rendered at build time
+    '/': {
+      cors: true,
+      // headers: {
+      //   authorization: 'Basic YWRtaW5AdmFmb3VyMjAxNjM6NGY1NjIwMzViNA=='
+      // }
+    }
+  },
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },
     head: {
@@ -33,9 +41,19 @@ export default defineNuxtConfig({
     '@nuxtjs/apollo',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
-    '@nuxtjs/strapi',
+    '@nuxtjs/strapi'
+    // 'nuxt-security'
     // '@nuxt-alt/proxy'
   ],
+  // security: {
+  //   corsHandler: {
+  //     origin: '*',
+  //     methods: '*',
+  //   },
+  //   headers: {
+  //     "Access-Control-Allow-Origin": '*'
+  //   }
+  // },
 
   pinia: {
     autoImports: ['defineStore', ['defineStore', 'definePiniaStore']]
