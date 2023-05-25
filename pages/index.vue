@@ -18,8 +18,38 @@
             @click="createDeal()"
           />
         </div>
-        <div class="flex flex-col gap-3 overflow-y-auto h-[400px] scrollbar">
-          <DashboardDeal v-for="(deal, i) in 3" :key="i" :data="i + 1" />
+        <span class="text-xs text-gray-400">Сессия: {{ store.retailID }}</span>
+
+        <div class="grid grid-cols-[2fr,3fr] gap-4">
+          <div class="flex flex-col justify-between gap-4 blockM p-4">
+            <span class="text-sm text-center">Продаж</span
+            ><span class="text-6xl font-bold text-center text-green-500">{{
+              dashboad.sales.count
+            }}</span>
+          </div>
+          <div class="flex flex-col justify-between gap-4 blockM p-4 text-sm">
+            <span class="text-sm text-center">Финансы</span>
+            <div class="flex justify-between text-center">
+              <span>Доходы за период:</span>
+              <span>{{ dashboad.money.income }} ₽</span>
+            </div>
+            <!-- <div class="flex justify-between text-center">
+              <span>Расходы за период:</span>
+              <span>{{ dashboad.money.outcome }} ₽</span>
+            </div> -->
+            <div class="flex justify-between text-center">
+              <span>Дельта за сегодня:</span>
+              <span>{{ dashboad.money.todayMovement }} ₽</span>
+            </div>
+          </div>
+          <span class="w-full col-span-2">Последние сделки</span>
+          <div class="w-full col-span-2 flex flex-col gap-4 overflow-y-auto h-[400px] scrollbar">
+            <DashboardDeal
+              v-for="(deal, i) in salesCom"
+              :key="i"
+              :data="deal"
+            />
+          </div>
         </div>
       </div>
       <div class="blockT flex flex-col gap-4">
@@ -71,39 +101,22 @@
             aria-label="Filter"
             class="!w-8 h-8"
             v-tooltip.left="'Создать заметку'"
+            @click="modalAddNote = true"
           />
         </div>
-        <div class="flex flex-col gap-3 overflow-y-auto h-[400px] scrollbar">
-          <DashboardNotes v-for="(note, i) in 5" :key="i" />
-        </div>
-      </div>
-      <div class="col-span-2 blockT flex flex-col gap-4">
-        <div class="flex items-start justify-between">
-          <span>Склад</span>
-          <Button
-            icon="pi pi-plus"
-            text
-            raised
-            rounded
-            aria-label="Filter"
-            class="!w-8 h-8"
-            v-tooltip.bottom="'Создать приход'"
+        <div class="flex flex-col gap-3 overflow-y-auto h-[620px] scrollbar" v-if="userNotesCom.length !== 0">
+          <DashboardNotes
+            v-for="note in userNotesCom"
+            :key="note.id"
+            :data="note"
+            @deleteNote="deleteNote(note.id)"
           />
         </div>
-        <div>sdsd</div>
+        <span v-else>Заметок еще нет...</span>
       </div>
-      <div class="col-span-1 blockT flex flex-col gap-4">
-        <span>Всякая всячина</span>
-        <div>sdsd</div>
-      </div>
-      <pre>{{ tokenSKLAD }}</pre>
     </div>
 
     <span v-else>Загрузка...</span>
-    <pre>---- error {{ users }}</pre>
-    <pre>---- data{{ dataProducts }} </pre>
-    <button class="p-2 border bg-red-400" @click="test()">test</button>
-    <button class="p-2 border bg-green-400" @click="test2()">test2</button>
   </div>
   <Dialog
     v-model:visible="modalAddDeal"
@@ -132,6 +145,7 @@
           label="Оплата картой"
         />
         <Button
+          @click="oplataCart()"
           class="!text-sm"
           icon="pi pi-money-bill"
           label="Оплата наличными"
@@ -152,15 +166,56 @@
       />
     </template>
   </Dialog>
+  <Dialog
+    v-model:visible="modalAddNote"
+    modal
+    header="Создать заметку"
+    class="dark:bg-red-300"
+  >
+    <div class="py-2 flex flex-col gap-6 w-full">
+      <div>
+        <textarea v-model="noteDesc" rows="5" cols="60" name="description">
+            Опишите задачу...
+         </textarea
+        >
+      </div>
+    </div>
+
+    <template #footer>
+      <Button
+        @click="createNote()"
+        icon="pi pi-times"
+        label="Сохранить"
+        class="!bg-green-400 !text-white"
+      />
+      <Button
+        @click="modalAddNote = false"
+        icon="pi pi-times"
+        label="Отмена"
+        class="!bg-red-400 !text-white"
+      />
+    </template>
+  </Dialog>
+  <Toast position="bottom-right" />
 </template>
 
 <script setup>
-import { useFetch, createFetch } from '@vueuse/core'
-import { CREATE_DEAL } from '@/gql/query/DASHBOARD'
-
+import {
+  CREATE_DEAL,
+  USER_NOTES,
+  CREATE_USER_NOTES,
+  DELETE_USER_NOTES
+} from '@/gql/query/DASHBOARD'
+import { sessionInfo, userInfo } from '@/store'
+import { useIntervalFn } from '@vueuse/core'
+const store = sessionInfo()
+const storeUser = userInfo()
 definePageMeta({
   middleware: 'auth'
 })
+
+import { useToast } from 'primevue/usetoast'
+const toast = useToast()
 
 const runtimeConfig = useRuntimeConfig()
 const tokenSKLAD = runtimeConfig.public.skladToken
@@ -169,6 +224,9 @@ const loading = ref(true)
 const date = ref()
 
 const modalAddDeal = ref(false)
+const modalAddNote = ref(false)
+
+let noteDesc = ref('')
 
 const createDeal = () => {
   modalAddDeal.value = true
@@ -187,25 +245,123 @@ const allProducts = computed(() => {
   return dataMap
 })
 
-onMounted(() => {
-  setTimeout(() => {
-    loading.value = false
-  }, 500)
+//user notes
+
+const { result: userNotes, refetch: userNotesRefetch } = useQuery(USER_NOTES, {
+  ID: storeUser.data.id
+})
+
+const userNotesCom = computed(() => {
+  return (
+    userNotes.value?.usersPermissionsUser.data.attributes.user_notes.data ?? []
+  )
 })
 
 const selectedCities = ref()
 
 // sklad
 
+const {
+  pending: pendingDashboad,
+  data: dashboad,
+  refresh: refreshDashboard
+} = await useFetch('/api/report/dashboard/week', {
+  method: 'GET',
+  headers: {
+    Authorization: 'Basic YWRtaW5AdmFmb3VyMjAxNjM6NGY1NjIwMzViNA=='
+  }
+})
 
+const {
+  pending: pendingSales,
+  data: dashboadSales,
+  refresh: refreshSales
+} = await useFetch('/api/entity/retaildemand', {
+  method: 'GET',
+  headers: {
+    Authorization: 'Basic YWRtaW5AdmFmb3VyMjAxNjM6NGY1NjIwMzViNA=='
+  }
+})
 
-import http from '@/apis/http'
+const salesCom = computed(() => {
+  const data = []
+  const dataCom = dashboadSales.value.rows
+  dataCom.forEach(e => {
+    const eData = {
+      created: e.moment,
+      sdelka: e.name,
+      summ: {
+        cart: e.noCashSum,
+        nal: e.cashSum
+      },
+      chec: e.externalCode
+    }
+    data.push(eData)
+  })
+  return data
+})
 
+// oplata
+function oplataCart () {}
 
-function test2 () {
-  return http.post(`/security/token`)
+//note
+const { mutate: createNoteR, onDone: createNoteDone } = useMutation(
+  CREATE_USER_NOTES,
+  () => ({
+    variables: {
+      ID: storeUser.data.id,
+      DESC: noteDesc.value
+    }
+  })
+)
+
+const { mutate: deleteNoteR, onDone: deleteNoteDone } =
+  useMutation(DELETE_USER_NOTES)
+
+function createNote () {
+  createNoteR()
+  modalAddNote.value = false
+  setTimeout(() => {
+    toast.add({
+      severity: 'success',
+      summary: 'Успешно!',
+      detail: 'Заметка создана',
+      life: 2000
+    })
+  }, 500)
 }
 
+createNoteDone(() => {
+  userNotesRefetch()
+})
+
+deleteNoteDone(() => {
+  userNotesRefetch()
+})
+
+function deleteNote (id) {
+  deleteNoteR({ ID: id })
+  setTimeout(() => {
+    toast.add({
+      severity: 'success',
+      summary: 'Успешно!',
+      detail: 'Заметка удалена',
+      life: 2000
+    })
+  }, 100)
+}
+
+//end
+useIntervalFn(() => {
+  refreshSales()
+  refreshDashboard()
+}, 3000)
+
+onMounted(() => {
+  setTimeout(() => {
+    loading.value = false
+  }, 500)
+})
 </script>
 
 <style>

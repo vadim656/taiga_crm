@@ -1,6 +1,15 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-
+  ssr: false,
+  nitro: {
+    devProxy: {
+      '/api': {
+        target: 'https://online.moysklad.ru/api/remap/1.2',
+        changeOrigin: true,
+        prependPath: true
+      }
+    }
+  },
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },
     head: {

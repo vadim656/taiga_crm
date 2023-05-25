@@ -13,6 +13,7 @@ import Editor from 'primevue/editor'
 import Calendar from 'primevue/calendar'
 import Tooltip from 'primevue/tooltip'
 import MultiSelect from 'primevue/multiselect'
+import InputMask from 'primevue/inputmask';
 
 export default defineNuxtPlugin(nuxtApp => {
   nuxtApp.vueApp.use(PrimeVue, {
@@ -184,5 +185,6 @@ export default defineNuxtPlugin(nuxtApp => {
   nuxtApp.vueApp.component('Editor', Editor)
   nuxtApp.vueApp.component('Calendar', Calendar)
   nuxtApp.vueApp.component('MultiSelect', MultiSelect)
+  nuxtApp.vueApp.component('InputMask', InputMask)
   //other components that you need
 })
