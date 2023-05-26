@@ -8,18 +8,23 @@ export default defineNuxtConfig({
         changeOrigin: true,
         prependPath: true
       }
+    },
+    routeRules: {
+      // '/api': { proxy: 'https://online.moysklad.ru/api/remap/1.2' },
+      '/api/**': { proxy: 'https://online.moysklad.ru/api/remap/1.2/**' },
     }
   },
-  vite: {
-    server: {
-      proxy: {
-        '/api': {
-          target: 'https://online.moysklad.ru/api/remap/1.2',
-          changeOrigin: true
-        }
-      }
-    }
-  },
+  // proxy: {
+  //   enableProxy: true,
+  //   proxies: {
+  //     '/api': {
+  //       target: 'https://online.moysklad.ru/api/remap/1.2',
+  //       changeOrigin: true,
+  //       prependPath: true,
+  //       rewrite: path => path.replace(/^\/api/, '')
+  //     }
+  //   }
+  // },
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },
     head: {
@@ -52,19 +57,9 @@ export default defineNuxtConfig({
     '@nuxtjs/apollo',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
-    '@nuxtjs/strapi'
-    // 'nuxt-security'
-    // '@nuxt-alt/proxy'
+    '@nuxtjs/strapi',
+    '@nuxtjs-alt/proxy'
   ],
-  // security: {
-  //   corsHandler: {
-  //     origin: '*',
-  //     methods: '*',
-  //   },
-  //   headers: {
-  //     "Access-Control-Allow-Origin": '*'
-  //   }
-  // },
 
   pinia: {
     autoImports: ['defineStore', ['defineStore', 'definePiniaStore']]
