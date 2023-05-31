@@ -119,13 +119,6 @@ const initPrice = price => {
             </div>
           </template>
         </Column>
-        <Column
-          field="code"
-          filterField="code"
-          header="Остатки"
-          style="width: 2%"
-          class="text-sm"
-        ></Column>
         <Column field="id" header="" style="width: 8%" class="text-sm">
           <template #body="slotProps">
             <div class="flex items-center gap-2">

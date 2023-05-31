@@ -29,14 +29,13 @@
           field="name"
           filterField="name"
           header="ФИО"
-          style="width: 2%"
           class="text-sm"
         ></Column>
         <Column
           field="created"
           filterField="created"
           header="Создан"
-          style="width: 2%"
+
           class="text-sm"
         ></Column>
         <Column
@@ -45,7 +44,41 @@
           header="Заметки"
           style="width: 2%"
           class="text-sm"
-        ></Column>
+        >
+        <template #body="slotProps">
+            <div class="flex items-center gap-2">
+            2
+            </div>
+          </template>
+        </Column>
+        <Column
+          field="created"
+          filterField="created"
+          header="Бонусы"
+          style="width: 2%"
+          class="text-sm"
+        >
+        <template #body="slotProps">
+            <div class="flex items-center gap-2">
+            1000
+            </div>
+          </template>
+        </Column>
+        <Column field="id" header="" style="width: 8%" class="text-sm">
+          <template #body="slotProps">
+            <div class="flex items-center gap-2">
+              <button
+                @click="editProduct(slotProps.data.id)"
+                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+              >
+                <IconsIEdit />
+              </button>
+              <button>
+                <IconsIDelete />
+              </button>
+            </div>
+          </template>
+        </Column>
       </DataTable>
     </ClientOnly>
   </div>
