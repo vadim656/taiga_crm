@@ -29,6 +29,7 @@ export const USER_NOTES = gql`
   query USER_NOTES($ID: ID) {
     usersPermissionsUser(id: $ID) {
       data {
+        id
         attributes {
           user_notes(sort: "createdAt:desc") {
             data {
@@ -49,6 +50,7 @@ export const CREATE_USER_NOTES = gql`
   mutation CREATE_USER_NOTES($ID: ID, $DESC: String) {
     createUserNote(data: { Desc: $DESC, users_permissions_user: $ID }) {
       data {
+        id
         attributes {
           Name
           Desc

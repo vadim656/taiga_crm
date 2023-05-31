@@ -4,6 +4,7 @@ export const ALL_RECORDS = gql`
   query ALL_RECORDS {
     userRecords {
       data {
+        id
         attributes {
           Name
           Time
@@ -26,6 +27,7 @@ export const ALL_RECORDS_FILTER = gql`
   query ALL_RECORDS_FILTER {
     userRecords {
       data {
+        id
         attributes {
           Name
           Time

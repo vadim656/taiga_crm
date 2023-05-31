@@ -9,32 +9,26 @@ export default defineNuxtConfig({
         prependPath: true
       }
     },
+
     routeRules: {
-      // '/api': { proxy: 'https://online.moysklad.ru/api/remap/1.2' },
-      '/api/**': { proxy: 'https://online.moysklad.ru/api/remap/1.2/**' },
+      '/api/**': { proxy: 'https://online.moysklad.ru/api/remap/1.2/**' }
     }
   },
-  // proxy: {
-  //   enableProxy: true,
-  //   proxies: {
-  //     '/api': {
-  //       target: 'https://online.moysklad.ru/api/remap/1.2',
-  //       changeOrigin: true,
-  //       prependPath: true,
-  //       rewrite: path => path.replace(/^\/api/, '')
+  // vite: {
+  //   server: {
+  //     hmr: {
+  //       clientPort: 24600,
+  //       port: 24600
   //     }
   //   }
   // },
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },
     head: {
-      charset: 'utf-16',
+      charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
-      title: 'CRM',
-      meta: [
-        // <meta name="description" content="My amazing site">
-        { name: 'description', content: 'My amazing site.' }
-      ],
+      title: 'CRM TAIGA',
+      meta: [{ name: 'description', content: 'CRM taiga salon' }],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
         {
@@ -45,7 +39,6 @@ export default defineNuxtConfig({
     }
   },
   runtimeConfig: {
-    githubToken: process.env.GITHUB_TOKEN,
     public: {
       graphqlURL: 'https://api.zhivayataiga.ru/graphql',
       strapiURL: 'https://api.zhivayataiga.ru',
@@ -57,8 +50,7 @@ export default defineNuxtConfig({
     '@nuxtjs/apollo',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
-    '@nuxtjs/strapi',
-    '@nuxtjs-alt/proxy'
+    '@nuxtjs/strapi'
   ],
 
   pinia: {

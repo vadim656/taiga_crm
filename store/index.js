@@ -3,12 +3,16 @@ import { defineStore } from 'pinia'
 export const userInfo = defineStore('user', {
   state: () => {
     return {
-      data: {}
+      data: {},
+      role: ''
     }
   },
   actions: {
     setUserId (data) {
       this.data = data
+    },
+    setUserRole (role) {
+      this.role = role
     }
   },
   getters: {

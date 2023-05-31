@@ -1,6 +1,7 @@
 <script setup>
 import { RouterLink } from 'vue-router'
-import { userInfo } from '@/store'
+import { userInfo, sessionInfo } from '@/store'
+const store2 = sessionInfo()
 const store = userInfo()
 let activeLink = ref(null)
 
@@ -21,8 +22,10 @@ const getLink = link => {
 }
 
 function logout () {
-  router.push('/login')
+  router.push('/auth/login')
 }
+
+
 </script>
 <template>
   <div class="relative overflow-x-auto inset-0">
@@ -40,9 +43,16 @@ function logout () {
                 class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"
                 >TAIGA</span
               >
+              <span
+                class="bg-green-400 py-2 px-3 rounded-md text-gray-800 ml-12"
+                >{{ store.role }}</span
+              >
             </NuxtLink>
           </div>
           <div class="flex items-center gap-3">
+            <span class="text-xs text-gray-400"
+              >Сессия: {{ store2.retailID }}</span
+            >
             <div
               class="bg-gray-700 px-3 py-2 rounded-full flex items-center gap-3 text-sm mr-6"
             >
@@ -59,48 +69,19 @@ function logout () {
     </nav>
     <aside
       id="logo-sidebar"
-      class="fixed top-0 left-0 z-40 w-56 h-screen pt-20 transition-transform -translate-x-full bg-[#1E1E1E] border-r border-gray-200 sm:translate-x-0 dark:border-gray-700"
+      class="fixed top-0 left-0 z-40 w-48 h-screen pt-20 transition-transform -translate-x-full bg-[#1E1E1E] border-r border-gray-200 sm:translate-x-0 dark:border-gray-700"
       aria-label="Sidebar"
     >
       <div
         class="flex flex-col justify-between h-full pb-4 overflow-y-auto bg-[#1E1E1E]"
       >
         <ul class="space-y-2 px-3">
+         
           <li>
             <button
               @click="getLink('services')"
               type="button"
-              class="flex items-center w-full p-2 text-base font-normal text-[#1E1E1E] transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-              aria-controls="dropdown-example"
-              data-collapse-toggle="dropdown-example"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-6 h-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5"
-                />
-              </svg>
-
-              <span
-                class="flex-1 ml-3 text-left whitespace-nowrap"
-                sidebar-toggle-item
-                >Записи</span
-              >
-            </button>
-          </li>
-          <li>
-            <button
-              @click="getLink('services')"
-              type="button"
-              class="flex items-center w-full p-2 text-base font-normal text-[#1E1E1E] transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+              class="flex items-center w-full p-2 text-sm font-normal text-[#1E1E1E] transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
               aria-controls="dropdown-example"
               data-collapse-toggle="dropdown-example"
             >
@@ -120,14 +101,14 @@ function logout () {
               <span
                 class="flex-1 ml-3 text-left whitespace-nowrap"
                 sidebar-toggle-item
-                >Услуги</span
+                >Товары / Услуги</span
               >
             </button>
           </li>
           <li class="w-full">
             <button
               @click="getLink('calendar')"
-              class="flex w-full justify-start items-center p-2 text-base font-normal rounded-lg text-white hover:bg-gray-700"
+              class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg text-white hover:bg-gray-700"
             >
               <IconsICalendar
                 class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] dark:group-hover:text-white"
@@ -136,11 +117,11 @@ function logout () {
             </button>
           </li>
           <li>
-            <a
-              href="#"
-              class="flex items-center p-2 text-base font-normal text-[#1E1E1E] rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+            <button
+              @click="getLink('clients')"
+              class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg text-white hover:bg-gray-700"
             >
-              <svg
+            <svg
                 aria-hidden="true"
                 class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-[#1E1E1E] dark:group-hover:text-white"
                 fill="currentColor"
@@ -153,25 +134,26 @@ function logout () {
                   clip-rule="evenodd"
                 ></path>
               </svg>
-              <span class="flex-1 ml-3 whitespace-nowrap">Клиенты</span>
-            </a>
+              <span class="ml-3">Клиенты</span>
+            </button>
+           
           </li>
-          <li>
+          <!-- <li>
             <button
               @click="getLink('products')"
-              class="flex w-full justify-start items-center p-2 text-base font-normal rounded-lg text-white hover:bg-gray-700"
+              class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg text-white hover:bg-gray-700"
             >
               <IconsICube
                 class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] dark:group-hover:text-white"
               />
               <span class="ml-3">Продукция</span>
             </button>
-          </li>
-          <li>
+          </li> -->
+          <li v-if="store.role == 'Admin'">
             <button
               @click="getToggle(1)"
               type="button"
-              class="flex items-center w-full p-2 text-base font-normal text-[#1E1E1E] transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+              class="flex items-center w-full p-2 text-sm font-normal text-[#1E1E1E] transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
             >
               <svg
                 aria-hidden="true"
@@ -201,11 +183,11 @@ function logout () {
             </ul>
           </li>
 
-          <li>
+          <li v-if="store.role == 'Admin'">
             <button
               @click="getToggle(3)"
               href="#"
-              class="flex items-center w-full p-2 text-base font-normal text-[#1E1E1E] transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+              class="flex items-center w-full p-2 text-sm font-normal text-[#1E1E1E] transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
             >
               <svg
                 class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-[#1E1E1E] dark:group-hover:text-white"
@@ -230,11 +212,11 @@ function logout () {
             </ul>
           </li>
 
-          <li>
+          <li v-if="store.role == 'Admin'">
             <button
               @click="getToggle(2)"
               type="button"
-              class="flex items-center w-full p-2 text-base font-normal text-[#1E1E1E] transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+              class="flex items-center w-full p-2 text-sm font-normal text-[#1E1E1E] transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
             >
               <svg
                 class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] dark:group-hover:text-white"
@@ -271,14 +253,19 @@ function logout () {
               class="flex items-center justify-between w-full gap-2 text-white text-xs"
             >
               {{ store.data.FIO }}
-              <button @click="logout" class="bg-[#1E1E1E] p-2 rounded-md hover:drop-shadow-xl" v-tooltip.top="'Выйти из аккаунта'">
+
+              <button
+                @click="logout"
+                class="bg-[#1E1E1E] p-2 rounded-md hover:drop-shadow-xl"
+                v-tooltip.top="'Выйти из аккаунта'"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="w-5 h-5 "
+                  class="w-5 h-5"
                 >
                   <path
                     stroke-linecap="round"
@@ -297,7 +284,7 @@ function logout () {
       </div>
     </aside>
     <div
-      class="p-4 sm:ml-56 mt-14 h-auto min-h-[calc(100vh-3.5rem)] bg-white dark:bg-[#1E1E1E]"
+      class="p-4 sm:ml-48 mt-14 h-auto min-h-[calc(100vh-3.5rem)] bg-white dark:bg-[#1E1E1E]"
     >
       <slot />
     </div>
@@ -305,7 +292,7 @@ function logout () {
 </template>
 <style>
 .link {
-  @apply flex items-center w-full p-2 text-base font-normal anime  pl-4 text-white hover:bg-gray-700;
+  @apply flex items-center w-full p-2 text-sm font-normal anime  pl-4 text-white hover:bg-gray-700;
 }
 
 .link-active {

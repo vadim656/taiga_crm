@@ -1,6 +1,8 @@
 <script setup>
 import { ALL_RECORDS, ALL_RECORDS_FILTER } from '@/gql/query/CALENDAR'
-
+definePageMeta({
+  middleware: 'auth'
+})
 const date = ref()
 
 const test = new Date()
