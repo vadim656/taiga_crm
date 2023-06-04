@@ -127,7 +127,7 @@
       v-model:visible="modalAddDeal"
       modal
       header="Провести оплату"
-      class="dark:bg-red-300"
+      class="bg-red-300"
     >
       <div class="py-2 flex flex-col gap-6">
         <div>
@@ -175,7 +175,7 @@
       v-model:visible="modalAddNote"
       modal
       header="Создать заметку"
-      class="dark:bg-red-300"
+      class="bg-red-300"
     >
       <div class="py-2 flex flex-col gap-6 w-full">
         <div>

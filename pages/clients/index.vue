@@ -100,7 +100,7 @@
             <div class="flex items-center gap-2">
               <button
                 @click="editProduct(slotProps.data.id)"
-                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                class="font-medium text-blue-600 text-blue-500 hover:underline"
               >
                 <IconsIEdit />
               </button>
@@ -116,7 +116,7 @@
       v-model:visible="addUserView"
       modal
       header="Добавить клиента"
-      class="dark:bg-red-300"
+      class="bg-red-300"
       ><div class="py-2">
         <div class="grid grid-cols-2 gap-4">
           <span class="p-float-label col-span-2">

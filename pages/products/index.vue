@@ -144,7 +144,7 @@ function createProduct (text) {
               <div class="flex items-center gap-2 justify-end">
                 <button
                   @click="editProduct(slotProps.data.id)"
-                  class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                  class="font-medium text-blue-600 text-blue-500 hover:underline"
                 >
                   <IconsIEdit />
                 </button>
@@ -168,7 +168,7 @@ function createProduct (text) {
       v-model:visible="modalAdd"
       modal
       header="Добавить товар"
-      class="dark:bg-red-300"
+      class="bg-red-300"
       ><div class="py-2">
         <div class="grid grid-cols-1 gap-4">
           <span class="p-float-label">

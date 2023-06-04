@@ -40,7 +40,7 @@ function logout () {
                 alt="FlowBite Logo"
               />
               <span
-                class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"
+                class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap "
                 >TAIGA</span
               >
               <span
@@ -69,7 +69,7 @@ function logout () {
     </nav>
     <aside
       id="logo-sidebar"
-      class="fixed top-0 left-0 z-40 w-48 h-screen pt-20 transition-transform -translate-x-full bg-[#1E1E1E] border-r border-gray-200 sm:translate-x-0 dark:border-gray-700"
+      class="fixed top-0 left-0 z-40 w-48 h-screen pt-20 transition-transform -translate-x-full bg-[#1E1E1E] border-r  sm:translate-x-0 border-gray-700"
       aria-label="Sidebar"
     >
       <div
@@ -81,13 +81,13 @@ function logout () {
             <button
               @click="getLink('services')"
               type="button"
-              class="flex items-center w-full p-2 text-sm font-normal text-[#1E1E1E] transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+              class="flex items-center w-full p-2 text-sm font-normal text-white transition duration-75 rounded-lg group   hover:bg-gray-700"
               aria-controls="dropdown-example"
               data-collapse-toggle="dropdown-example"
             >
               <svg
                 aria-hidden="true"
-                class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-[#1E1E1E] dark:text-gray-400 dark:group-hover:text-white"
+                class="flex-shrink-0 w-6 h-6  transition duration-75 group-hover:text-[#1E1E1E] text-gray-400 "
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -105,25 +105,25 @@ function logout () {
               >
             </button>
           </li>
-          <li class="w-full">
+          <!-- <li class="w-full">
             <button
               @click="getLink('calendar')"
-              class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg text-white hover:bg-gray-700"
+              class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg  hover:bg-gray-700"
             >
               <IconsICalendar
-                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] dark:group-hover:text-white"
+                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] "
               />
               <span class="ml-3">Календарь</span>
             </button>
-          </li>
+          </li> -->
           <li>
             <button
               @click="getLink('clients')"
-              class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg text-white hover:bg-gray-700"
+              class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg  hover:bg-gray-700"
             >
             <svg
                 aria-hidden="true"
-                class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-[#1E1E1E] dark:group-hover:text-white"
+                class="flex-shrink-0 w-6 h-6  transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] group-hover:"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -141,10 +141,10 @@ function logout () {
           <li>
             <button
               @click="getLink('stock')"
-              class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg text-white hover:bg-gray-700"
+              class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg  hover:bg-gray-700"
             >
               <IconsICube
-                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] dark:group-hover:text-white"
+                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] group-hover:"
               />
               <span class="ml-3">Склад</span>
             </button>
@@ -153,11 +153,11 @@ function logout () {
             <button
               @click="getToggle(1)"
               type="button"
-              class="flex items-center w-full p-2 text-sm font-normal text-[#1E1E1E] transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+              class="flex items-center w-full p-2 text-sm font-normal text-white transition duration-75 rounded-lg group   hover:bg-gray-700"
             >
               <svg
                 aria-hidden="true"
-                class="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-[#1E1E1E] dark:group-hover:text-white"
+                class="w-6 h-6  transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] group-hover:"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -187,10 +187,10 @@ function logout () {
             <button
               @click="getToggle(3)"
               href="#"
-              class="flex items-center w-full p-2 text-sm font-normal text-[#1E1E1E] transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+              class="flex items-center w-full p-2 text-sm font-normal text-text-white transition duration-75 rounded-lg group   hover:bg-gray-700"
             >
               <svg
-                class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-[#1E1E1E] dark:group-hover:text-white"
+                class="flex-shrink-0 w-6 h-6  transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] "
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -216,10 +216,10 @@ function logout () {
             <button
               @click="getToggle(2)"
               type="button"
-              class="flex items-center w-full p-2 text-sm font-normal text-[#1E1E1E] transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+              class="flex items-center w-full p-2 text-sm font-normal text-white transition duration-75 rounded-lg group   hover:bg-gray-700"
             >
               <svg
-                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] dark:group-hover:text-white"
+                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] group-hover:"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -250,7 +250,7 @@ function logout () {
         <div class="bg-[#292929] px-3 py-2 flex cc">
           <div class="flex items-center w-full">
             <div
-              class="flex items-center justify-between w-full gap-2 text-white text-xs"
+              class="flex items-center justify-between w-full gap-2  text-xs"
             >
               {{ store.data.FIO }}
 
@@ -284,7 +284,7 @@ function logout () {
       </div>
     </aside>
     <div
-      class="p-4 sm:ml-48 mt-14 h-auto min-h-[calc(100vh-3.5rem)] bg-white dark:bg-[#1E1E1E]"
+      class="p-4 sm:ml-48 mt-14 h-auto min-h-[calc(100vh-3.5rem)]  bg-[#1E1E1E]"
     >
       <slot />
     </div>
@@ -292,7 +292,7 @@ function logout () {
 </template>
 <style>
 .link {
-  @apply flex items-center w-full p-2 text-sm font-normal anime  pl-4 text-white hover:bg-gray-700;
+  @apply flex items-center w-full p-2 text-sm font-normal anime  pl-4  hover:bg-gray-700;
 }
 
 .link-active {

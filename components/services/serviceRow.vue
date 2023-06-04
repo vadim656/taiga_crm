@@ -1,18 +1,18 @@
 <template>
-  <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600">
+  <tr class="bg-white bg-gray-800 hover:bg-gray-50 hover:bg-gray-600">
     <td class="w-4 p-4">
       <div class="flex items-center">
         <input
           id="checkbox-table-search-3"
           type="checkbox"
-          class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+          class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"
         />
         <label for="checkbox-table-search-3" class="sr-only">checkbox</label>
       </div>
     </td>
     <th
       scope="row"
-      class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+      class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-white"
     >
       <div class="">
         <div class="text-base font-semibold">{{ props.data.Name }}</div>
@@ -31,7 +31,7 @@
       <!-- Modal toggle -->
       <button
         @click="$emit('edit')"
-        class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+        class="font-medium text-blue-600 text-blue-500 hover:underline"
       >
         <IconsIEdit/>
       </button>

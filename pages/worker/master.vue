@@ -15,7 +15,7 @@ const search = ref('')
 <template>
   <div class="text-white">
     <div
-      class="flex items-center justify-between p-4 bg-white dark:bg-gray-800"
+      class="flex items-center justify-between p-4 bg-white bg-gray-800"
     >
       <span class="p-input-icon-left">
         <i class="pi pi-search" />
