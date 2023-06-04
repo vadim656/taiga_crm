@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
-export const CREATE_USER = gql`
-  mutation CREATE_USER(
+export const CREATE_USER_DATA = gql`
+  mutation CREATE_USER_DATA(
     $USERNAME: String
     $EMAIL: String
     $FIO: String
@@ -22,14 +22,33 @@ export const CREATE_USER = gql`
       }
     ) {
       data {
-        attributes {
-          username
-          email
-          FIO
-          Bonus
-          UID_SKLAD
-          DateRozhdenia
-        }
+        id
+      }
+    }
+  }
+`
+
+export const CREATE_USER = gql`
+  mutation CREATE_USER(
+    $USERNAME: String
+    $EMAIL: String
+    $FIO: String
+    $BONUS: Long
+    $UID_SKLAD: String
+  ) {
+    createUsersPermissionsUser(
+      data: {
+        username: $USERNAME
+        email: $EMAIL
+        FIO: $FIO
+        Bonus: $BONUS
+        UID_SKLAD: $UID_SKLAD
+        password: "taiga123"
+        role: 1
+      }
+    ) {
+      data {
+        id
       }
     }
   }

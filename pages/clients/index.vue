@@ -1,91 +1,8 @@
 <template>
   <div>
     <Toast position="bottom-right" />
-    <!-- <ClientOnly placeholder="Загрузка...">
-      <DataTable
-        :value="counterpartyCom"
-        stripedRows
-        removableSort
-        v-model:filters="filters"
-        :globalFilterFields="['name']"
-        class="rounded-t-md overflow-hidden"
-        paginator
-        :rows="10"
-        :rowsPerPageOptions="[10, 20, 50]"
-      >
-        <template #header>
-          <div class="flex justify-between">
-            <div>
-              <InputText
-                v-model="filters['global'].value"
-                placeholder="Поиск по клиентам"
-              />
-            </div>
-            <ButtonsBDelete @click="addUserView = true" icon="plus" type="add"
-              >Добавить</ButtonsBDelete
-            >
-          </div>
-        </template>
-        <Column
-          field="name"
-          filterField="name"
-          header="ФИО"
-          class="text-sm"
-        ></Column>
-        <Column
-          field="created"
-          filterField="created"
-          header="Создан"
-          class="text-sm"
-        ></Column>
-        <Column
-          field="created"
-          filterField="created"
-          header="Дата рождения"
-          class="text-sm"
-        >
-        </Column>
-        <Column
-          field="created"
-          filterField="created"
-          header="Заметки"
-          style="width: 2%"
-          class="text-sm"
-        >
-          <template #body="slotProps">
-            <div class="flex items-center gap-2">2</div>
-          </template>
-        </Column>
-
-        <Column
-          field="created"
-          filterField="created"
-          header="Бонусы"
-          style="width: 2%"
-          class="text-sm"
-        >
-          <template #body="slotProps">
-            <div class="flex items-center gap-2">1000</div>
-          </template>
-        </Column>
-        <Column field="id" header="" style="width: 8%" class="text-sm">
-          <template #body="slotProps">
-            <div class="flex items-center gap-2">
-              <button
-                @click="editProduct(slotProps.data.id)"
-                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-              >
-                <IconsIEdit />
-              </button>
-              <button>
-                <IconsIDelete />
-              </button>
-            </div>
-          </template>
-        </Column>
-      </DataTable>
-    </ClientOnly> -->
     <!-- strapi -->
+    <span v-if="usersL">Загрузка</span>
     <ClientOnly placeholder="Загрузка...">
       <DataTable
         :value="dataUsersData"
@@ -162,9 +79,6 @@
           style="width: 2%"
           class="text-sm"
         >
-          <!-- <template #body="slotProps">
-            <div class="flex items-center gap-2">1000</div>
-          </template> -->
         </Column>
         <!-- <Column field="id" header="" style="width: 8%" class="text-sm">
           <template #body="slotProps">
@@ -245,7 +159,7 @@ import { FilterMatchMode } from 'primevue/api'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 
-import { CREATE_USER, ALL_USER } from '@/gql/query/USERS.js'
+import { CREATE_USER, CREATE_USER_DATA, ALL_USER } from '@/gql/query/USERS.js'
 
 const confirm = useConfirm()
 const toast = useToast()
@@ -261,7 +175,7 @@ const addUserView = ref(false)
 const userData = ref({
   fio: '',
   dataRozh: '',
-  bonus: 0,
+  bonus: 100,
   email: '',
   phone: ''
 })
@@ -295,7 +209,15 @@ const filters = ref({
 })
 
 // create user
+const { result: users, refetch: usersR, loading: usersL } = useQuery(ALL_USER, null, {
+  fetchPolicy: 'no-cache'
+})
 
+const dataUsersData = computed(
+  () => users.value?.usersPermissionsUsers.data ?? []
+)
+
+const { mutate: createUserStrapiData } = useMutation(CREATE_USER_DATA)
 const { mutate: createUserStrapi } = useMutation(CREATE_USER)
 
 async function createUser () {
@@ -318,14 +240,31 @@ async function createUser () {
     credentials: 'omit'
   })
     .then(res => {
-      createUserStrapi({
-        USERNAME: phoneCom.value,
-        EMAIL: userData.value.email,
-        FIO: userData.value.fio,
-        BONUS: userData.value.bonus,
-        UID_SKLAD: res.data.value.id,
-        DATER: userData.value.dataRozh
-      })
+      if (userData.value.dataRozh) {
+        createUserStrapiData({
+          USERNAME: phoneCom.value,
+          EMAIL: userData.value.email,
+          FIO: userData.value.fio,
+          BONUS: userData.value.bonus,
+          UID_SKLAD: res.data.value.id,
+          DATER: userData.value.dataRozh
+        })
+        setTimeout(() => {
+          usersR()
+        }, 200)
+      } else {
+        createUserStrapi({
+          USERNAME: phoneCom.value,
+          EMAIL: userData.value.email,
+          FIO: userData.value.fio,
+          BONUS: userData.value.bonus,
+          UID_SKLAD: res.data.value.id
+        })
+        setTimeout(() => {
+          usersR()
+        }, 200)
+      }
+
       refreshСounterparty()
       setTimeout(() => {
         addUserView.value = false
@@ -347,14 +286,6 @@ async function createUser () {
       })
     })
 }
-
-const { result: users } = useQuery(ALL_USER, null, {
-  fetchPolicy: 'no-cache'
-})
-
-const dataUsersData = computed(
-  () => users.value?.usersPermissionsUsers.data ?? []
-)
 
 let options = {
   year: 'numeric',

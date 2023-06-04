@@ -553,12 +553,12 @@
   dependencies:
     preact "~10.12.1"
 
-"@fullcalendar/daygrid@~6.1.5", "@fullcalendar/daygrid@~6.1.8":
+"@fullcalendar/daygrid@^6.1.8", "@fullcalendar/daygrid@~6.1.8":
   version "6.1.8"
   resolved "https://registry.yarnpkg.com/@fullcalendar/daygrid/-/daygrid-6.1.8.tgz#2ca4a10892f5e2abeac0f8a8ecc8f07c002a4bf4"
   integrity sha512-kCZxQFKb9Vqa3CZRX0v7rMSJ2mlTt4gDpyLfiNJKxUAq7W51uKurPaFZWicaXy1ESHVBxKNlbx5uNjBpyu50JQ==
 
-"@fullcalendar/interaction@^6.1.5":
+"@fullcalendar/interaction@^6.1.8":
   version "6.1.8"
   resolved "https://registry.yarnpkg.com/@fullcalendar/interaction/-/interaction-6.1.8.tgz#36c35bd5718f893e8215a45d48a6ef7d5fcc4650"
   integrity sha512-r6W4E9ohaA87M2uPSlmpE2WT7Fzu7LN0u2pE6D/tThruCEaAPbN8Pw5+sqclsuyTIL09mg0eSJm/ggJekTabSA==
@@ -570,7 +570,7 @@
   dependencies:
     "@fullcalendar/daygrid" "~6.1.8"
 
-"@fullcalendar/vue3@^6.1.5":
+"@fullcalendar/vue3@^6.1.8":
   version "6.1.8"
   resolved "https://registry.yarnpkg.com/@fullcalendar/vue3/-/vue3-6.1.8.tgz#8d0cb3c8c37c6761857badb77cbf70edc4333dba"
   integrity sha512-rO7vZnGXyd5djOhpJ9Y33PhnUeJ/1IN1rIVWPWpleh1hboi8kCwVqE47oOwj7NvTEJq1EH8/58UuYtIqRQ73Lg==
@@ -6603,6 +6603,7 @@ wide-align@^1.1.2, wide-align@^1.1.5:
     string-width "^1.0.2 || 2 || 3 || 4"
 
 "wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
+  name wrap-ansi-cjs
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
