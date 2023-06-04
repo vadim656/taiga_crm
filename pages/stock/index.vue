@@ -2,6 +2,7 @@
 import { FilterMatchMode } from 'primevue/api'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
+import { v4 as uuidv4 } from 'uuid'
 useHead({
   title: 'TAIGA CRM - Услуги'
 })
@@ -104,6 +105,92 @@ const confirm1 = (event, id) => {
     }
   })
 }
+
+// prihod
+
+const prihodProduct = ref(false)
+
+const value2 = ref(1)
+const idProduct = ref()
+
+const prihodProductData = id => {
+  prihodProduct.value = true
+  idProduct.value = id
+  console.log('prihod', id)
+}
+
+const dataProductPrihod = async () => {
+  let enter = {
+    name: uuidv4(),
+    organization: {
+      meta: {
+        href: 'https://online.moysklad.ru/api/remap/1.2/entity/organization/804b181a-fc63-11ed-0a80-000d00187fc7',
+        metadataHref:
+          'https://online.moysklad.ru/api/remap/1.2/entity/organization/metadata',
+        type: 'organization',
+        mediaType: 'application/json'
+      }
+    },
+    store: {
+      meta: {
+        href: 'https://online.moysklad.ru/api/remap/1.2/entity/store/804c5356-fc63-11ed-0a80-000d00187fcf',
+        metadataHref:
+          'https://online.moysklad.ru/api/remap/1.2/entity/store/metadata',
+        type: 'store',
+        mediaType: 'application/json'
+      }
+    },
+    positions: [
+      {
+        quantity: value2.value,
+        assortment: {
+          meta: {
+            href: `https://online.moysklad.ru/api/remap/1.2/entity/product/${idProduct.value}`,
+            metadataHref:
+              'https://online.moysklad.ru/api/remap/1.2/entity/product/metadata',
+            type: 'product',
+            mediaType: 'application/json'
+          }
+        }
+      }
+    ]
+  }
+
+  await useFetch(
+    '/api/entity/enter',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: 'Basic YWRtaW5AbW1wY2FwaXRhbDE6ZjkzZWMzMmVlYQ==',
+        'Content-Type': 'application/json;charset=utf-8',
+        Accept: 'application/json;charset=utf-8'
+      },
+      body: JSON.stringify(enter),
+      credentials: 'omit'
+    }
+  )
+    .then(() => {
+      setTimeout(() => {
+        prihodProduct.value = false
+        toast.add({
+          severity: 'info',
+          summary: 'Успешно',
+          detail: `Приход создан`,
+          life: 2000
+        })
+      }, 500)
+      refreshServices()
+    })
+    .catch(err => {
+      console.log(err)
+      toast.add({
+        severity: 'error',
+        summary: 'Неудача',
+        detail: 'Что то пошло не так',
+        life: 2000
+      })
+    })
+}
 </script>
 <template>
   <div>
@@ -183,10 +270,10 @@ const confirm1 = (event, id) => {
           <template #body="slotProps">
             <div class="flex items-center gap-2">
               <button
-                @click="confirm1($event, slotProps.data.id)"
+                @click="prihodProductData(slotProps.data.id)"
                 class="flex items-center gap-2 bg-green-600 rounded-md px-3 py-2"
               >
-                <IconsIPlus class="w-5 h-5 text-white" /> Добавить на склад
+                <IconsIPlus class="w-5 h-5 text-white" /> Приход
               </button>
               <button
                 @click="confirm1($event, slotProps.data.id)"
@@ -264,6 +351,41 @@ const confirm1 = (event, id) => {
           label="Создать"
           icon="pi pi-check"
           @click="createProduct('sdfsdf')"
+          autofocus
+          class="!bg-green-500 !text-white"
+        />
+      </template>
+    </Dialog>
+    <Dialog
+      v-model:visible="prihodProduct"
+      modal
+      header="Приход товара"
+      class="bg-red-300"
+      ><div class="py-2">
+        <div class="grid grid-cols-1 gap-4">
+          <InputNumber
+            v-model="value2"
+            inputId="minmax-buttons"
+            mode="decimal"
+            showButtons
+            :min="1"
+            :max="1000"
+          />
+        </div>
+      </div>
+
+      <template #footer>
+        <Button
+          label="Отменить"
+          icon="pi pi-times"
+          @click="modalAdd = false"
+          text
+          class="!bg-red-500 !text-white"
+        />
+        <Button
+          label="Сохранить"
+          icon="pi pi-check"
+          @click="dataProductPrihod()"
           autofocus
           class="!bg-green-500 !text-white"
         />
