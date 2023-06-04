@@ -35,6 +35,18 @@
           class="text-sm"
         ></Column>
         <Column
+          field="attributes.username"
+          filterField="attributes.username"
+          header="Телефон"
+          class="text-sm"
+        ></Column>
+        <Column
+          field="attributes.email"
+          filterField="attributes.email"
+          header="Email"
+          class="text-sm"
+        ></Column>
+        <Column
           field="attributes.createdAt"
           filterField="attributes.createdAt"
           header="Создан"
@@ -54,7 +66,10 @@
         >
           <template #body="slotProps">
             <div class="flex items-center gap-2">
-              {{ date(slotProps.data.attributes.DateRozhdenia) }}
+              <span v-if="slotProps.data.attributes.DateRozhdenia !== null">{{
+                date(slotProps.data.attributes.DateRozhdenia)
+              }}</span>
+              <span v-else class="text-red-400">Не указан</span>
             </div>
           </template>
         </Column>
@@ -106,7 +121,7 @@
         <div class="grid grid-cols-2 gap-4">
           <span class="p-float-label col-span-2">
             <InputText id="username" v-model="userData.fio" class="w-full" />
-            <label for="username">ФИО</label>
+            <label for="username">ФИО*</label>
           </span>
 
           <span class="p-float-label">
@@ -117,11 +132,11 @@
               placeholder="+7(999) 999-99-99"
             />
 
-            <label for="username">Телефон</label>
+            <label for="username">Телефон*</label>
           </span>
           <span class="p-float-label">
             <InputText id="username" v-model="userData.email" class="w-full" />
-            <label for="username">Email</label>
+            <label for="username">Email*</label>
           </span>
           <span class="p-float-label">
             <Calendar v-model="userData.dataRozh" inputId="birth_date" />
@@ -129,7 +144,7 @@
           </span>
           <span class="p-float-label">
             <InputText id="username" v-model="userData.bonus" class="w-full" />
-            <label for="username">Бонусы</label>
+            <label for="username">Бонусы(100+)</label>
           </span>
         </div>
       </div>
@@ -209,7 +224,11 @@ const filters = ref({
 })
 
 // create user
-const { result: users, refetch: usersR, loading: usersL } = useQuery(ALL_USER, null, {
+const {
+  result: users,
+  refetch: usersR,
+  loading: usersL
+} = useQuery(ALL_USER, null, {
   fetchPolicy: 'no-cache'
 })
 
