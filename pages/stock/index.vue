@@ -107,7 +107,7 @@ const confirm1 = (event, id) => {
 </script>
 <template>
   <div>
-    <Toast position="bottom-right"/>
+    <Toast position="bottom-right" />
     <ConfirmPopup></ConfirmPopup>
     <!-- <pre class="text-xs">{{ groups.rows }}</pre> -->
 
@@ -158,25 +158,7 @@ const confirm1 = (event, id) => {
             </div>
           </template></Column
         >
-        <Column
-          header="Группа"
-          field="pathName"
-          filterField="pathName"
-          sortable
-          style="width: 3%"
-          class="text-sm"
-        >
-        </Column>
 
-        <Column field="id" header="Цена" style="width: 10%" class="text-sm">
-          <template #body="slotProps">
-            <div class="flex items-center gap-2">
-              <span class="font-bold"
-                >{{ initPrice(slotProps.data.salePrices[0].value) }} ₽</span
-              >
-            </div>
-          </template>
-        </Column>
         <Column
           header="Остатки"
           field="stock"
@@ -196,35 +178,21 @@ const confirm1 = (event, id) => {
             </div>
           </template>
         </Column>
-        <Column
-          header="Статус"
-          field="archived"
-          filterField="archived"
-          sortable
-          style="width: 3%"
-          class="text-sm"
-          ><template #body="slotProps">
-            <div class="flex items-center gap-2">
-              <span v-if="slotProps.data.archived == false" class="font-bold">
-                <div class="rounded-full w-3 h-3 bg-green-400"></div>
-              </span>
-              <span v-else class="font-bold"
-                ><div class="rounded-full w-3 h-3 bg-red-400"></div
-              ></span>
-            </div>
-          </template>
-        </Column>
-        <Column field="id" header="" style="width: 8%" class="text-sm">
+
+        <Column field="id" header="" class="text-sm">
           <template #body="slotProps">
             <div class="flex items-center gap-2">
               <button
-                @click="editProduct(slotProps.data)"
-                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                @click="confirm1($event, slotProps.data.id)"
+                class="flex items-center gap-2 bg-green-600 rounded-md px-3 py-2"
               >
-                <IconsIEdit />
+                <IconsIPlus class="w-5 h-5 text-white" /> Добавить на склад
               </button>
-              <button @click="confirm1($event, slotProps.data.id)">
-                <IconsIArhive class="w-5 h-5 text-red-400" />
+              <button
+                @click="confirm1($event, slotProps.data.id)"
+                class="flex items-center gap-2 bg-green-600 rounded-md px-3 py-2"
+              >
+                <IconsIPlus class="w-5 h-5 text-white" /> История
               </button>
             </div>
           </template>

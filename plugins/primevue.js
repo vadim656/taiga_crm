@@ -14,7 +14,8 @@ import Calendar from 'primevue/calendar'
 import Tooltip from 'primevue/tooltip'
 import MultiSelect from 'primevue/multiselect'
 import InputMask from 'primevue/inputmask';
-
+import ConfirmPopup from 'primevue/confirmpopup';
+import ConfirmationService from 'primevue/confirmationservice';
 export default defineNuxtPlugin(nuxtApp => {
   nuxtApp.vueApp.use(PrimeVue, {
     ripple: true,
@@ -185,6 +186,8 @@ export default defineNuxtPlugin(nuxtApp => {
   nuxtApp.vueApp.component('Editor', Editor)
   nuxtApp.vueApp.component('Calendar', Calendar)
   nuxtApp.vueApp.component('MultiSelect', MultiSelect)
+  nuxtApp.vueApp.component('ConfirmPopup', ConfirmPopup)
   nuxtApp.vueApp.component('InputMask', InputMask)
+  nuxtApp.vueApp.use(ConfirmationService)
   //other components that you need
 })

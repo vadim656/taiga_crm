@@ -138,17 +138,17 @@ function logout () {
             </button>
            
           </li>
-          <!-- <li>
+          <li>
             <button
-              @click="getLink('products')"
+              @click="getLink('stock')"
               class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg text-white hover:bg-gray-700"
             >
               <IconsICube
                 class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] dark:group-hover:text-white"
               />
-              <span class="ml-3">Продукция</span>
+              <span class="ml-3">Склад</span>
             </button>
-          </li> -->
+          </li>
           <li v-if="store.role == 'Admin'">
             <button
               @click="getToggle(1)"

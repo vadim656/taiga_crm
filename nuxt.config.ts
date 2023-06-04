@@ -14,6 +14,7 @@ export default defineNuxtConfig({
       '/api/**': { proxy: 'https://online.moysklad.ru/api/remap/1.2/**' }
     }
   },
+
   // vite: {
   //   server: {
   //     hmr: {
@@ -38,6 +39,7 @@ export default defineNuxtConfig({
       ]
     }
   },
+
   runtimeConfig: {
     public: {
       graphqlURL: 'https://api.zhivayataiga.ru/graphql',
@@ -45,6 +47,7 @@ export default defineNuxtConfig({
       skladToken: 'ac4cefd7530e6a05d53170ae38d7267259bfd527'
     }
   },
+
   modules: [
     '@vueuse/nuxt',
     '@nuxtjs/apollo',
@@ -63,16 +66,19 @@ export default defineNuxtConfig({
     'primevue/resources/primevue.css',
     'primeicons/primeicons.css'
   ],
+
   postcss: {
     plugins: {
       tailwindcss: {},
       autoprefixer: {}
     }
   },
+
   components: {
     global: true,
     dirs: ['~/components/global', '~/components']
   },
+
   strapi: {
     url: 'https://api.zhivayataiga.ru',
     prefix: '/api',
@@ -82,6 +88,7 @@ export default defineNuxtConfig({
     },
     cookieName: 'strapi_jwt'
   },
+
   apollo: {
     authType: 'Bearer',
     authHeader: 'Authorization',
@@ -95,7 +102,12 @@ export default defineNuxtConfig({
       }
     }
   },
+
   build: {
     transpile: ['primevue']
+  },
+
+  devtools: {
+    enabled: true
   }
 })
