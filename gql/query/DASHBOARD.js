@@ -81,7 +81,7 @@ export const CREATE_CLIENT_NOTE = gql`
 
 export const ALL_CLIENT_NOTES = gql`
   query {
-    userRecords {
+    userRecords(pagination: { limit: 1000 }) {
       data {
         attributes {
           Name

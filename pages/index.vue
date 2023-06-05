@@ -136,10 +136,6 @@ function handlerSendNote () {
   timer.setHours(h1)
   timer.setMinutes(m1)
 
-  // console.log({
-  //   DATE: timer,
-  //   NAME: note.value.title,
-  // })
   sendNote({
     DATE: timer,
     NAME: note.value.title
