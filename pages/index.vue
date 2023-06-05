@@ -76,7 +76,18 @@
 import { CREATE_CLIENT_NOTE, ALL_CLIENT_NOTES } from '../gql/query/DASHBOARD'
 import { v4 as uuidv4 } from 'uuid'
 import { useToast } from 'primevue/usetoast'
+
+useHead({
+  title: 'TAIGA CRM - Главная'
+})
+definePageMeta({
+  middleware: 'auth'
+})
+
 const toast = useToast()
+
+
+
 
 const {
   result: getRole,
