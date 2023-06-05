@@ -16,6 +16,10 @@ import MultiSelect from 'primevue/multiselect'
 import InputMask from 'primevue/inputmask';
 import ConfirmPopup from 'primevue/confirmpopup';
 import ConfirmationService from 'primevue/confirmationservice';
+import Dropdown from 'primevue/dropdown';
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
+
 export default defineNuxtPlugin(nuxtApp => {
   nuxtApp.vueApp.use(PrimeVue, {
     ripple: true,
@@ -188,6 +192,9 @@ export default defineNuxtPlugin(nuxtApp => {
   nuxtApp.vueApp.component('MultiSelect', MultiSelect)
   nuxtApp.vueApp.component('ConfirmPopup', ConfirmPopup)
   nuxtApp.vueApp.component('InputMask', InputMask)
+  nuxtApp.vueApp.component('Dropdown', Dropdown)
+  nuxtApp.vueApp.component('TabView', TabView)
+  nuxtApp.vueApp.component('TabPanel', TabPanel)
   nuxtApp.vueApp.use(ConfirmationService)
   //other components that you need
 })

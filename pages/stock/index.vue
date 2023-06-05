@@ -25,13 +25,36 @@ const {
   }
 })
 
+const barcodes = computed(() => {
+  const data = services.value.rows
+  const dataBar = data.map(x => {
+    if (x.barcodes.length) {
+      if (x.barcodes[0].ean13) {
+        const bar = x.barcodes[0].ean13
+        return bar
+      } else if (x.barcodes[0].code128) {
+        const bar = x.barcodes[0].code128
+        return bar
+      }
+      return x
+    } else {
+      return x
+    }
+  })
+  for (const key in dataBar) {
+    data[key].barcode = dataBar[key]
+  }
+  return data
+})
+
 const filters = ref()
 
 const initFilters = () => {
   filters.value = {
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     name: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    pathName: { value: null, matchMode: FilterMatchMode.IN }
+    pathName: { value: null, matchMode: FilterMatchMode.IN },
+    barcode: { value: null, matchMode: FilterMatchMode.CONTAINS }
   }
 }
 
@@ -113,11 +136,37 @@ const prihodProduct = ref(false)
 const value2 = ref(1)
 const idProduct = ref()
 
+const dateDoc = ref()
+const document = ref('')
+
 const prihodProductData = id => {
   prihodProduct.value = true
   idProduct.value = id
   console.log('prihod', id)
 }
+
+let options = {
+  hour: 'numeric',
+  minute: 'numeric',
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric'
+}
+
+const dateCom = computed(() => {
+  const d = new Date(dateDoc.value)
+  var datestring =
+    d.getDate() +
+    '-' +
+    (d.getMonth() + 1) +
+    '-' +
+    d.getFullYear() +
+    ' ' +
+    d.getHours() +
+    ':' +
+    d.getMinutes()
+  return datestring.toString()
+})
 
 const dataProductPrihod = async () => {
   let enter = {
@@ -153,22 +202,20 @@ const dataProductPrihod = async () => {
           }
         }
       }
-    ]
+    ],
+    description: `Основание документа:  ${document.value} // Дата документа: ${dateCom.value}`
   }
 
-  await useFetch(
-    '/api/entity/enter',
-    {
-      method: 'POST',
-      headers: {
-        Authorization: 'Basic YWRtaW5AbW1wY2FwaXRhbDE6ZjkzZWMzMmVlYQ==',
-        'Content-Type': 'application/json;charset=utf-8',
-        Accept: 'application/json;charset=utf-8'
-      },
-      body: JSON.stringify(enter),
-      credentials: 'omit'
-    }
-  )
+  await useFetch('/api/entity/enter', {
+    method: 'POST',
+    headers: {
+      Authorization: 'Basic YWRtaW5AbW1wY2FwaXRhbDE6ZjkzZWMzMmVlYQ==',
+      'Content-Type': 'application/json;charset=utf-8',
+      Accept: 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify(enter),
+    credentials: 'omit'
+  })
     .then(() => {
       setTimeout(() => {
         prihodProduct.value = false
@@ -196,15 +243,17 @@ const dataProductPrihod = async () => {
   <div>
     <Toast position="bottom-right" />
     <ConfirmPopup></ConfirmPopup>
+
+    <!-- <pre class="text-sm">{{ barcodes }}</pre> -->
     <!-- <pre class="text-xs">{{ groups.rows }}</pre> -->
 
     <ClientOnly placeholder="Загрузка...">
       <DataTable
-        :value="services.rows"
+        :value="barcodes"
         stripedRows
         removableSort
         v-model:filters="filters"
-        :globalFilterFields="['name', 'pathName']"
+        :globalFilterFields="['name', 'pathName', 'barcode']"
         class="rounded-t-md overflow-hidden"
         paginator
         :rows="10"
@@ -225,12 +274,21 @@ const dataProductPrihod = async () => {
           </div>
         </template>
         <Column
-          field="code"
-          filterField="code"
+          field="barcode"
+          filterField="barcode"
           header="Арт"
           style="width: 2%"
           class="text-sm"
-        ></Column>
+        >
+          <template #body="slotProps">
+            <div class="flex items-center gap-2">
+              <span class="" v-if="slotProps.data.barcode">{{
+                slotProps.data.barcode
+              }}</span>
+              <span class="text-red-400" v-else>Нет кода</span>
+            </div>
+          </template>
+        </Column>
         <Column
           field="name"
           filterField="name"
@@ -371,9 +429,16 @@ const dataProductPrihod = async () => {
             :min="1"
             :max="1000"
           />
+          <span class="p-float-label w-full">
+            <InputText id="username" v-model="document" class="w-full" />
+            <label for="username">На основании документа</label>
+          </span>
+          <span class="p-float-label w-full">
+            <Calendar v-model="dateDoc" inputId="birth_date" class="w-full" />
+            <label for="birth_date">Дата документа</label>
+          </span>
         </div>
       </div>
-
       <template #footer>
         <Button
           label="Отменить"
@@ -383,6 +448,7 @@ const dataProductPrihod = async () => {
           class="!bg-red-500 !text-white"
         />
         <Button
+          v-if="document.length >= 5 && dateDoc"
           label="Сохранить"
           icon="pi pi-check"
           @click="dataProductPrihod()"

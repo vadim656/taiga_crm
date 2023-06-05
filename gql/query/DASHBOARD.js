@@ -68,3 +68,33 @@ export const DELETE_USER_NOTES = gql`
     }
   }
 `
+
+export const CREATE_CLIENT_NOTE = gql`
+  mutation CREATE_CLIENT_NOTE($DATE: DateTime, $NAME: String) {
+    createUserRecord(data: { Time: $DATE, Name: $NAME }) {
+      data {
+        id
+      }
+    }
+  }
+`
+
+export const ALL_CLIENT_NOTES = gql`
+  query {
+    userRecords {
+      data {
+        attributes {
+          Name
+          Time
+          services {
+            data {
+              attributes {
+                Name
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`

@@ -209,6 +209,7 @@ function logout () {
               <NuxtLink to="/" class="link group">Расходы</NuxtLink>
               <NuxtLink to="/" class="link group">Ком-услуги</NuxtLink>
               <NuxtLink to="/" class="link group">Касса</NuxtLink>
+              <NuxtLink to="/finance/prihod" class="link group">Приходы</NuxtLink>
             </ul>
           </li>
 
