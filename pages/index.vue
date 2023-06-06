@@ -25,14 +25,23 @@
         <p>3</p>
       </TabPanel>
     </TabView>
-    <Dialog v-model:visible="editDay" modal header="Записи" class=""
+    <Dialog
+      v-model:visible="editDay"
+      modal
+      header="Записи"
+      class="w-full max-w-[800px]"
       ><div class="py-2 w-full">
         <!-- <pre class="text-xs"> {{ dataDay }}</pre> -->
         <div class="w-full flex flex-col gap-4">
-          <span class="p-float-label">
-            <InputText id="username" v-model="note.title" class="w-full" />
-            <label for="username">Услуга</label>
-          </span>
+          <Dropdown
+            filter
+            v-model="selectedServices"
+            :options="allServices"
+            showClear
+            optionLabel="name"
+            placeholder="Выберите услугу"
+            class="w-full md:w-14rem"
+          />
           <!-- <span class="p-float-label">
             <InputText id="username" v-model="note.title" class="w-full" />
             <label for="username">Телефон</label>
@@ -41,15 +50,39 @@
             <InputText id="username" v-model="note.title" class="w-full" />
             <label for="username">Услуга</label>
           </span> -->
-
-          <span class="p-float-label">
-            <Calendar id="calendar-timeonly" v-model="note.time" timeOnly />
-            <label for="username">Время</label>
-          </span>
-          <!-- <span class="p-float-label">
-            <InputText id="username" v-model="note.title" class="w-full" />
-            <label for="username">Цена</label>
-          </span> -->
+          <div class="grid grid-cols-3 gap-4 w-full">
+            <span class="p-float-label">
+              <Calendar
+                id="calendar-timeonly"
+                v-model="note.time"
+                timeOnly
+                class="w-full"
+              />
+              <label for="username">Время</label>
+            </span>
+            <Dropdown
+              v-model="selectedCabinet"
+              :options="allCabinet"
+              showClear
+              optionLabel="name"
+              placeholder="Выберите кабинет"
+              class="w-full md:w-14rem"
+            />
+            <span class="p-float-label">
+              <InputText id="username" v-model="note.user" class="w-full" />
+              <label for="username">ФИО</label>
+            </span>
+            <span class="p-float-label">
+              <InputText id="username" v-model="note.user" class="w-full" />
+              <label for="username">Телефон</label>
+            </span>
+            <div class="col-span-2">
+              <span class="p-float-label">
+                <InputText id="username" v-model="note.user" class="w-full" />
+                <label for="username">Примечания</label>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -86,8 +119,32 @@ definePageMeta({
 
 const toast = useToast()
 
+const selectedServices = ref()
+const selectedCabinet = ref()
+const {
+  pending: pendingServices,
+  data: services,
+  refresh: refreshServices
+} = await useFetch('/api/entity/assortment', {
+  method: 'GET',
+  headers: {
+    Authorization: 'Basic YWRtaW5AbW1wY2FwaXRhbDE6ZjkzZWMzMmVlYQ=='
+  }
+})
 
+const allCabinet = ref([
+  { name: '1', code: '1' },
+  { name: '2', code: '2' },
+  { name: '3', code: '3' },
+  { name: '4', code: '4' },
+  { name: '5', code: '5' }
+])
 
+const fio = ref('')
+
+const allServices = computed(() => {
+  return services.value?.rows ?? []
+})
 
 const {
   result: getRole,
@@ -95,6 +152,8 @@ const {
   refetch: getRoleRef
 } = useQuery(ALL_CLIENT_NOTES, null, {
   pollInterval: 2000
+},{
+  fetchPolicy: 'cache-and-network',
 })
 
 const allNotes = computed(() => {
@@ -159,6 +218,17 @@ getRoleRes(() => {
 
 onMounted(() => {
   UID.value = uuidv4()
+})
+onUnmounted(() => {
+  note.value = {
+    title: '',
+    time: '',
+    user: '',
+    service: '',
+    price: ''
+  }
+
+
 })
 </script>
 <style>

@@ -26,6 +26,18 @@
       .blockM{
         @apply  rounded-md bg-[#212121];
       }
+      input::-webkit-input-placeholder { 
+        font-size: 16px !important;
+       }
+      input:-ms-input-placeholder { 
+        font-size: 16px !important;
+       }
+      input::-ms-input-placeholder { 
+        font-size: 16px !important;
+       }
+      input::placeholder { 
+        font-size: 16px !important;
+       }
 }
 
 .p-checkbox .p-checkbox-box.p-highlight .p-checkbox-icon.pi-check::before {
@@ -37,6 +49,10 @@ html,
 body, .p-component {
   font-family: 'Wix Madefor Display', sans-serif !important;
   letter-spacing: 0.05rem;
+}
+
+.p-inputtext{
+  font-family: 'Wix Madefor Display', sans-serif !important;
 }
 
 

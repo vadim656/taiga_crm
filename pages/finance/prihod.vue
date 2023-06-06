@@ -303,6 +303,21 @@ const dataProductPrihod = async () => {
           </div>
         </template>
         <Column
+          field="name"
+          filterField="name"
+          header="UID"
+          style="width: 10%"
+          class="text-sm"
+        >
+          <template #body="slotProps">
+            <div class="flex items-center gap-2">
+              <span class="font-bold">{{
+               slotProps.data.name.slice(0,8)
+              }}</span>
+            </div>
+          </template>
+        </Column>
+        <Column
           field="created"
           filterField="created"
           header="Создан"
