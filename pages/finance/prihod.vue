@@ -269,6 +269,8 @@ const dataProductPrihod = async () => {
       })
     })
 }
+
+
 </script>
 <template>
   <div>
@@ -397,6 +399,7 @@ const dataProductPrihod = async () => {
         />
       </template>
     </Dialog>
+   
     <Dialog
       v-model:visible="prihodView"
       modal

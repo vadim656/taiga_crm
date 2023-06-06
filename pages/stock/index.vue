@@ -9,6 +9,7 @@ useHead({
 definePageMeta({
   middleware: 'auth'
 })
+const router = useRouter()
 
 const confirm = useConfirm()
 const toast = useToast()
@@ -153,6 +154,11 @@ let options = {
   day: 'numeric'
 }
 
+const dataCorrection = time => {
+  const x = new Date(time)
+  return x.toLocaleString('ru', options)
+}
+
 const dateCom = computed(() => {
   const d = new Date(dateDoc.value)
   var datestring =
@@ -165,7 +171,7 @@ const dateCom = computed(() => {
     d.getHours() +
     ':' +
     d.getMinutes()
-  return datestring.toString()
+  return datestring
 })
 
 const dataProductPrihod = async () => {
@@ -203,7 +209,8 @@ const dataProductPrihod = async () => {
         }
       }
     ],
-    description: `Основание документа:  ${document.value} // Дата документа: ${dateCom.value}`
+    description: `Дата документа: ${dateCom.value}`,
+    reason: `Обновленная причина ${document.value}`
   }
 
   await useFetch('/api/entity/enter', {
@@ -237,6 +244,45 @@ const dataProductPrihod = async () => {
         life: 2000
       })
     })
+}
+
+// history
+
+const modalViewHistory = ref(false)
+
+const historyData = ref()
+
+const modalViewHistoryOpen = async id => {
+  console.log('prihod history', id)
+  await useFetch(
+    `/api/entity/enter?filter=assortment=https://online.moysklad.ru/api/remap/1.2/entity/product/${id}`,
+    {
+      method: 'GET',
+      headers: {
+        Authorization: 'Basic YWRtaW5AbW1wY2FwaXRhbDE6ZjkzZWMzMmVlYQ==',
+        'Content-Type': 'application/json;charset=utf-8',
+        Accept: 'application/json;charset=utf-8'
+      }
+    }
+  )
+    .then(res => {
+      historyData.value = res.data.value.rows
+      modalViewHistory.value = true
+    })
+    .catch(err => {
+      console.log(err)
+    })
+}
+
+const modalViewHistoryOne = ref(false)
+
+const historyDataOne = ref()
+
+const modalViewHistoryOpenOne = id => {
+  const routeData = router.resolve({
+    path: '/finance/prihod-' + id + '/' + id
+  })
+  window.open(routeData.href, '_blank')
 }
 </script>
 <template>
@@ -303,7 +349,6 @@ const dataProductPrihod = async () => {
             </div>
           </template></Column
         >
-
         <Column
           header="Остатки"
           field="stock"
@@ -324,17 +369,17 @@ const dataProductPrihod = async () => {
           </template>
         </Column>
 
-        <Column field="id" header="" class="text-sm">
+        <Column field="id" header="" class="text-sm" style="width: 6%">
           <template #body="slotProps">
             <div class="flex items-center gap-2">
-              <button
+              <!-- <button
                 @click="prihodProductData(slotProps.data.id)"
                 class="flex items-center gap-2 bg-green-600 rounded-md px-3 py-2"
               >
                 <IconsIPlus class="w-5 h-5 text-white" /> Приход
-              </button>
+              </button> -->
               <button
-                @click="confirm1($event, slotProps.data.id)"
+                @click="modalViewHistoryOpen(slotProps.data.id)"
                 class="flex items-center gap-2 bg-green-600 rounded-md px-3 py-2"
               >
                 <IconsIPlus class="w-5 h-5 text-white" /> История
@@ -456,6 +501,110 @@ const dataProductPrihod = async () => {
           class="!bg-green-500 !text-white"
         />
       </template>
+    </Dialog>
+    <Dialog
+      v-model:visible="modalViewHistory"
+      modal
+      header="Приход товара история"
+      class="bg-red-300 w-full max-w-[900px]"
+    >
+      <div class="py-2">
+        <div class="flex flex-col gap-4">
+          <ClientOnly placeholder="Загрузка...">
+            <DataTable
+              :value="historyData"
+              removableSort
+              class="rounded-t-md overflow-hidden"
+            >
+              <Column field="name" header="№ прихода" style="" class="text-sm">
+                <!-- <template #body="slotProps"> </template> -->
+              </Column>
+              <Column
+                field="created"
+                header="Дата создания"
+                style=""
+                class="text-sm"
+              >
+                <template #body="slotProps">
+                  {{ dataCorrection(slotProps.data.created) }}</template
+                >
+              </Column>
+              <Column
+                field="positions.meta.size"
+                header="Всего позиций"
+                style=""
+                class="text-sm"
+              >
+              </Column>
+              <Column style="width: 2%" class="text-sm">
+                <template #body="slotProps">
+                  <button @click="modalViewHistoryOpenOne(slotProps.data.id)">
+                    Подробнее
+                  </button></template
+                >
+              </Column>
+            </DataTable>
+
+            <!-- @page="pageEventProducts" -->
+          </ClientOnly>
+        </div>
+        <!-- <pre class="text-sm"> {{ historyData }}</pre> -->
+      </div>
+      <template #footer>
+        <Button
+          label="Отменить"
+          icon="pi pi-times"
+          @click="modalViewHistory = false"
+          text
+          class="!bg-red-500 !text-white"
+        />
+        <Button
+          v-if="document.length >= 5 && dateDoc"
+          label="Сохранить"
+          icon="pi pi-check"
+          @click="dataProductPrihod()"
+          autofocus
+          class="!bg-green-500 !text-white"
+        />
+      </template>
+    </Dialog>
+    <Dialog
+      v-model:visible="modalViewHistoryOne"
+      modal
+      header="Приход товара история"
+      class="bg-red-300"
+    >
+      <div class="py-2">
+        <ClientOnly placeholder="Загрузка...">
+          <DataTable
+            :value="historyData"
+            removableSort
+            class="rounded-t-md overflow-hidden"
+          >
+            <Column field="name" header="№ прихода" style="" class="text-sm">
+            </Column>
+            <Column
+              field="positions.meta.size"
+              header="Всего позиций"
+              style=""
+              class="text-sm"
+            >
+            </Column>
+          </DataTable>
+
+          <!-- @page="pageEventProducts" -->
+        </ClientOnly>
+
+        <div class="flex flex-col gap-4">
+          <div
+            @click="modalViewHistoryOpenOne(item.id)"
+            v-for="item in historyDataOne"
+            class="border p-2"
+          >
+            <pre>{{ item }}</pre>
+          </div>
+        </div>
+      </div>
     </Dialog>
   </div>
 </template>

@@ -107,7 +107,7 @@ const confirm1 = (event, id) => {
 </script>
 <template>
   <div>
-    <Toast position="bottom-right"/>
+    <Toast position="bottom-right" />
     <ConfirmPopup></ConfirmPopup>
     <!-- <pre class="text-xs">{{ groups.rows }}</pre> -->
 
@@ -182,7 +182,7 @@ const confirm1 = (event, id) => {
           field="stock"
           filterField="stock"
           sortable
-          style="width: 6%"
+          style="width: 2%"
           class="text-sm"
           ><template #body="slotProps">
             <div class="flex items-center gap-2">
@@ -214,12 +214,18 @@ const confirm1 = (event, id) => {
             </div>
           </template>
         </Column>
-        <Column field="id" header="" style="width: 8%" class="text-sm">
+        <Column field="id" header="" style="width: 10%" class="text-sm">
           <template #body="slotProps">
             <div class="flex items-center gap-2">
               <button
+                @click="modalViewHistoryOpen(slotProps.data.id)"
+                class="flex items-center gap-2 bg-green-600 rounded-md px-3 py-2"
+              >
+                <IconsIPlus class="w-5 h-5 text-white" /> История
+              </button>
+              <button
                 @click="editProduct(slotProps.data)"
-                class="font-medium text-blue-600 text-blue-500 hover:underline"
+                class="font-medium hover:underline"
               >
                 <IconsIEdit />
               </button>
