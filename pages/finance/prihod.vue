@@ -18,7 +18,7 @@ const {
   pending: pendingprihods,
   data: prihods,
   refresh: refreshprihods
-} = await useFetch('/api/entity/enter', {
+} = await useFetch('/api/entity/enter?order=created,desc', {
   method: 'GET',
   headers: {
     Authorization: 'Basic YWRtaW5AbW1wY2FwaXRhbDE6ZjkzZWMzMmVlYQ=='
@@ -179,14 +179,27 @@ const reuseQt = id => {
 }
 
 function isInArray (name) {
-  if (selectedProduct.value.some(e => e.name === name)) {
-    return true
+  console.log('name', name)
+  console.log('selectedProduct', selectedProduct.value)
+  if (
+    selectedProduct.value.some(
+      e =>
+        e.assortment.meta.href.replace(
+          'https://online.moysklad.ru/api/remap/1.2/entity/product/',
+          ''
+        ) === name
+    )
+  ) {
+    return false
   }
-  return false
+  return true
 }
 
 const reusePriveVal = ref()
 const reuseQtVal = ref()
+
+const dateDoc = ref()
+const document = ref('')
 
 function selectedProductFunc (data) {
   const dataItem = {
@@ -211,7 +224,9 @@ function selectedProductFunc (data) {
   selectedProduct.value.push(dataItem)
 }
 
-const dataProductPrihod = async () => {
+const finishView = ref(false)
+const prihodDataPreFinish = ref()
+const dataProductPrihod = () => {
   let enter = {
     name: uuidv4(),
     organization: {
@@ -232,10 +247,16 @@ const dataProductPrihod = async () => {
         mediaType: 'application/json'
       }
     },
-    positions: selectedProduct.value
-    // description: `Основание документа:  ${document.value} // Дата документа: ${dateCom.value}`
+    positions: selectedProduct.value,
+    reason: `Основание документа ${document.value}`,
+    description: `Основание документа:  ${document.value} // Дата документа: ${dateCom.value}`
   }
+  finishView.value = true
 
+  prihodDataPreFinish.value = enter
+}
+
+const dataProductPrihodFinish = async () => {
   await useFetch('/api/entity/enter', {
     method: 'POST',
     headers: {
@@ -243,7 +264,7 @@ const dataProductPrihod = async () => {
       'Content-Type': 'application/json;charset=utf-8',
       Accept: 'application/json;charset=utf-8'
     },
-    body: JSON.stringify(enter),
+    body: JSON.stringify(prihodDataPreFinish.value),
     credentials: 'omit'
   })
     .then(() => {
@@ -269,8 +290,6 @@ const dataProductPrihod = async () => {
       })
     })
 }
-
-
 </script>
 <template>
   <div>
@@ -314,7 +333,7 @@ const dataProductPrihod = async () => {
           <template #body="slotProps">
             <div class="flex items-center gap-2">
               <span class="font-bold">{{
-               slotProps.data.name.slice(0,8)
+                slotProps.data.name.slice(0, 8)
               }}</span>
             </div>
           </template>
@@ -383,8 +402,10 @@ const dataProductPrihod = async () => {
             class="text-sm border border-gray-600 rounded-md p-4 grid grid-cols-[4fr,1fr,1fr]"
           >
             <span class="">{{ item.name }} </span>
-            <span>Закупка: {{ initPrice(item.buyPrice.value)  }} ₽</span>
-            <span>Цена продажи: {{ initPrice(item.salePrices[0].value) }} ₽</span>
+            <span>Закупка: {{ initPrice(item.buyPrice.value) }} ₽</span>
+            <span
+              >Цена продажи: {{ initPrice(item.salePrices[0].value) }} ₽</span
+            >
           </div>
         </div>
       </div>
@@ -399,11 +420,11 @@ const dataProductPrihod = async () => {
         />
       </template>
     </Dialog>
-   
+
     <Dialog
       v-model:visible="prihodView"
       modal
-      header="Приход товара"
+      header="Приход товаров"
       class="bg-red-300 w-full mx-10"
       ><div class="py-2 w-full">
         <div class="w-full">
@@ -422,11 +443,27 @@ const dataProductPrihod = async () => {
             >
               <template #header>
                 <div class="flex justify-between gap-6">
-                  <div>
+                  <div class="flex items-start justify-start gap-4">
                     <InputText
                       v-model="filters['global'].value"
                       placeholder="Поиск по продукции"
                     />
+                    <div class="flex flex-wrap gap-4">
+                      <span
+                        class="text-xs p-2 border rounded-sm border-gray-600"
+                        v-for="item in selectedProduct"
+                      >
+                        {{
+                          item.assortment.meta.href
+                            .replace(
+                              'https://online.moysklad.ru/api/remap/1.2/entity/product/',
+                              ''
+                            )
+                            .slice(0, 6)
+                        }}
+                        - {{ item.quantity }} шт.</span
+                      >
+                    </div>
                   </div>
                 </div>
               </template>
@@ -512,9 +549,13 @@ const dataProductPrihod = async () => {
                       @change="reuseQtVal = $event.target.value"
                       class="border border-gray-500 p-2 w-20 bg-transparent rounded-md"
                     />
-                    <button @click="selectedProductFunc(slotProps.data)">
+                    <button
+                      v-if="isInArray(slotProps.data.id)"
+                      @click="selectedProductFunc(slotProps.data)"
+                    >
                       Добавить
                     </button>
+                    <button v-else class="text-green-400 text-sm"> Добавлено </button>
                   </div>
                 </template>
               </Column>
@@ -533,10 +574,45 @@ const dataProductPrihod = async () => {
           class="!bg-red-500 !text-white"
         />
         <Button
-          label="Сохранить"
+          label="Продолжить"
           icon="pi pi-check"
           @click="dataProductPrihod"
           text
+          class="!bg-green-500 !text-white"
+        />
+      </template>
+    </Dialog>
+    <Dialog
+      v-model:visible="finishView"
+      modal
+      header="Подробности"
+      class="bg-red-300 w-full max-w-[400px]"
+      ><div class="py-2">
+        <div class="grid grid-cols-1 gap-4">
+          <span class="p-float-label w-full">
+            <InputText id="username" v-model="document" class="w-full" />
+            <label for="username">На основании документа</label>
+          </span>
+          <span class="p-float-label w-full">
+            <Calendar v-model="dateDoc" inputId="birth_date" class="w-full" />
+            <label for="birth_date">Дата документа</label>
+          </span>
+        </div>
+      </div>
+      <template #footer>
+        <Button
+          label="Отменить"
+          icon="pi pi-times"
+          @click="modalAdd = false"
+          text
+          class="!bg-red-500 !text-white"
+        />
+        <Button
+          v-if="document.length >= 5 && dateDoc"
+          label="Создать"
+          icon="pi pi-check"
+          @click="dataProductPrihodFinish()"
+          autofocus
           class="!bg-green-500 !text-white"
         />
       </template>

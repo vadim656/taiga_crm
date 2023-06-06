@@ -13,12 +13,12 @@
         </div>
       </TabPanel>
       <TabPanel header="Кабинеты">
-        <div class="grid grid-cols-5 gap-4 w-full">
-          <div class="blockT">Кабинет: 1</div>
-          <div class="blockT">Кабинет: 2</div>
-          <div class="blockT">Кабинет: 3</div>
-          <div class="blockT">Кабинет: 4</div>
-          <div class="blockT">Кабинет: 5</div>
+        <div class="grid grid-cols-5 gap-4 w-full text-sm">
+          <div class="blockT">1 - Хамам </div>
+          <div class="blockT">2 - Стандартный</div>
+          <div class="blockT">3 - Стандартный</div>
+          <div class="blockT">4 - Ванна</div>
+          <div class="blockT">5 - Стандартный</div>
         </div>
       </TabPanel>
       <TabPanel header="Сводка">
@@ -133,11 +133,11 @@ const {
 })
 
 const allCabinet = ref([
-  { name: '1', code: '1' },
-  { name: '2', code: '2' },
-  { name: '3', code: '3' },
-  { name: '4', code: '4' },
-  { name: '5', code: '5' }
+  { name: '1 - Хамам', code: '1' },
+  { name: '2 - Стандартный', code: '2' },
+  { name: '3 - Стандартный', code: '3' },
+  { name: '4 - Ванна', code: '4' },
+  { name: '3 - Стандартный', code: '5' }
 ])
 
 const fio = ref('')

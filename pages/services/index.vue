@@ -163,8 +163,8 @@ const confirm1 = (event, id) => {
           field="pathName"
           filterField="pathName"
           sortable
-          style="width: 3%"
-          class="text-sm"
+          style="width: 13%"
+          class="text-xs text-gray-400"
         >
         </Column>
 
@@ -177,7 +177,19 @@ const confirm1 = (event, id) => {
             </div>
           </template>
         </Column>
-        <Column
+        <Column field="id" header="Тип" style="width: 10%" class="text-sm">
+          <template #body="slotProps">
+            <div class="flex items-center gap-2">
+              <span
+                v-if="slotProps.data.meta.type == 'product'"
+                class="font-bold"
+                >Товар</span
+              >
+              <span v-else class="font-bold">Услуга</span>
+            </div>
+          </template>
+        </Column>
+        <!-- <Column
           header="Остатки"
           field="stock"
           filterField="stock"
@@ -195,14 +207,8 @@ const confirm1 = (event, id) => {
               >
             </div>
           </template>
-        </Column>
-        <Column
-          header="Статус"
-          field="archived"
-          filterField="archived"
-          sortable
-          style="width: 3%"
-          class="text-sm"
+        </Column> -->
+        <Column field="archived" style="width: 1%" class="text-sm"
           ><template #body="slotProps">
             <div class="flex items-center gap-2">
               <span v-if="slotProps.data.archived == false" class="font-bold">
@@ -214,15 +220,9 @@ const confirm1 = (event, id) => {
             </div>
           </template>
         </Column>
-        <Column field="id" header="" style="width: 10%" class="text-sm">
+        <Column field="id" header="" style="width: 4%" class="text-sm">
           <template #body="slotProps">
             <div class="flex items-center gap-2">
-              <button
-                @click="modalViewHistoryOpen(slotProps.data.id)"
-                class="flex items-center gap-2 bg-green-600 rounded-md px-3 py-2"
-              >
-                <IconsIPlus class="w-5 h-5 text-white" /> История
-              </button>
               <button
                 @click="editProduct(slotProps.data)"
                 class="font-medium hover:underline"
