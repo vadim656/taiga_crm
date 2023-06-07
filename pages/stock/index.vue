@@ -278,9 +278,9 @@ const modalViewHistoryOne = ref(false)
 
 const historyDataOne = ref()
 
-const modalViewHistoryOpenOne = id => {
+const modalViewHistoryOpenOne = (name, id) => {
   const routeData = router.resolve({
-    path: '/finance/prihod-' + id + '/' + id
+    path: '/finance/prihod-' + name + '/' + id
   })
   window.open(routeData.href, '_blank')
 }
@@ -517,7 +517,12 @@ const modalViewHistoryOpenOne = id => {
               class="rounded-t-md overflow-hidden"
             >
               <Column field="name" header="№ прихода" style="" class="text-sm">
-                <!-- <template #body="slotProps"> </template> -->
+                <!-- <template #body="slotProps">
+              <div class="flex items-center gap-4">
+              <pre>{{ slotProps.data }}</pre>
+               
+              </div>
+            </template> -->
               </Column>
               <Column
                 field="created"
@@ -538,7 +543,14 @@ const modalViewHistoryOpenOne = id => {
               </Column>
               <Column style="width: 2%" class="text-sm">
                 <template #body="slotProps">
-                  <button @click="modalViewHistoryOpenOne(slotProps.data.id)">
+                  <button
+                    @click="
+                      modalViewHistoryOpenOne(
+                        slotProps.data.name,
+                        slotProps.data.id
+                      )
+                    "
+                  >
                     Подробнее
                   </button></template
                 >

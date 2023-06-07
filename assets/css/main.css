@@ -44,6 +44,9 @@
        .btn-default{
         @apply  px-3 py-2 border border-gray-600  text-white   rounded-md flex items-center justify-center gap-1;
        }
+       .btn-danger{
+        @apply  px-3 py-2 bg-red-500    text-white   rounded-md flex items-center justify-center gap-1;
+       }
 }
 
 .p-checkbox .p-checkbox-box.p-highlight .p-checkbox-icon.pi-check::before {

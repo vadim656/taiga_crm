@@ -202,12 +202,6 @@ function selectedProductFunc (data) {
       }
     }
   }
-  // toast.add({
-  //   severity: 'info',
-  //   summary: 'Успешно',
-  //   detail: `Товар ${data.name} добавлен`,
-  //   life: 300
-  // })
   selectedProduct.value.push(dataItem)
 }
 
@@ -268,6 +262,8 @@ const dataProductPrihodFinish = async () => {
         filters.value.global.value = null
       }, 500)
       refreshServices()
+      selectedProduct.value = []
+
       refreshprihods()
     })
     .catch(err => {
