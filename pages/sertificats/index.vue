@@ -25,7 +25,7 @@ const {
   pending: pendingServices,
   data: services,
   refresh: refreshServices
-} = await useFetch('/api/entity/assortment?filter=pathname=Сертификаты&order=created,desc', {
+} = await useFetch('/api/entity/assortment?filter=pathname=Сертификаты', {
   method: 'GET',
   headers: {
     Authorization: 'Basic YWRtaW5AbW1wY2FwaXRhbDE6ZjkzZWMzMmVlYQ=='
