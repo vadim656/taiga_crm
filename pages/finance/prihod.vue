@@ -58,18 +58,13 @@ const barcodes = computed(() => {
   return data
 })
 
-const filters = ref()
-
-const initFilters = () => {
-  filters.value = {
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    name: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    pathName: { value: null, matchMode: FilterMatchMode.IN },
-    barcode: { value: null, matchMode: FilterMatchMode.CONTAINS }
-  }
-}
-
-initFilters()
+const filters = ref({
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  name: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  pathName: { value: null, matchMode: FilterMatchMode.IN },
+  description: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  barcode: { value: null, matchMode: FilterMatchMode.CONTAINS }
+})
 
 const initPrice = price => {
   const pre = price * 0.01
@@ -91,15 +86,7 @@ let options = {
 const dateCom = x => {
   const d = new Date(x)
   var datestring =
-    d.getDate() +
-    '-' +
-    (d.getMonth() + 1) +
-    '-' +
-    d.getFullYear() +
-    ' ' +
-    d.getHours() +
-    ':' +
-    d.getMinutes()
+    d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear()
   return datestring.toString()
 }
 
@@ -199,12 +186,12 @@ const reusePriveVal = ref()
 const reuseQtVal = ref()
 
 const dateDoc = ref()
-const document = ref('')
+const document = ref('Счет...')
 
 function selectedProductFunc (data) {
   const dataItem = {
     quantity: Number(reuseQtVal.value),
-    price: Number(reusePriveVal.value * 100),
+    price: Number(reusePriveVal.value * 100) || 0,
     assortment: {
       meta: {
         href: `https://online.moysklad.ru/api/remap/1.2/entity/product/${data.id}`,
@@ -215,12 +202,12 @@ function selectedProductFunc (data) {
       }
     }
   }
-  toast.add({
-    severity: 'info',
-    summary: 'Успешно',
-    detail: `Товар ${data.name} добавлен`,
-    life: 3000
-  })
+  // toast.add({
+  //   severity: 'info',
+  //   summary: 'Успешно',
+  //   detail: `Товар ${data.name} добавлен`,
+  //   life: 300
+  // })
   selectedProduct.value.push(dataItem)
 }
 
@@ -247,9 +234,7 @@ const dataProductPrihod = () => {
         mediaType: 'application/json'
       }
     },
-    positions: selectedProduct.value,
-    reason: `Основание документа ${document.value}`,
-    description: `Основание документа:  ${document.value} // Дата документа: ${dateCom.value}`
+    positions: selectedProduct.value
   }
   finishView.value = true
 
@@ -257,6 +242,8 @@ const dataProductPrihod = () => {
 }
 
 const dataProductPrihodFinish = async () => {
+  prihodDataPreFinish.value['description'] =
+    document.value + ' || ' + dateCom(dateDoc.value)
   await useFetch('/api/entity/enter', {
     method: 'POST',
     headers: {
@@ -270,12 +257,15 @@ const dataProductPrihodFinish = async () => {
     .then(() => {
       setTimeout(() => {
         prihodView.value = false
+        finishView.value = false
         toast.add({
           severity: 'info',
           summary: 'Успешно',
           detail: `Приход создан`,
-          life: 2000
+          life: 500
         })
+        prihodDataPreFinish.value = []
+        filters.value.global.value = null
       }, 500)
       refreshServices()
       refreshprihods()
@@ -303,7 +293,7 @@ const dataProductPrihodFinish = async () => {
         stripedRows
         removableSort
         v-model:filters="filters"
-        :globalFilterFields="['name', 'pathName']"
+        :globalFilterFields="['name', 'pathName', 'description']"
         class="rounded-t-md overflow-hidden"
         paginator
         :rows="10"
@@ -311,11 +301,12 @@ const dataProductPrihodFinish = async () => {
         filterDisplay="menu"
       >
         <template #header>
-          <div class="flex justify-between">
-            <div>
+          <div class="flex justify-between w-full gap-4">
+            <div class="w-full max-w-[400px]">
               <InputText
                 v-model="filters['global'].value"
-                placeholder="Поиск по продукции"
+                class="w-full"
+                placeholder="Поиск по приходам, основаниям, датам"
               />
             </div>
             <ButtonsBDelete @click="prihodView = true" icon="plus" type="add"
@@ -353,6 +344,13 @@ const dataProductPrihodFinish = async () => {
             </div>
           </template>
         </Column>
+
+        <Column
+          field="description"
+          filterField="description"
+          header="Основание"
+          class="text-sm"
+        ></Column>
         <Column
           field="sum"
           filterField="sum"
@@ -366,12 +364,6 @@ const dataProductPrihodFinish = async () => {
             </div>
           </template>
         </Column>
-        <Column
-          field="description"
-          filterField="description"
-          header="Описание"
-          class="text-sm"
-        ></Column>
         <Column field="id" header="" style="width: 2%" class="text-sm">
           <template #body="slotProps">
             <div class="flex items-center gap-2">
@@ -522,7 +514,17 @@ const dataProductPrihodFinish = async () => {
               </Column>
               <Column
                 field="id"
-                header="Цена"
+                header="Цена розница"
+                style="width: 10%"
+                class="text-sm"
+              >
+                <template #body="slotProps">
+                  {{ initPrice(slotProps.data.salePrices[0].value) }} ₽
+                </template>
+              </Column>
+              <Column
+                field="id"
+                header="Цена закуп"
                 style="width: 10%"
                 class="text-sm"
               >
@@ -538,7 +540,7 @@ const dataProductPrihodFinish = async () => {
               <Column
                 field="id"
                 header="Кол-во"
-                style="width: 4%"
+                style="width: 6%"
                 class="text-sm"
               >
                 <template #body="slotProps">
@@ -555,7 +557,9 @@ const dataProductPrihodFinish = async () => {
                     >
                       Добавить
                     </button>
-                    <button v-else class="text-green-400 text-sm"> Добавлено </button>
+                    <button v-else class="text-green-400 text-sm">
+                      Добавлено
+                    </button>
                   </div>
                 </template>
               </Column>
@@ -593,6 +597,7 @@ const dataProductPrihodFinish = async () => {
             <InputText id="username" v-model="document" class="w-full" />
             <label for="username">На основании документа</label>
           </span>
+          {{ document }}
           <span class="p-float-label w-full">
             <Calendar v-model="dateDoc" inputId="birth_date" class="w-full" />
             <label for="birth_date">Дата документа</label>

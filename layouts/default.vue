@@ -149,6 +149,17 @@ function logout () {
               <span class="ml-3">Склад</span>
             </button>
           </li>
+          <li>
+            <button
+              @click="getLink('sertificats')"
+              class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg  hover:bg-gray-700"
+            >
+              <IconsICube
+                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] group-hover:"
+              />
+              <span class="ml-3">Сертификаты</span>
+            </button>
+          </li>
           <li v-if="store.role == 'Admin'">
             <button
               @click="getToggle(1)"
