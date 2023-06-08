@@ -33,7 +33,7 @@ const {
 })
 
 const allSertificats = computed(() => {
-  return services.value ?? []
+  return services.value.rows ?? []
 })
 
 const getSert = id => {
@@ -187,8 +187,22 @@ const dataProductPrihodFinish =  (data) => {
           >
             <template #body="slotProps">
               <div class="flex items-center gap-2">
-                <span class="font-bold">{{
+                <span class="">{{
                   slotProps.data.id.slice(0, 8)
+                }}</span>
+              </div>
+            </template>
+          </Column>
+          <Column
+            field="id"
+            filterField="id"
+            header="Название сертификата"
+            class="text-sm"
+          >
+            <template #body="slotProps">
+              <div class="flex items-center gap-2">
+                <span class="">{{
+                  slotProps.data.name
                 }}</span>
               </div>
             </template>
@@ -202,7 +216,7 @@ const dataProductPrihodFinish =  (data) => {
               </div>
             </template>
           </Column>
-          <Column field="id" filterField="id" header="Статус" class="text-sm">
+          <Column  header="Статус" class="text-sm">
             <template #body="slotProps">
               <div class="flex items-center gap-2">
                 <span class="font-bold"
@@ -211,9 +225,9 @@ const dataProductPrihodFinish =  (data) => {
               </div>
             </template>
           </Column>
-          <Column field="id" filterField="id" header="Действия" class="text-sm">
+          <Column   class="text-sm">
             <template #body="slotProps">
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 justify-end">
                 <button @click="" class="text-sm btn-default-blue anime">
                   <IconsICheck />
                   Активировать
@@ -223,7 +237,7 @@ const dataProductPrihodFinish =  (data) => {
                   class="text-sm btn-default anime"
                 >
                   <IconsICog class="!w-4 !h-4" />
-                  Действия
+                  
                 </button>
               </div>
             </template>

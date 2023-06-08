@@ -14,15 +14,6 @@ export default defineNuxtConfig({
       '/api/**': { proxy: 'https://online.moysklad.ru/api/remap/1.2/**' }
     }
   },
-
-  // vite: {
-  //   server: {
-  //     hmr: {
-  //       clientPort: 24600,
-  //       port: 24600
-  //     }
-  //   }
-  // },
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },
     head: {
@@ -53,9 +44,16 @@ export default defineNuxtConfig({
     '@nuxtjs/apollo',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
-    '@nuxtjs/strapi'
+    '@nuxtjs/strapi',
+    'dayjs-nuxt'
   ],
+  dayjs: {
+    locales: ['ru'],
+    plugins: ['relativeTime', 'utc', 'timezone'],
+    defaultLocale: 'ru',
+    defaultTimezone: 'Russia/Moscow',
 
+  },
   pinia: {
     autoImports: ['defineStore', ['defineStore', 'definePiniaStore']]
   },

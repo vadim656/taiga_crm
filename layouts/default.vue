@@ -3,6 +3,7 @@ import { RouterLink } from 'vue-router'
 import { userInfo, sessionInfo } from '@/store'
 const store2 = sessionInfo()
 const store = userInfo()
+const dayjs = useDayjs()
 let activeLink = ref(null)
 
 const userMenu = ref(true)
@@ -25,7 +26,13 @@ function logout () {
   router.push('/auth/login')
 }
 
-
+const date = ref()
+const date2 = dayjs(new Date()).format('DD/MM/YYYY ')
+onMounted(() => {
+  setInterval(() => {
+    date.value = dayjs(new Date()).format('HH:mm:ss')
+  }, 1000)
+})
 </script>
 <template>
   <div class="relative overflow-x-auto inset-0">
@@ -40,7 +47,7 @@ function logout () {
                 alt="FlowBite Logo"
               />
               <span
-                class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap "
+                class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap"
                 >TAIGA</span
               >
               <span
@@ -50,16 +57,14 @@ function logout () {
             </NuxtLink>
           </div>
           <div class="flex items-center gap-3">
-            <span class="text-xs text-gray-400"
-              >Сессия: {{ store2.retailID }}</span
-            >
+            
             <div
               class="bg-gray-700 px-3 py-2 rounded-full flex items-center gap-3 text-sm mr-6"
             >
               <IconsICalendar />
               <b>5 записей</b>сегодня
             </div>
-
+            <span class="text-sm font-bold text-gray-400">{{ date }}</span>
             <IconsIVopros />
             <IconsICog />
             <IconsINotification />
@@ -69,25 +74,24 @@ function logout () {
     </nav>
     <aside
       id="logo-sidebar"
-      class="fixed top-0 left-0 z-40 w-48 h-screen pt-20 transition-transform -translate-x-full bg-[#1E1E1E] border-r  sm:translate-x-0 border-gray-700"
+      class="fixed top-0 left-0 z-40 w-48 h-screen pt-20 transition-transform -translate-x-full bg-[#1E1E1E] border-r sm:translate-x-0 border-gray-700"
       aria-label="Sidebar"
     >
       <div
         class="flex flex-col justify-between h-full pb-4 overflow-y-auto bg-[#1E1E1E]"
       >
         <ul class="space-y-2 px-3">
-         
           <li>
             <button
               @click="getLink('services')"
               type="button"
-              class="flex items-center w-full p-2 text-sm font-normal text-white transition duration-75 rounded-lg group   hover:bg-gray-700"
+              class="flex items-center w-full p-2 text-sm font-normal text-white transition duration-75 rounded-lg group hover:bg-gray-700"
               aria-controls="dropdown-example"
               data-collapse-toggle="dropdown-example"
             >
               <svg
                 aria-hidden="true"
-                class="flex-shrink-0 w-6 h-6  transition duration-75 group-hover:text-[#1E1E1E] text-gray-400 "
+                class="flex-shrink-0 w-6 h-6 transition duration-75 group-hover:text-[#1E1E1E] text-gray-400"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -119,11 +123,11 @@ function logout () {
           <li>
             <button
               @click="getLink('clients')"
-              class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg  hover:bg-gray-700"
+              class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg hover:bg-gray-700"
             >
-            <svg
+              <svg
                 aria-hidden="true"
-                class="flex-shrink-0 w-6 h-6  transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] group-hover:"
+                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] group-hover:"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -136,12 +140,11 @@ function logout () {
               </svg>
               <span class="ml-3">Клиенты</span>
             </button>
-           
           </li>
           <li>
             <button
               @click="getLink('stock')"
-              class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg  hover:bg-gray-700"
+              class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg hover:bg-gray-700"
             >
               <IconsICube
                 class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] group-hover:"
@@ -152,7 +155,7 @@ function logout () {
           <li>
             <button
               @click="getLink('sertificats')"
-              class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg  hover:bg-gray-700"
+              class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg hover:bg-gray-700"
             >
               <IconsICube
                 class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] group-hover:"
@@ -164,11 +167,11 @@ function logout () {
             <button
               @click="getToggle(1)"
               type="button"
-              class="flex items-center w-full p-2 text-sm font-normal text-white transition duration-75 rounded-lg group   hover:bg-gray-700"
+              class="flex items-center w-full p-2 text-sm font-normal text-white transition duration-75 rounded-lg group hover:bg-gray-700"
             >
               <svg
                 aria-hidden="true"
-                class="w-6 h-6  transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] group-hover:"
+                class="w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] group-hover:"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -198,10 +201,10 @@ function logout () {
             <button
               @click="getToggle(3)"
               href="#"
-              class="flex items-center w-full p-2 text-sm font-normal text-text-white transition duration-75 rounded-lg group   hover:bg-gray-700"
+              class="flex items-center w-full p-2 text-sm font-normal text-text-white transition duration-75 rounded-lg group hover:bg-gray-700"
             >
               <svg
-                class="flex-shrink-0 w-6 h-6  transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] "
+                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E]"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -220,7 +223,9 @@ function logout () {
               <NuxtLink to="/" class="link group">Расходы</NuxtLink>
               <NuxtLink to="/" class="link group">Ком-услуги</NuxtLink>
               <NuxtLink to="/" class="link group">Касса</NuxtLink>
-              <NuxtLink to="/finance/prihod" class="link group">Приходы</NuxtLink>
+              <NuxtLink to="/finance/prihod" class="link group"
+                >Приходы</NuxtLink
+              >
             </ul>
           </li>
 
@@ -228,7 +233,7 @@ function logout () {
             <button
               @click="getToggle(2)"
               type="button"
-              class="flex items-center w-full p-2 text-sm font-normal text-white transition duration-75 rounded-lg group   hover:bg-gray-700"
+              class="flex items-center w-full p-2 text-sm font-normal text-white transition duration-75 rounded-lg group hover:bg-gray-700"
             >
               <svg
                 class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] group-hover:"
@@ -261,9 +266,7 @@ function logout () {
         </ul>
         <div class="bg-[#292929] px-3 py-2 flex cc">
           <div class="flex items-center w-full">
-            <div
-              class="flex items-center justify-between w-full gap-2  text-xs"
-            >
+            <div class="flex items-center justify-between w-full gap-2 text-xs">
               {{ store.data.FIO }}
 
               <button
@@ -296,7 +299,7 @@ function logout () {
       </div>
     </aside>
     <div
-      class="p-4 sm:ml-48 mt-14 h-auto min-h-[calc(100vh-3.5rem)]  bg-[#1E1E1E]"
+      class="p-4 sm:ml-48 mt-14 h-auto min-h-[calc(100vh-3.5rem)] bg-[#1E1E1E]"
     >
       <slot />
     </div>
