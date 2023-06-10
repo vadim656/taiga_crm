@@ -86,7 +86,7 @@ const add = () => {
                 >
               </div>
             </th>
-            <th scope="col" class="px-6 py-3">ФИО</th>
+            <th scope="col" class="px-6 py-3">Имя</th>
             <th scope="col" class="px-6 py-3">Телефон</th>
             <th scope="col" class="px-6 py-3">Статус</th>
             <th scope="col" class="px-6 py-3 text-right">Действия</th>
@@ -118,7 +118,7 @@ const add = () => {
               <label
                 for="first-name"
                 class="block mb-2 text-sm font-medium text-white"
-                >ФИО</label
+                >Имя</label
               >
               <input
                 type="text"
@@ -182,7 +182,7 @@ const add = () => {
               <label
                 for="first-name"
                 class="block mb-2 text-sm font-medium text-white"
-                >ФИО</label
+                >Имя</label
               >
               <input
                 type="text"

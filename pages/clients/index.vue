@@ -31,7 +31,7 @@
         <Column
           field="attributes.FIO"
           filterField="attributes.FIO"
-          header="ФИО"
+          header="Имя"
           class="text-sm"
         ></Column>
         <Column
@@ -121,7 +121,7 @@
         <div class="grid grid-cols-2 gap-4">
           <span class="p-float-label col-span-2">
             <InputText id="username" v-model="userData.fio" class="w-full" />
-            <label for="username">ФИО*</label>
+            <label for="username">Имя*</label>
           </span>
 
           <span class="p-float-label">

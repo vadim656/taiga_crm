@@ -2,16 +2,22 @@
   <div class="w-full h-full flex flex-col gap-12 items-center justify-center">
     <span class="uppercase text-2xl font-bold">Живая тайга</span>
     <div class="flex flex-col gap-4 items-center justify-center">
-      <InputMask
-        id="pin"
-        v-model="userLogin"
-        mask="9 9 9 9 9 9"
-        placeholder="9 9 9 9 9 9"
-        class="w-[100px] text-center"
-      />
+      <div class="flex gap-2 w-full justify-center">
+        <input
+          type="text"
+          minlength="1"
+          maxlength="1"
+          required
+          v-for="(item, i) in 6"
+          @input="setPin($event.target.value, i)"
+          :key="i"
+          class="w-8 h-14 rounded-md text-center text-xl font-bold"
+          ref="inputRefs"
+        />
+      </div>
       <span v-if="error" class="text-red-400 text-sm">{{ error }}</span>
-      <pre class="text-xs text-green-400 leading-8">
-      Смена открыта {{ addRetail.rows[0].created }}</pre
+      <span class="text-xs text-green-400 leading-8 text-center">
+        Смена открыта {{ addRetail.rows[0].created }}</span
       >
     </div>
   </div>
@@ -19,7 +25,7 @@
 
 <script setup>
 import { sessionInfo, userInfo } from '@/store'
-
+import { watchDeep } from '@vueuse/core'
 const store = sessionInfo()
 const storeUser = userInfo()
 definePageMeta({
@@ -84,12 +90,14 @@ watch(pin, x => {
 
 const error = ref('')
 
+let pinDone = ref('')
+
 // const router = useRouter()
 const onLogin = async () => {
   if (view.value == true) {
     await login({
-      identifier: pin.value,
-      password: pin.value
+      identifier: pinDone.value,
+      password: pinDone.value
     })
       .then(res => {
         // console.log(res.user._object.$sstrapi_user)
@@ -120,11 +128,29 @@ getRoleRes(queryResult => {
       .name
   )
 })
+
+const inputRefs = ref([])
+
 onMounted(() => {
   setTimeout(() => {
     view.value = true
+    inputRefs.value[0].focus()
   }, 500)
 })
+
+function setPin (target, pin) {
+  if (pin + 1 !== inputRefs.value.length) {
+    inputRefs.value[pin].value = target
+    inputRefs.value[pin + 1].focus()
+  } else {
+    let pinCode = ''
+    inputRefs.value.forEach(e => {
+      console.log('forEach', e.value)
+      pinDone.value = pinDone.value + e.value
+    })
+    onLogin()
+  }
+}
 </script>
 
 <style lang="scss" scoped></style>

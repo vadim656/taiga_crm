@@ -34,7 +34,7 @@ const search = ref('')
         class="w-full"
       >
         <Column selectionMode="multiple"></Column>
-        <Column field="attributes.FIO" header="ФИО"></Column>
+        <Column field="attributes.FIO" header="Имя"></Column>
         <Column field="attributes.Zapisi" header="Записи"></Column>
         <Column
           field="attributes.user_status.data.attributes.Name"

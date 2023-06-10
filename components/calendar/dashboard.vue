@@ -4,12 +4,19 @@
       <FullCalendar :options="calendarOptions">
         <template v-slot:eventContent="arg">
           <div
-            class="flex flex-col !bg-gray-700 p-2 rounded-sm w-full !border-none"
+            class="flex flex-col gap-1  px-2 py-1 rounded-sm w-full !border-none"
+            :class="status(arg.event.extendedProps.status)"
           >
-            <p class="text-gray-400 text-xs">
-              {{ arg.event.extendedProps.desc }}
+            <p class="text-gray-400">{{ arg.event.title }}</p>
+            <!-- <p class="text-gray-400 text-xs flex items-center gap-1">
+              <IconsIPhone class="!w-3 !h-3" />
+              {{ arg.event.extendedProps.phone }}
+            </p> -->
+            <p class="text-gray-400 text-xs flex items-center gap-1">
+              <IconsITime class="!w-3 !h-3" />
+              {{ arg.event.extendedProps.timeStart }} -
+              {{ arg.event.extendedProps.timeEnd }}
             </p>
-            <p class="text-gray-400">{{ arg.event.title }},</p>
           </div>
         </template>
       </FullCalendar>
@@ -61,7 +68,8 @@ export default {
         editable: true,
         locale: ruLocale,
         events: [],
-        dateClick: this.handleDateClick
+        dateClick: this.handleDateClick,
+        eventClick: this.handleEventClick
       }
     }
   },
@@ -69,6 +77,10 @@ export default {
     handleDateClick: function (arg) {
       this.$emit('createEvent', arg.date)
       console.log('date click! ' + arg)
+    },
+    handleEventClick: function (arg) {
+      this.$emit('clickEvent', arg.event)
+      console.log('Event click! ' + arg)
     },
     setTimeNote: function (time) {
       const x = new Date(time)
@@ -81,15 +93,33 @@ export default {
       const t = {
         title: element.attributes.Name,
         date: element.attributes.Time,
-        desc: this.setTimeNote(element.attributes.Time)
+        phone: element.attributes.Phone,
+        timeStart: '10:00',
+        timeEnd: '12:00',
+        desc: this.setTimeNote(element.attributes.Time),
+        status : element.attributes.Status
       }
       this.calendarOptions.events.push(t)
-      console.log('tut', element)
     })
 
     // console.log(this.notes)
 
     // this.calendarOptions.events.push()
+  },
+  setup() {
+    const status = (id) => {
+      if (id == 'Pending') {
+        return 'bg-[#494D36]'
+      } else if (id == 'Done') {
+        return 'bg-[#384E3C]'
+      } else if(id == 'Off') {
+        return 'bg-[#493434]'
+      } else {
+        return 'bg-gray-700'
+      }
+    }
+
+    return {status}
   }
 }
 </script>

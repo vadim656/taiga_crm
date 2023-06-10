@@ -86,10 +86,52 @@ export const ALL_CLIENT_NOTES = gql`
         attributes {
           Name
           Time
+          Note
+          FIO
+          Phone
+          Status
           services {
             data {
               attributes {
                 Name
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`
+
+export const ALL_CABINETS_NOTES = gql`
+  query {
+    crmCabinets {
+      data {
+        id
+        attributes {
+          Name
+          ... on CrmCabinet {
+            Name
+            Time(pagination: { limit: 90 }) {
+              DayCabinet
+              id
+              user_records(pagination: { limit: 90 }) {
+                data {
+                  id
+                  attributes {
+                    Name
+                    Time
+                    TimeEnd
+                    services {
+                      data {
+                        id
+                        attributes {
+                          Name
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           }

@@ -86,5 +86,16 @@ body, .p-component {
   font-size: 14px !important;
 }
 
+.p-tabview .p-tabview-panels {
+
+  padding:  1rem 0 !important;
+
+}
+
+textarea:focus, input:focus{
+  outline: none !important;
+  border: 1px rgba(255, 255, 255, 30%) solid ;
+}
+
 
 
