@@ -15,19 +15,19 @@ defineExpose({
 <template>
   <div
     v-if="modalView"
-    class="fixed top-0 left-0 right-0 z-50 flex items-center justify-center w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full bg-gray-900  bg-opacity-80"
+    class="fixed top-0 left-0 right-0 z-50 flex items-center justify-center w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full bg-gray-900 bg-opacity-80"
   >
     <div class="relative w-full h-full max-w-xl md:h-auto" ref="modal">
-      <form class="relative  rounded-lg shadow bg-gray-700">
+      <form class="relative rounded-lg shadow bg-gray-700">
         <div
           class="flex items-start justify-between p-4 border-b rounded-t border-gray-600"
         >
-          <h3 class="text-xl font-semibold  text-white">
+          <h3 class="text-xl font-semibold text-white">
             <slot name="title"></slot>
           </h3>
           <!-- close -->
           <button
-            class="text-gray-400 bg-transparent  hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center hover:bg-gray-600 "
+            class="text-gray-400 bg-transparent hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center hover:bg-gray-600"
           >
             <svg
               class="w-5 h-5"
@@ -49,7 +49,7 @@ defineExpose({
         </div>
 
         <div
-          class="flex items-center p-6 space-x-2 border-t  rounded-b border-gray-600"
+          class="flex items-center p-6 space-x-2 border-t rounded-b border-gray-600"
         >
           <slot name="footer"></slot>
         </div>

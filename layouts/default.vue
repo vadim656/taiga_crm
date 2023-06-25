@@ -57,7 +57,6 @@ onMounted(() => {
             </NuxtLink>
           </div>
           <div class="flex items-center gap-3">
-            
             <div
               class="bg-gray-700 px-3 py-2 rounded-full flex items-center gap-3 text-sm mr-6"
             >
@@ -81,6 +80,34 @@ onMounted(() => {
         class="flex flex-col justify-between h-full pb-4 overflow-y-auto bg-[#1E1E1E]"
       >
         <ul class="space-y-2 px-3">
+          <li>
+            <button
+              @click="getLink('kassa')"
+              type="button"
+              class="flex items-center w-full p-2 text-sm font-normal text-white transition duration-75 rounded-lg group hover:bg-gray-700"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="flex-shrink-0 w-6 h-6 transition duration-75 group-hover:text-[#1E1E1E] text-gray-400"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"
+                />
+              </svg>
+
+              <span
+                class="flex-1 ml-3 text-left whitespace-nowrap"
+                sidebar-toggle-item
+                >Кассир</span
+              >
+            </button>
+          </li>
           <li>
             <button
               @click="getLink('services')"
@@ -109,17 +136,6 @@ onMounted(() => {
               >
             </button>
           </li>
-          <!-- <li class="w-full">
-            <button
-              @click="getLink('calendar')"
-              class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg  hover:bg-gray-700"
-            >
-              <IconsICalendar
-                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] "
-              />
-              <span class="ml-3">Календарь</span>
-            </button>
-          </li> -->
           <li>
             <button
               @click="getLink('clients')"
@@ -196,7 +212,6 @@ onMounted(() => {
               </li>
             </ul>
           </li>
-
           <li v-if="store.role == 'Admin'">
             <button
               @click="getToggle(3)"
