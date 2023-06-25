@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Toast position="bottom-right" />
     <div class="grid grid-cols-3 gap-4 mt-3">
       <button
         @click="pay = true"
@@ -10,13 +11,25 @@
       <button class="block_button_kassa bg_kassa">
         <span class="button_kassa" type="">Возврат</span>
       </button>
-      <button class="block_button_kassa bg_kassa">
-        <span class="button_kassa" type="">Смена</span>
-      </button>
+      <div
+        @click="sessionSwith"
+        class="block_button_kassa bg_kassa flex-col gap-4"
+      >
+        <div
+          class="button_kassa flex flex-col items-center justify-center gap-4"
+          type=""
+        >
+          Смена
+          <div class="flex items-center justify-center gap-4">
+            <span v-if="storeShift.sessionID == null"> Закрыта </span>
+            <span v-else>Открыта</span>
+          </div>
+        </div>
+      </div>
       <button class="block_button_kassa bg_kassa">
         <span class="button_kassa" type="">X - отчет</span>
       </button>
-      <button class="block_button_kassa bg_kassa">
+      <button @click="getPay" class="block_button_kassa bg_kassa">
         <span class="button_kassa" type="">Внесение</span>
       </button>
       <button class="block_button_kassa bg_kassa">
@@ -82,7 +95,7 @@
                         :key="slotProps.data"
                         value="1"
                         class="w-16 p-2 bg-transparent border border-neutral-700 rounded-md"
-                        @change="addKol(slotProps.data, $event.target.value)"
+                        @change="addKol(slotProps.data.id, $event.target.value)"
                       />
                     </div>
                   </template>
@@ -125,7 +138,7 @@
                 Картой
               </div>
             </div>
-            <div class="flex items-center gap-12">
+            <div v-if="payType == true" class="flex items-center gap-12">
               <span class="p-float-label">
                 <InputText id="username" v-model="inputMoney" class="w-full" />
                 <label for="username">Внесено</label>
@@ -144,10 +157,19 @@
             text
           />
           <Button
+            v-if="payType == true"
             class="!bg-green-500 !text-white"
             label="Оплатить"
             icon="pi pi-check"
-            @click="pay = false"
+            @click="getPay"
+            autofocus
+          />
+          <Button
+            v-else-if="payType == false"
+            class="!bg-green-500 !text-white"
+            label="Оплатить карта"
+            icon="pi pi-check"
+            @click="getPayCart"
             autofocus
           />
         </template>
@@ -273,13 +295,106 @@
 
 <script setup>
 import { FilterMatchMode } from 'primevue/api'
+import { useToast } from 'primevue/usetoast'
 import { ALL_PRODUCTS } from '@/gql/KASSA'
+import { v4 as uuidv4 } from 'uuid'
+import { sessionInfo } from '@/store'
+
 useHead({
   title: 'TAIGA - Касса'
 })
 definePageMeta({
   middleware: 'auth'
 })
+const storeShift = sessionInfo()
+const toast = useToast()
+
+//shift
+
+function sessionSwith () {
+  if (storeShift.sessionID == null) {
+    openShift()
+  } else {
+    closeShift()
+  }
+}
+
+async function openShift () {
+  const data = {
+    Command: 'OpenShift',
+    InnKkm: '4217204110',
+    NumDevice: 0,
+    IdDevice: '',
+    CashierName: 'Броваренко В. Д.',
+    NotPrint: false,
+    IdCommand: uuidv4()
+  }
+  await useFetch(() => 'http://localhost:5894/Execute', {
+    method: 'POST',
+    headers: {
+      Authorization: 'Basic QWRtaW46RHJvcGVzdHJva2UwMDEzIQ==',
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify(data),
+    credentials: 'omit'
+  })
+    .then(res => {
+      console.log('kkm', res.data.value.SessionNumber)
+      storeShift.openShift(res.data.value.SessionNumber)
+      toast.add({
+        severity: 'info',
+        summary: 'Успешно',
+        detail: `Смена # ${res.data.value.SessionNumber} открыта`,
+        life: 2000
+      })
+    })
+    .catch(err => {
+      toast.add({
+        severity: 'error',
+        summary: 'Неудача',
+        detail: 'Что то пошло не так',
+        life: 2000
+      })
+    })
+}
+
+async function closeShift () {
+  storeShift.closeShift()
+  const data = {
+    Command: 'CloseShift',
+    InnKkm: '4217204110',
+    NumDevice: 0,
+    IdDevice: '',
+    CashierName: 'Броваренко В. Д.',
+    NotPrint: false,
+    IdCommand: uuidv4()
+  }
+  await useFetch(() => 'http://localhost:5894/Execute', {
+    method: 'POST',
+    headers: {
+      Authorization: 'Basic QWRtaW46RHJvcGVzdHJva2UwMDEzIQ==',
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify(data),
+    credentials: 'omit'
+  })
+    .then(() => {
+      toast.add({
+        severity: 'info',
+        summary: 'Успешно',
+        detail: `Смена закрыта`,
+        life: 2000
+      })
+    })
+    .catch(err => {
+      toast.add({
+        severity: 'error',
+        summary: 'Неудача',
+        detail: 'Что то пошло не так',
+        life: 2000
+      })
+    })
+}
 
 //product
 const { result: P1 } = useQuery(ALL_PRODUCTS)
@@ -294,7 +409,11 @@ const filters = ref({
 })
 
 function addProductToPay (product) {
-  productToPay.value.push(product)
+  const data = {
+    ...product,
+    value: 1
+  }
+  productToPay.value.push(data)
 }
 function removeProductToPay (product) {
   productToPay.value = productToPay.value.filter(x => x !== product)
@@ -304,20 +423,173 @@ function insertProduct (product) {
   return productToPay.value.filter(x => x == product).length
 }
 
-function addKol(product, val) {
-    console.log(product, val);
+function addKol (product, val) {
+  for (let i = 0; i < productToPay.value.length; i++) {
+    if (productToPay.value[i].id == product) {
+      productToPay.value[i].value = Number(val)
+    }
+  }
+
+  console.log(product, val)
 }
 
 const itogo = computed(() => {
-  const allItemsPrice = productToPay.value.map(x => x.attributes.Price)
-  const sumWithInitial = allItemsPrice.reduce((a, b) => a + b, 0)
+  const data = productToPay.value.map(x => x)
+  const summ = []
+  data.forEach(x => {
+    const s = x.attributes.Price * Number(x.value)
+    summ.push(s)
+  })
+  const sumWithInitial = summ.reduce((a, b) => a + b, 0)
+
   return sumWithInitial.toFixed(2)
 })
 
 //pay
 const inputMoney = ref(0)
-const pay = ref(true)
+const pay = ref(false)
 const payType = ref(true)
+
+async function getPay () {
+  const prices = []
+  const products = []
+  productToPay.value.forEach(e => {
+    const element = {
+      Register: {
+        Name: e.attributes.Name,
+        Quantity: e.value,
+        Price: Number(e.attributes.Price).toFixed(2),
+        Amount: Number(e.attributes.Price * Number(e.value)).toFixed(2),
+        Department: 0,
+        Tax: -1,
+        SignMethodCalculation: 4,
+        SignCalculationObject: 4
+      }
+    }
+    prices.push(Number(e.attributes.Price * Number(e.value)))
+    products.push(element)
+  })
+  const sumWithInitial = prices.reduce((a, b) => a + b, 0)
+
+  const data = {
+    Command: 'RegisterCheck',
+    InnKkm: '4217204110',
+    NumDevice: 0,
+    KktNumber: '',
+    Timeout: 30,
+    IdCommand: uuidv4(),
+    IsFiscalCheck: true,
+    TypeCheck: 0,
+    NotPrint: false,
+    NumberCopies: 0,
+    CashierName: 'Броваренко В. Д.',
+    TaxVariant: '',
+    NumDeviceByProcessing: null,
+    PrintSlipAfterCheck: false,
+    PrintSlipForCashier: true,
+
+    CheckStrings: [...products, { PrintText: { Text: '<<->>' } }],
+    Cash: Number(sumWithInitial * 2).toFixed(2)
+  }
+
+  await useFetch(() => 'http://localhost:5894/Execute', {
+    method: 'POST',
+    headers: {
+      Authorization: 'Basic QWRtaW46RHJvcGVzdHJva2UwMDEzIQ==',
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify(data),
+    credentials: 'omit'
+  })
+    .then(res => {
+      console.log('kkm', res.data.value)
+
+      toast.add({
+        severity: 'info',
+        summary: 'Успешно',
+        detail: `Продажа успешно`,
+        life: 2000
+      })
+    })
+    .catch(err => {
+      toast.add({
+        severity: 'error',
+        summary: 'Неудача',
+        detail: 'Что то пошло не так',
+        life: 2000
+      })
+    })
+}
+async function getPayCart () {
+  const prices = []
+  const products = []
+  productToPay.value.forEach(e => {
+    const element = {
+      Register: {
+        Name: e.attributes.Name,
+        Quantity: e.value,
+        Price: Number(e.attributes.Price).toFixed(2),
+        Amount: Number(e.attributes.Price * Number(e.value)).toFixed(2),
+        Department: 0,
+        Tax: -1,
+        SignMethodCalculation: 4,
+        SignCalculationObject: 4
+      }
+    }
+    prices.push(Number(e.attributes.Price * Number(e.value)))
+    products.push(element)
+  })
+  const sumWithInitial = prices.reduce((a, b) => a + b, 0)
+
+  const data = {
+    Command: 'PayByPaymentCard',
+    InnKkm: '4217204110',
+    NumDevice: 0,
+    KktNumber: '',
+    Timeout: 30,
+    IdCommand: uuidv4(),
+    IsFiscalCheck: true,
+    TypeCheck: 0,
+    NotPrint: false,
+    NumberCopies: 0,
+    CashierName: 'Броваренко В. Д.',
+    TaxVariant: '',
+    NumDeviceByProcessing: null,
+    PrintSlipAfterCheck: false,
+    PrintSlipForCashier: true,
+
+    CheckStrings: [...products, { PrintText: { Text: '<<->>' } }],
+    Amount: Number(sumWithInitial).toFixed(2)
+  }
+
+  await useFetch(() => 'http://localhost:5894/Execute', {
+    method: 'POST',
+    headers: {
+      Authorization: 'Basic QWRtaW46RHJvcGVzdHJva2UwMDEzIQ==',
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify(data),
+    credentials: 'omit'
+  })
+    .then(res => {
+      console.log('kkm', res.data.value)
+
+      toast.add({
+        severity: 'info',
+        summary: 'Успешно',
+        detail: `Продажа успешно`,
+        life: 2000
+      })
+    })
+    .catch(err => {
+      toast.add({
+        severity: 'error',
+        summary: 'Неудача',
+        detail: 'Что то пошло не так',
+        life: 2000
+      })
+    })
+}
 </script>
 
 <style scoped>

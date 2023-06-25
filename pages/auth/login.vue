@@ -4,7 +4,7 @@
     <div class="flex flex-col gap-4 items-center justify-center">
       <div class="flex gap-2 w-full justify-center">
         <input
-          type="text"
+          type="password"
           minlength="1"
           maxlength="1"
           required

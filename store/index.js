@@ -26,12 +26,19 @@ export const userInfo = defineStore('user', {
 export const sessionInfo = defineStore('session', {
   state: () => {
     return {
-      retailshift: 'zxczxc'
+      retailshift: 'zxczxc',
+      sessionID: null
     }
   },
   actions: {
     activeRetail (id) {
       this.retailshift = id
+    },
+    openShift (id) {
+      this.sessionID = id
+    },
+    closeShift () {
+      this.sessionID = null
     }
   },
   getters: {
