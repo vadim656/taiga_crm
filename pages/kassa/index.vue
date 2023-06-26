@@ -203,13 +203,13 @@
                     />
                   </div>
                 </template>
-                <Column
+                <!-- <Column
                   field="attributes.ART"
                   filterField="attributes.ART"
                   header="Арт"
                   style="width: 10%"
                   class="text-sm"
-                ></Column>
+                ></Column> -->
                 <Column
                   field="attributes.Name"
                   filterField="attributes.Name"

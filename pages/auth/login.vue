@@ -1,6 +1,7 @@
 <template>
   <div class="w-full h-full flex flex-col gap-12 items-center justify-center">
     <span class="uppercase text-2xl font-bold">Живая тайга</span>
+    <!-- {{ route.name }} -->
     <div class="flex flex-col gap-4 items-center justify-center">
       <div class="flex gap-2 w-full justify-center">
         <input
@@ -34,6 +35,7 @@ definePageMeta({
 
 const userLogin = ref('')
 const router = useRouter()
+const route = useRoute()
 const jwt = ref()
 
 const user = useStrapiUser()
@@ -83,7 +85,7 @@ const pin = computed(() => {
 const view = ref(false)
 
 watch(pin, x => {
-  if (view.value == true && x.length == 6) {
+  if (view.value == true && x.length == 6 && route.name == 'auth-login') {
     onLogin()
   }
 })
@@ -94,7 +96,7 @@ let pinDone = ref('')
 
 // const router = useRouter()
 const onLogin = async () => {
-  if (view.value == true) {
+  if (view.value == true && route.name == 'auth-login') {
     await login({
       identifier: pinDone.value,
       password: pinDone.value

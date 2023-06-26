@@ -3,109 +3,109 @@ export default defineNuxtConfig({
   ssr: false,
   nitro: {
     devProxy: {
-      '/api': {
-        target: 'https://online.moysklad.ru/api/remap/1.2',
+      "/api": {
+        target: "https://online.moysklad.ru/api/remap/1.2",
         changeOrigin: true,
-        prependPath: true
-      }
+        prependPath: true,
+      },
     },
 
     routeRules: {
-      '/api/**': { proxy: 'https://online.moysklad.ru/api/remap/1.2/**' }
-    }
+      "/api/**": { proxy: "https://online.moysklad.ru/api/remap/1.2/**" },
+    },
   },
   app: {
-    pageTransition: { name: 'page', mode: 'out-in' },
+    // pageTransition: { name: 'page', mode: 'out-in' },
     head: {
-      charset: 'utf-8',
-      viewport: 'width=device-width, initial-scale=1',
-      title: 'CRM TAIGA',
-      meta: [{ name: 'description', content: 'CRM taiga salon' }],
+      charset: "utf-8",
+      viewport: "width=device-width, initial-scale=1",
+      title: "CRM TAIGA",
+      meta: [{ name: "description", content: "CRM taiga salon" }],
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
         {
-          rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@400;500;600;700&display=swap'
-        }
-      ]
-    }
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@400;500;600;700&display=swap",
+        },
+      ],
+    },
   },
 
   runtimeConfig: {
     public: {
-      graphqlURL: 'https://api.zhivayataiga.ru/graphql',
-      strapiURL: 'https://api.zhivayataiga.ru',
-      skladToken: 'ac4cefd7530e6a05d53170ae38d7267259bfd527'
-    }
+      graphqlURL: "https://api.zhivayataiga.ru/graphql",
+      strapiURL: "https://api.zhivayataiga.ru",
+      skladToken: "ac4cefd7530e6a05d53170ae38d7267259bfd527",
+    },
   },
 
   modules: [
-    '@vueuse/nuxt',
-    '@nuxtjs/apollo',
-    '@pinia/nuxt',
-    '@pinia-plugin-persistedstate/nuxt',
-    '@nuxtjs/strapi',
-    'dayjs-nuxt'
+    "@vueuse/nuxt",
+    "@nuxtjs/apollo",
+    "@pinia/nuxt",
+    "@pinia-plugin-persistedstate/nuxt",
+    "@nuxtjs/strapi",
+    "dayjs-nuxt",
   ],
-  dayjs: {
-    locales: ['ru'],
-    plugins: ['relativeTime', 'utc', 'timezone'],
-    defaultLocale: 'ru',
-    defaultTimezone: 'Russia/Moscow',
 
+  dayjs: {
+    locales: ["ru"],
+    plugins: ["relativeTime", "utc", "timezone"],
+    defaultLocale: "ru",
+    defaultTimezone: "Russia/Moscow",
   },
   pinia: {
-    autoImports: ['defineStore', ['defineStore', 'definePiniaStore']]
+    autoImports: ["defineStore", ["defineStore", "definePiniaStore"]],
   },
 
   css: [
-    '~/assets/css/main.css',
-    'primevue/resources/themes/md-dark-indigo/theme.css',
-    'primevue/resources/primevue.css',
-    'primeicons/primeicons.css'
+    "~/assets/css/main.css",
+    "primevue/resources/themes/md-dark-indigo/theme.css",
+    "primevue/resources/primevue.css",
+    "primeicons/primeicons.css",
   ],
 
   postcss: {
     plugins: {
       tailwindcss: {},
-      autoprefixer: {}
-    }
+      autoprefixer: {},
+    },
   },
 
   components: {
     global: true,
-    dirs: ['~/components/global', '~/components']
+    dirs: ["~/components/global", "~/components"],
   },
 
   strapi: {
-    url: 'https://api.zhivayataiga.ru',
-    prefix: '/api',
-    version: 'v4',
+    url: "https://api.zhivayataiga.ru",
+    prefix: "/api",
+    version: "v4",
     cookie: {
-      sameSite: 'strict'
+      sameSite: "strict",
     },
-    cookieName: 'strapi_jwt'
+    cookieName: "strapi_jwt",
   },
 
   apollo: {
-    authType: 'Bearer',
-    authHeader: 'Authorization',
-    tokenStorage: 'cookie',
+    authType: "Bearer",
+    authHeader: "Authorization",
+    tokenStorage: "cookie",
     clients: {
       default: {
-        httpEndpoint: 'https://api.zhivayataiga.ru/graphql',
+        httpEndpoint: "https://api.zhivayataiga.ru/graphql",
         httpLinkOptions: {
-          credentials: 'include'
-        }
-      }
-    }
+          credentials: "include",
+        },
+      },
+    },
   },
 
   build: {
-    transpile: ['primevue']
+    transpile: ["primevue"],
   },
 
   devtools: {
-    enabled: true
-  }
-})
+    enabled: true,
+  },
+});

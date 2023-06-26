@@ -108,7 +108,7 @@ onMounted(() => {
               >
             </button>
           </li>
-          <li>
+          <!-- <li>
             <button
               @click="getLink('services')"
               type="button"
@@ -135,7 +135,7 @@ onMounted(() => {
                 >Товары / Услуги</span
               >
             </button>
-          </li>
+          </li> -->
           <li>
             <button
               @click="getLink('clients')"

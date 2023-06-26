@@ -438,87 +438,105 @@ async function createProductFinish () {
   <div>
     <Toast position="bottom-right" />
     <ConfirmPopup></ConfirmPopup>
-    <!-- <pre class="text-xs">{{ complect }}</pre> -->
-
-    <ClientOnly placeholder="Загрузка...">
-      <DataTable
-        :value="services.rows"
-        stripedRows
-        removableSort
-        v-model:filters="filters"
-        :globalFilterFields="['name', 'pathName']"
-        class="rounded-t-md overflow-hidden"
-        paginator
-        :rows="10"
-        :rowsPerPageOptions="[10, 20, 50]"
-        filterDisplay="menu"
-      >
-        <template #header>
-          <div class="flex justify-between">
-            <div>
-              <InputText
-                v-model="filters['global'].value"
-                placeholder="Поиск по продукции"
-              />
-            </div>
-            <ButtonsBDelete @click="createView = true" icon="plus" type="add"
-              >Добавить</ButtonsBDelete
-            >
-          </div>
-        </template>
-        <Column
-          field="code"
-          filterField="code"
-          header="Арт"
-          style="width: 2%"
-          class="text-sm"
-        ></Column>
-        <Column
-          field="name"
-          filterField="name"
-          header="Наименование"
-          style="width: 50%"
-          class="text-sm"
-          sortable
-        >
-          <template #body="slotProps">
-            <div class="flex items-center gap-2">
-              <span class="truncate">{{ slotProps.data.name }}</span>
-            </div>
-          </template></Column
-        >
-        <Column
-          header="Группа"
-          field="pathName"
-          filterField="pathName"
-          sortable
-          style="width: 13%"
-          class="text-xs text-gray-400"
-        >
-        </Column>
-
-        <Column field="id" header="Цена" style="width: 10%" class="text-sm">
-          <template #body="slotProps">
-            <div class="flex items-center gap-2">
-              <span class="font-bold"
-                >{{ initPrice(slotProps.data.salePrices[0].value) }} ₽</span
+    <div>
+      <TabView class="w-full">
+        <TabPanel header="Услуги">
+          <div>
+            <ClientOnly placeholder="Загрузка...">
+              <DataTable
+                :value="services.rows"
+                stripedRows
+                removableSort
+                v-model:filters="filters"
+                :globalFilterFields="['name', 'pathName']"
+                class="rounded-t-md overflow-hidden"
+                paginator
+                :rows="10"
+                :rowsPerPageOptions="[10, 20, 50]"
+                filterDisplay="menu"
               >
-            </div>
-          </template>
-        </Column>
-        <Column field="id" header="Тип" style="width: 10%" class="text-sm">
-          <template #body="slotProps">
-            <div class="flex items-center gap-2">
-              <span
-                v-if="slotProps.data.meta.type == 'product'"
-                class="font-bold"
-                >Товар</span
-              >
-              <span v-else class="font-bold">Услуга</span>
-            </div>
-          </template>
-        </Column>
-        <!-- <Column
+                <template #header>
+                  <div class="flex justify-between">
+                    <div>
+                      <InputText
+                        v-model="filters['global'].value"
+                        placeholder="Поиск по продукции"
+                      />
+                    </div>
+                    <ButtonsBDelete
+                      @click="createView = true"
+                      icon="plus"
+                      type="add"
+                      >Добавить</ButtonsBDelete
+                    >
+                  </div>
+                </template>
+                <Column
+                  field="code"
+                  filterField="code"
+                  header="Арт"
+                  style="width: 2%"
+                  class="text-sm"
+                ></Column>
+                <Column
+                  field="name"
+                  filterField="name"
+                  header="Наименование"
+                  style="width: 50%"
+                  class="text-sm"
+                  sortable
+                >
+                  <template #body="slotProps">
+                    <div class="flex items-center gap-2">
+                      <span class="truncate">{{ slotProps.data.name }}</span>
+                    </div>
+                  </template></Column
+                >
+                <Column
+                  header="Группа"
+                  field="pathName"
+                  filterField="pathName"
+                  sortable
+                  style="width: 13%"
+                  class="text-xs text-gray-400"
+                >
+                </Column>
+
+                <Column
+                  field="id"
+                  header="Цена"
+                  style="width: 10%"
+                  class="text-sm"
+                >
+                  <template #body="slotProps">
+                    <div class="flex items-center gap-2">
+                      <span class="font-bold"
+                        >{{
+                          initPrice(slotProps.data.salePrices[0].value)
+                        }}
+                        ₽</span
+                      >
+                    </div>
+                  </template>
+                </Column>
+                <Column
+                  field="id"
+                  header="Тип"
+                  style="width: 10%"
+                  class="text-sm"
+                >
+                  <template #body="slotProps">
+                    <div class="flex items-center gap-2">
+                      <span
+                        v-if="slotProps.data.meta.type == 'product'"
+                        class="font-bold"
+                        >Товар</span
+                      >
+                      <span v-else class="font-bold">Услуга</span>
+                    </div>
+                  </template>
+                </Column>
+                <!-- <Column
           header="Остатки"
           field="stock"
           filterField="stock"
@@ -537,37 +555,52 @@ async function createProductFinish () {
             </div>
           </template>
         </Column> -->
-        <Column field="archived" style="width: 1%" class="text-sm"
-          ><template #body="slotProps">
-            <div class="flex items-center gap-2">
-              <span v-if="slotProps.data.archived == false" class="font-bold">
-                <div class="rounded-full w-3 h-3 bg-green-400"></div>
-              </span>
-              <span v-else class="font-bold"
-                ><div class="rounded-full w-3 h-3 bg-red-400"></div
-              ></span>
-            </div>
-          </template>
-        </Column>
-        <Column field="id" header="" style="width: 4%" class="text-sm">
-          <template #body="slotProps">
-            <div class="flex items-center gap-2">
-              <!-- <button
+                <Column field="archived" style="width: 1%" class="text-sm"
+                  ><template #body="slotProps">
+                    <div class="flex items-center gap-2">
+                      <span
+                        v-if="slotProps.data.archived == false"
+                        class="font-bold"
+                      >
+                        <div class="rounded-full w-3 h-3 bg-green-400"></div>
+                      </span>
+                      <span v-else class="font-bold"
+                        ><div class="rounded-full w-3 h-3 bg-red-400"></div
+                      ></span>
+                    </div>
+                  </template>
+                </Column>
+                <Column field="id" header="" style="width: 4%" class="text-sm">
+                  <template #body="slotProps">
+                    <div class="flex items-center gap-2">
+                      <!-- <button
                 @click="editProduct(slotProps.data)"
                 class="font-medium hover:underline"
               >
                 <IconsIEdit />
               </button> -->
-              <button @click="confirm1($event, slotProps.data.id)">
-                <IconsIArhive class="w-5 h-5 text-red-400" />
-              </button>
-            </div>
-          </template>
-        </Column>
-      </DataTable>
+                      <button @click="confirm1($event, slotProps.data.id)">
+                        <IconsIArhive class="w-5 h-5 text-red-400" />
+                      </button>
+                    </div>
+                  </template>
+                </Column>
+              </DataTable>
 
-      <!-- @page="pageEventProducts" -->
-    </ClientOnly>
+              <!-- @page="pageEventProducts" -->
+            </ClientOnly>
+          </div>
+        </TabPanel>
+        <TabPanel header="Товары">
+          <div class="grid grid-cols-1 gap-4 w-full text-sm">2</div>
+        </TabPanel>
+        <TabPanel header="Группы">
+          <p>3</p>
+        </TabPanel>
+      </TabView>
+    </div>
+    <!-- <pre class="text-xs">{{ complect }}</pre> -->
+
     <Dialog
       v-model:visible="createView"
       modal
