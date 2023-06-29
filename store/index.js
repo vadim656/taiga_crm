@@ -38,13 +38,13 @@ export const sessionInfo = defineStore('session', {
       this.sessionID = id
     },
     closeShift () {
-      this.sessionID = null
+      console.log('this.sessionID = null');
     }
   },
   getters: {
     retailID: state => state.retailshift
   },
   persist: {
-    storage: persistedState.sessionStorage
+    storage: persistedState.localStorage
   }
 })
