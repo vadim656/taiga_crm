@@ -8,7 +8,10 @@
       >
         <span class="button_kassa !text-4xl" type="">Продажа</span>
       </button>
-      <button class="block_button_kassa bg_kassa">
+      <button
+        @click="getUrl('/kassa/vozvrat')"
+        class="block_button_kassa bg_kassa"
+      >
         <span class="button_kassa" type="">Возврат</span>
       </button>
       <div
@@ -16,23 +19,31 @@
         class="block_button_kassa bg_kassa flex-col gap-4"
       >
         <div
-          class="button_kassa flex flex-col items-center justify-center gap-4"
+          class="button_kassa flex items-center justify-center gap-4"
           type=""
         >
           Смена
           <div class="flex items-center justify-center gap-4">
-            <span v-if="storeShift.sessionID == null"> Закрыта </span>
-            <span v-else>Открыта</span>
+            <span v-if="storeShift.sessionID == null">
+              Закрыта ( при нажатии откроется)
+            </span>
+            <span v-else>Открыта ( при нажатии закроется)</span>
           </div>
         </div>
       </div>
-      <button class="block_button_kassa bg_kassa">
+      <button @click="XReport"  class="block_button_kassa bg_kassa">
         <span class="button_kassa" type="">X - отчет</span>
       </button>
-      <button @click="getPay" class="block_button_kassa bg_kassa">
+      <button
+        @click="PaymentCashView = true"
+        class="block_button_kassa bg_kassa"
+      >
         <span class="button_kassa" type="">Внесение</span>
       </button>
-      <button class="block_button_kassa bg_kassa">
+      <button
+        @click="DepositingCashView = true"
+        class="block_button_kassa bg_kassa"
+      >
         <span class="button_kassa" type="">Изъятие</span>
       </button>
     </div>
@@ -289,6 +300,94 @@
           />
         </template>
       </Dialog>
+      <Dialog
+        v-model:visible="PaymentCashView"
+        modal
+        header="Внесение наличных"
+        :style="{ width: '30vw' }"
+      >
+        <div class="flex flex-col gap-12">
+          <InputNumber
+            v-model="PaymentCashValue"
+            inputId="withoutgrouping"
+            :useGrouping="false"
+          />
+        </div>
+        <template #footer>
+          <Button
+            class="!bg-red-500 !text-white"
+            label="Отмена"
+            icon="pi pi-times"
+            @click="PaymentCashView = false"
+            text
+          />
+          <Button
+            class="!bg-green-500 !text-white"
+            label="Внести"
+            icon="pi pi-check"
+            @click="PaymentCash"
+            autofocus
+          />
+        </template>
+      </Dialog>
+      <Dialog
+        v-model:visible="DepositingCashView"
+        modal
+        header="Изъятие наличных"
+        :style="{ width: '30vw' }"
+      >
+        <div class="flex flex-col gap-12">
+          <InputNumber
+            v-model="DepositingCashValue"
+            inputId="withoutgrouping"
+            :useGrouping="false"
+          />
+        </div>
+        <template #footer>
+          <Button
+            class="!bg-red-500 !text-white"
+            label="Отмена"
+            icon="pi pi-times"
+            @click="DepositingCashView = false"
+            text
+          />
+          <Button
+            class="!bg-green-500 !text-white"
+            label="Изъять"
+            icon="pi pi-check"
+            @click="DepositingCash"
+            autofocus
+          />
+        </template>
+      </Dialog>
+      <Dialog
+        v-model:visible="sessionView"
+        modal
+        header="Закрытие смены"
+        :style="{ width: '30vw' }"
+      >
+        <div class="flex flex-col gap-12">
+        <span class="text-xl">В кассе {{ kktData }} ₽</span>
+        
+        
+        </div>
+        <template #footer>
+          <Button
+            class="!bg-red-500 !text-white"
+            label="Отмена"
+            icon="pi pi-times"
+            @click="sessionView = false"
+            text
+          />
+          <Button
+            class="!bg-green-500 !text-white"
+            label="Закрыть"
+            icon="pi pi-check"
+            @click="closeShift"
+            autofocus
+          />
+        </template>
+      </Dialog>
     </div>
   </div>
 </template>
@@ -306,16 +405,20 @@ useHead({
 definePageMeta({
   middleware: 'auth'
 })
+const router = useRouter()
 const storeShift = sessionInfo()
 const toast = useToast()
 
 //shift
+const sessionView = ref(false)
 
 function sessionSwith () {
   if (storeShift.sessionID == null) {
     openShift()
   } else {
-    closeShift()
+    sessionView.value = true
+    GetDataKKT()
+    // closeShift()
   }
 }
 
@@ -345,7 +448,7 @@ async function openShift () {
         severity: 'info',
         summary: 'Успешно',
         detail: `Смена # ${res.data.value.SessionNumber} открыта`,
-        life: 2000
+        life: 4000
       })
     })
     .catch(err => {
@@ -353,7 +456,7 @@ async function openShift () {
         severity: 'error',
         summary: 'Неудача',
         detail: 'Что то пошло не так',
-        life: 2000
+        life: 4000
       })
     })
 }
@@ -383,7 +486,7 @@ async function closeShift () {
         severity: 'info',
         summary: 'Успешно',
         detail: `Смена закрыта`,
-        life: 2000
+        life: 4000
       })
     })
     .catch(err => {
@@ -391,7 +494,7 @@ async function closeShift () {
         severity: 'error',
         summary: 'Неудача',
         detail: 'Что то пошло не так',
-        life: 2000
+        life: 4000
       })
     })
 }
@@ -508,7 +611,7 @@ async function getPay () {
         severity: 'info',
         summary: 'Успешно',
         detail: `Продажа успешно`,
-        life: 2000
+        life: 4000
       })
     })
     .catch(err => {
@@ -516,7 +619,7 @@ async function getPay () {
         severity: 'error',
         summary: 'Неудача',
         detail: 'Что то пошло не так',
-        life: 2000
+        life: 4000
       })
     })
 }
@@ -578,7 +681,7 @@ async function getPayCart () {
         severity: 'info',
         summary: 'Успешно',
         detail: `Продажа успешно`,
-        life: 2000
+        life: 4000
       })
     })
     .catch(err => {
@@ -586,9 +689,166 @@ async function getPayCart () {
         severity: 'error',
         summary: 'Неудача',
         detail: 'Что то пошло не так',
-        life: 2000
+        life: 4000
       })
     })
+}
+
+async function XReport () {
+  const data = {
+    Command: 'XReport',
+    InnKkm: '4217204110',
+    NumDevice: 0,
+    IdDevice: '',
+    IdCommand: uuidv4()
+  }
+  await useFetch(() => 'http://localhost:5894/Execute', {
+    method: 'POST',
+    headers: {
+      Authorization: 'Basic QWRtaW46RHJvcGVzdHJva2UwMDEzIQ==',
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify(data),
+    credentials: 'omit'
+  })
+    .then(res => {
+      toast.add({
+        severity: 'info',
+        summary: 'Успешно',
+        detail: `X-отчет успешно`,
+        life: 4000
+      })
+    })
+    .catch(err => {
+      toast.add({
+        severity: 'error',
+        summary: 'Неудача',
+        detail: 'Что то пошло не так',
+        life: 4000
+      })
+    })
+}
+
+// изъятие
+const DepositingCashView = ref(false)
+const DepositingCashValue = ref(0)
+
+async function DepositingCash () {
+  const data = {
+    Command: 'PaymentCash',
+    InnKkm: '4217204110',
+    NumDevice: 0,
+    IdDevice: '',
+    CashierName: 'Kазакова Н.А.',
+    Amount: DepositingCashValue.value.toFixed(2),
+    IdCommand: uuidv4()
+  }
+  await useFetch(() => 'http://localhost:5894/Execute', {
+    method: 'POST',
+    headers: {
+      Authorization: 'Basic QWRtaW46RHJvcGVzdHJva2UwMDEzIQ==',
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify(data),
+    credentials: 'omit'
+  })
+    .then(res => {
+      DepositingCashView.value = false
+      toast.add({
+        severity: 'info',
+        summary: 'Успешно',
+        detail: `Изъятие ${DepositingCashValue.value.toFixed(2)}₽ успешно`,
+        life: 4000
+      })
+    })
+    .catch(err => {
+      toast.add({
+        severity: 'error',
+        summary: 'Неудача',
+        detail: 'Что то пошло не так',
+        life: 4000
+      })
+    })
+}
+//внесение
+const PaymentCashView = ref(false)
+const PaymentCashValue = ref(0)
+
+async function PaymentCash () {
+  const data = {
+    Command: 'DepositingCash',
+    InnKkm: '4217204110',
+    NumDevice: 0,
+    IdDevice: '',
+    CashierName: 'Kазакова Н.А.',
+    Amount: PaymentCashValue.value.toFixed(2),
+    IdCommand: uuidv4()
+  }
+  await useFetch(() => 'http://localhost:5894/Execute', {
+    method: 'POST',
+    headers: {
+      Authorization: 'Basic QWRtaW46RHJvcGVzdHJva2UwMDEzIQ==',
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify(data),
+    credentials: 'omit'
+  })
+    .then(res => {
+      PaymentCashView.value = false
+      toast.add({
+        severity: 'info',
+        summary: 'Успешно',
+        detail: `Внесение ${PaymentCashValue.value.toFixed(2)}₽ успешно`,
+        life: 4000
+      })
+    })
+    .catch(err => {
+      toast.add({
+        severity: 'error',
+        summary: 'Неудача',
+        detail: 'Что то пошло не так',
+        life: 4000
+      })
+    })
+}
+
+//текущее состояние
+
+const kktData = ref()
+
+async function GetDataKKT () {
+  const data = {
+    Command: 'GetDataKKT',
+    InnKkm: '4217204110',
+    NumDevice: 0,
+    IdDevice: '',
+    IdCommand: uuidv4()
+  }
+  await useFetch(() => 'http://localhost:5894/Execute', {
+    method: 'POST',
+    headers: {
+      Authorization: 'Basic QWRtaW46RHJvcGVzdHJva2UwMDEzIQ==',
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify(data),
+    credentials: 'omit'
+  })
+    .then(res => {
+      kktData.value = res.data.value.Info.BalanceCash
+    })
+    .catch(err => {
+      toast.add({
+        severity: 'error',
+        summary: 'Неудача',
+        detail: 'Что то пошло не так',
+        life: 4000
+      })
+    })
+}
+
+
+function getUrl (url) {
+  router.push(url)
 }
 </script>
 
