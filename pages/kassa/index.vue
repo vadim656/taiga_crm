@@ -31,7 +31,7 @@
           </div>
         </div>
       </div>
-      <button @click="XReport"  class="block_button_kassa bg_kassa">
+      <button @click="XReport" class="block_button_kassa bg_kassa">
         <span class="button_kassa" type="">X - отчет</span>
       </button>
       <button
@@ -76,7 +76,7 @@
                 <Column
                   field="attributes.Name"
                   header="Наименование"
-                  class="text-sm w-[50%]"
+                  class="text-sm w-[40%]"
                 ></Column>
                 <Column
                   field="attributes.Price"
@@ -92,6 +92,7 @@
                         max="20"
                         value="0"
                         class="w-16 p-2 bg-transparent border border-neutral-700 rounded-md"
+                        @change="setSkidka($event.target.value, slotProps.data)"
                       />
                     </div>
                   </template>
@@ -111,6 +112,13 @@
                     </div>
                   </template>
                 </Column>
+                <Column header="Итого ₽" class="text-sm">
+                  <template #body="slotProps">
+                    <div class="flex items-center gap-2 justify-start">
+                      {{ itogItem(slotProps.data) }}
+                    </div>
+                  </template>
+                </Column>
                 <Column field="id" class="text-sm w-[2%]">
                   <template #body="slotProps">
                     <div class="flex items-center gap-2 justify-end">
@@ -125,12 +133,26 @@
                 </Column>
               </DataTable>
             </ClientOnly>
-            <div class="p-4 flex justify-end text-right text-xl font-bold">
-              Итого: {{ itogo }} ₽
+            <div
+              class="p-4 flex justify-end text-right text-xl font-bold gap-12"
+            >
+            <span class="hidden">{{ itogo }} </span>
+              Итого:  {{ itogoFixed }} ₽
             </div>
           </div>
           <div class="flex flex-col gap-6">
-            <span>Выберите тип оплаты</span>
+            <span>Клиент</span>
+            <button
+              @click="addProduct = true"
+              class="w-full flex items-center justify-between border p-4 rounded-md"
+            >
+              <span class="w-full text-center" type="">
+                Выбрать / Создать клиента
+              </span>
+            </button>
+          </div>
+          <div class="flex flex-col gap-6">
+            <span>Тип оплаты</span>
             <div
               class="flex items-center divide-x divide-neutral-500 rounded-md overflow-hidden border border-neutral-500"
             >
@@ -149,14 +171,29 @@
                 Картой
               </div>
             </div>
-            <div v-if="payType == true" class="flex items-center gap-12">
-              <span class="p-float-label">
-                <InputText id="username" v-model="inputMoney" class="w-full" />
-                <label for="username">Внесено</label>
-              </span>
-              <span> Сдача : {{ inputMoney }} </span>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="p-float-label my-4">
+                <Dropdown
+                  v-model="selectedCupon"
+                  inputId="dd-city"
+                  :options="Cupons"
+                  optionLabel="name"
+                  class="w-1/2 text-sm"
+                />
+                <label for="dd-city">Выбрать купон</label>
+              </div>
+              <div v-if="payType == true" class="flex items-center gap-12">
+                <span class="p-float-label">
+                  <InputText
+                    id="username"
+                    v-model="inputMoney"
+                    class="w-full"
+                  />
+                  <label for="username">Внесено</label>
+                </span>
+                <span> Сдача : {{ inputMoney }} </span>
+              </div>
             </div>
-            <span></span>
           </div>
         </div>
         <template #footer>
@@ -367,9 +404,7 @@
         :style="{ width: '30vw' }"
       >
         <div class="flex flex-col gap-12">
-        <span class="text-xl">В кассе {{ kktData }} ₽</span>
-        
-        
+          <span class="text-xl">В кассе {{ kktData }} ₽</span>
         </div>
         <template #footer>
           <Button
@@ -421,6 +456,54 @@ function sessionSwith () {
     // closeShift()
   }
 }
+
+function setSkidka (val, item) {
+  console.log(item.id)
+  const all = productToPay.value
+  for (const product in all) {
+    if (all[product].id == item.id) {
+      all[product].discont = Number(val)
+    }
+  }
+}
+
+const itogItem = item => {
+  const amount1 = item.attributes.Price * item.value
+  const amount2 = amount1 - (amount1 / 100) * item.discont
+
+  const all = productToPay.value
+  for (const product in all) {
+    if (all[product].id == item.id) {
+      all[product].amount = amount2
+    }
+  }
+  console.log('dis', item)
+  return amount2.toFixed(2)
+}
+
+const selectedCupon = ref()
+const Cupons = ref([
+  { name: '500 ₽', code: '500' },
+  { name: '1 000 ₽', code: '1000' },
+  { name: '1 500 ₽', code: '1500' },
+  { name: '2 000 ₽', code: '2000' },
+  { name: '2 500 ₽', code: '2500' },
+  { name: '3 000 ₽', code: '3000' },
+  { name: '3 500 ₽', code: '3500' },
+  { name: '4 000 ₽', code: '4000' },
+  { name: '4 500 ₽', code: '4500' },
+  { name: '5 000 ₽', code: '5000' }
+])
+
+watch(selectedCupon, newPrice => {
+  if (newPrice.code == 'none') {
+    console.log(newPrice.code)
+  } else {
+    itogoFixed.value = itogoFixed.value - newPrice.code
+  }
+  
+  
+})
 
 async function openShift () {
   const data = {
@@ -514,17 +597,21 @@ const filters = ref({
 function addProductToPay (product) {
   const data = {
     ...product,
-    value: 1
+    value: 1,
+    amount: product.attributes.Price,
+    discont: 0
   }
   productToPay.value.push(data)
 }
 function removeProductToPay (product) {
-  productToPay.value = productToPay.value.filter(x => x !== product)
+  productToPay.value = productToPay.value.filter(x => x.id !== product.id)
 }
 
 function insertProduct (product) {
-  return productToPay.value.filter(x => x == product).length
+  return productToPay.value.filter(x => x.id == product.id).length
 }
+
+const productInCart = () => {}
 
 function addKol (product, val) {
   for (let i = 0; i < productToPay.value.length; i++) {
@@ -536,15 +623,14 @@ function addKol (product, val) {
   console.log(product, val)
 }
 
-const itogo = computed(() => {
-  const data = productToPay.value.map(x => x)
-  const summ = []
-  data.forEach(x => {
-    const s = x.attributes.Price * Number(x.value)
-    summ.push(s)
-  })
-  const sumWithInitial = summ.reduce((a, b) => a + b, 0)
+const itogoFixed = ref(0)
 
+const itogo = computed(() => {
+  
+  const data = productToPay.value.map(x => x.amount)
+
+  const sumWithInitial = data.reduce((a, b) => a + b, 0)
+  itogoFixed.value = sumWithInitial.toFixed(2)
   return sumWithInitial.toFixed(2)
 })
 
@@ -845,7 +931,6 @@ async function GetDataKKT () {
       })
     })
 }
-
 
 function getUrl (url) {
   router.push(url)

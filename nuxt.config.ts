@@ -15,7 +15,6 @@ export default defineNuxtConfig({
     },
   },
   app: {
-    // pageTransition: { name: 'page', mode: 'out-in' },
     head: {
       charset: "utf-8",
       viewport: "width=device-width, initial-scale=1",
@@ -74,7 +73,7 @@ export default defineNuxtConfig({
 
   components: {
     global: true,
-    dirs: ["~/components/global", "~/components"],
+    dirs: ["~/components"],
   },
 
   strapi: {
