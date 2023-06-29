@@ -1,6 +1,8 @@
 <script setup>
 import { FilterMatchMode } from 'primevue/api'
 import { useToast } from 'primevue/usetoast'
+import {ALL_SERT, CREATE_SERT} from '@/gql/SERTS'
+import { v4 as uuidv4 } from 'uuid'
 useHead({
   title: 'TAIGA - Сертификаты'
 })
@@ -10,27 +12,33 @@ definePageMeta({
 const toast = useToast()
 const router = useRouter()
 
+const { result: S1, refetch :S1RE } = useQuery(ALL_SERT)
+const allSerts = computed(() => S1.value?.products?.data ?? [])
+
+
+const { mutate: sendSert } = useMutation(CREATE_SERT)
+
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   id: { value: null, matchMode: FilterMatchMode.CONTAINS }
 })
 
 const initPrice = price => {
-  const pre = price * 0.01
+  const pre = price
   const done = pre.toLocaleString('ru-RU')
   return done
 }
 
-const {
-  pending: pendingServices,
-  data: services,
-  refresh: refreshServices
-} = await useFetch('/api/entity/assortment?filter=pathname=Сертификаты', {
-  method: 'GET',
-  headers: {
-    Authorization: 'Basic YWRtaW5AbW1wY2FwaXRhbDE6ZjkzZWMzMmVlYQ=='
-  }
-})
+function createSertData() {
+  sendSert({
+    NAME: `Сертификат ${uuidv4()}`,
+    PRICE: Number(sertNominal.value)
+  })
+  setTimeout(() => {
+    S1RE()
+  }, 500);
+ 
+}
 
 const allSertificats = computed(() => {
   return services.value.rows ?? []
@@ -40,117 +48,11 @@ const getSert = id => {
   router.push({
     path: '/sertificats/' + id
   })
-  // window.open(routeData.href, '_blank')
 }
 
 const createSert = ref(false)
 const sertNominal = ref()
 
-const sertDataCreate = ref({
-  name: 'Сертификат',
-  // productFolder: 'Сертификаты',
-  uom: {
-    meta: {
-      href: 'https://online.moysklad.ru/api/remap/1.2/entity/uom/19f1edc0-fc42-4001-94cb-c9ec9c62ec10',
-      metadataHref:
-        'https://online.moysklad.ru/api/remap/1.2/entity/uom/metadata',
-      type: 'uom',
-      mediaType: 'application/json'
-    }
-  },
-  productFolder: {
-    meta: {
-      href: 'https://online.moysklad.ru/api/remap/1.2/entity/group/34360991-049e-11ee-0a80-142800172ed4',
-      metadataHref:
-        'https://online.moysklad.ru/api/remap/1.2/entity/group/metadata',
-      type: 'productfolder',
-      mediaType: 'application/json'
-    }
-  },
-  salePrices: [
-    {
-      value: 10000.0,
-      currency: {
-        meta: {
-          href: 'https://online.moysklad.ru/api/remap/1.2/entity/currency/804d1de1-fc63-11ed-0a80-000d00187fd9',
-          metadataHref:
-            'https://online.moysklad.ru/api/remap/1.2/entity/currency/metadata',
-          type: 'currency',
-          mediaType: 'application/json',
-          uuidHref:
-            'https://online.moysklad.ru/app/#currency/edit?id=804d1de1-fc63-11ed-0a80-000d00187fd9'
-        }
-      },
-      priceType: {
-        meta: {
-          href: 'https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype/804d661d-fc63-11ed-0a80-000d00187fdb',
-          type: 'pricetype',
-          mediaType: 'application/json'
-        },
-        id: '804d661d-fc63-11ed-0a80-000d00187fdb',
-        name: 'Цена продажи',
-        externalCode: 'cbcf493b-55bc-11d9-848a-00112f43529a'
-      }
-    }
-  ]
-})
-
-const createSertData = async () => {
-  const data = sertDataCreate.value
-  data.salePrices[0].value = sertNominal.value * 100
-  const lengthSerts = allSertificats.value.length + 1
-  data.name = `Сертификат № ${lengthSerts}`
-  console.log(data, lengthSerts)
-
-  await useFetch('/api/entity/product', {
-    method: 'POST',
-    headers: {
-      Authorization: 'Basic YWRtaW5AbW1wY2FwaXRhbDE6ZjkzZWMzMmVlYQ==',
-      'Content-Type': 'application/json;charset=utf-8',
-      Accept: 'application/json;charset=utf-8'
-    },
-    body: JSON.stringify(data),
-    credentials: 'omit'
-  })
-    .then(res => {
-      setTimeout(() => {
-        console.log('res', res.data.value)
-        refreshServices()
-        dataProductPrihodFinish(res.data.value)
-        createSert.value = false
-      }, 500)
-    })
-    .catch(err => {
-      console.log(err)
-    })
-}
-
-const dataProductPrihodFinish =  (data) => {
-  const sert = data
-  sert['description'] = 'Активация сертификата'
-  sert['description'] = 'Активация сертификата'
-  console.log(data);
-  // await useFetch('/api/entity/enter', {
-  //   method: 'POST',
-  //   headers: {
-  //     Authorization: 'Basic YWRtaW5AbW1wY2FwaXRhbDE6ZjkzZWMzMmVlYQ==',
-  //     'Content-Type': 'application/json;charset=utf-8',
-  //     Accept: 'application/json;charset=utf-8'
-  //   },
-  //   body: JSON.stringify(prihodDataPreFinish.value),
-  //   credentials: 'omit'
-  // })
-  //   .then(() => {
-  //     setTimeout(() => {
-  //     }, 500)
-  //     refreshServices()
-
-  //   })
-  //   .catch(err => {
-  //     console.log(err)
-
-  //   })
-}
 
 </script>
 <template>
@@ -159,7 +61,7 @@ const dataProductPrihodFinish =  (data) => {
     <div>
       <ClientOnly placeholder="Загрузка...">
         <DataTable
-          :value="allSertificats"
+          :value="allSerts"
           stripedRows
           removableSort
           v-model:filters="filters"
@@ -202,7 +104,7 @@ const dataProductPrihodFinish =  (data) => {
             <template #body="slotProps">
               <div class="flex items-center gap-2">
                 <span class="">{{
-                  slotProps.data.name
+                  slotProps.data.attributes.Name
                 }}</span>
               </div>
             </template>
@@ -211,7 +113,7 @@ const dataProductPrihodFinish =  (data) => {
             <template #body="slotProps">
               <div class="flex items-center gap-2">
                 <span class="font-bold"
-                  >{{ initPrice(slotProps.data.salePrices[0].value) }} ₽</span
+                  >{{ initPrice(slotProps.data.attributes.Price) }} ₽</span
                 >
               </div>
             </template>
@@ -220,7 +122,7 @@ const dataProductPrihodFinish =  (data) => {
             <template #body="slotProps">
               <div class="flex items-center gap-2">
                 <span class="font-bold"
-                  >{{ initPrice(slotProps.data.salePrices[0].value) }} ₽</span
+                  >{{ initPrice(slotProps.data.attributes.Price) }} ₽</span
                 >
               </div>
             </template>
