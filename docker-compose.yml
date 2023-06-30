@@ -1,0 +1,16 @@
+version: '3'
+services:
+
+  web-app:
+    image: node:18.0.0
+    container_name: taiga_front
+    command: [sh, -c, "yarn && yarn dev"]
+    ports:
+      - "3002:3000"
+    working_dir: '/webapp'
+    tty: true
+    volumes:
+      - './:/webapp/'
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
