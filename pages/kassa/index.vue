@@ -648,14 +648,14 @@ async function getPay () {
         Name: e.attributes.Name,
         Quantity: e.value,
         Price: Number(e.attributes.Price).toFixed(2),
-        Amount: Number(e.attributes.Price * Number(e.value)).toFixed(2),
+        Amount: Number(e.amount).toFixed(2),
         Department: 0,
         Tax: -1,
         SignMethodCalculation: 4,
         SignCalculationObject: 4
       }
     }
-    prices.push(Number(e.attributes.Price * Number(e.value)))
+    prices.push(prices.push(Number(e.amount)))
     products.push(element)
   })
   const sumWithInitial = prices.reduce((a, b) => a + b, 0)
@@ -718,14 +718,14 @@ async function getPayCart () {
         Name: e.attributes.Name,
         Quantity: e.value,
         Price: Number(e.attributes.Price).toFixed(2),
-        Amount: Number(e.attributes.Price * Number(e.value)).toFixed(2),
+        Amount: Number(e.amount).toFixed(2),
         Department: 0,
         Tax: -1,
         SignMethodCalculation: 4,
         SignCalculationObject: 4
       }
     }
-    prices.push(Number(e.attributes.Price * Number(e.value)))
+    prices.push(Number(e.amount))
     products.push(element)
   })
   const sumWithInitial = prices.reduce((a, b) => a + b, 0)
@@ -746,7 +746,6 @@ async function getPayCart () {
     NumDeviceByProcessing: null,
     PrintSlipAfterCheck: false,
     PrintSlipForCashier: true,
-
     CheckStrings: [...products, { PrintText: { Text: '<<->>' } }],
     Amount: Number(sumWithInitial).toFixed(2)
   }

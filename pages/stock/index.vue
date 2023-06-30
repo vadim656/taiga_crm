@@ -269,6 +269,11 @@ const modalViewHistoryOpenOne = (name, id) => {
 function getProduct (id) {
   router.push('/stock/product/' + id)
 }
+
+function getURL(url) {
+  router.push(url)
+  
+}
 </script>
 <template>
   <div>
@@ -300,7 +305,7 @@ function getProduct (id) {
                   class="w-full"
                 />
 
-                <ButtonsBDelete @click="addProduct" icon="plus" type="add"
+                <ButtonsBDelete @click="getURL('/stock/createusluga')" icon="plus" type="add"
                   >Добавить</ButtonsBDelete
                 >
               </div>
@@ -337,7 +342,7 @@ function getProduct (id) {
             <Column
               field="attributes.Unit"
               filterField="attributes.Unit"
-              header="Ед."
+              header="Длительность"
               class="text-sm"
               sortable
             >
@@ -381,42 +386,6 @@ function getProduct (id) {
                 </div>
               </template>
             </Column>
-            <Column
-              field="attributes.purchasePrice"
-              filterField="attributes.purchasePrice"
-              header="Закупка"
-              class="text-sm"
-              sortable
-            >
-              <template #body="slotProps">
-                <div class="flex items-center gap-2">
-                  <span class="truncate"
-                    >{{ slotProps.data.attributes.purchasePrice }} ₽</span
-                  >
-                </div>
-              </template>
-            </Column>
-            <Column
-              header="Остатки"
-              field="attributes.Ostatki"
-              filterField="attributes.Ostatki"
-              sortable
-              class="text-sm"
-              ><template #body="slotProps">
-                <div class="flex items-center gap-2">
-                  <span
-                    class="font-bold"
-                    :class="[
-                      slotProps.data.attributes.Ostatki >= 2
-                        ? 'text-green-400'
-                        : 'text-red-400'
-                    ]"
-                    >{{ slotProps.data.attributes.Ostatki }}</span
-                  >
-                </div>
-              </template>
-            </Column>
-
             <Column field="id" header="" class="text-sm">
               <template #body="slotProps">
                 <div class="flex items-center gap-2">
@@ -531,21 +500,6 @@ function getProduct (id) {
               </template>
             </Column>
             <Column
-              field="attributes.Price"
-              filterField="attributes.Price"
-              header="Цена"
-              class="text-sm"
-              sortable
-            >
-              <template #body="slotProps">
-                <div class="flex items-center gap-2">
-                  <span class="truncate"
-                    >{{ slotProps.data.attributes.Price }} ₽</span
-                  >
-                </div>
-              </template>
-            </Column>
-            <Column
               field="attributes.purchasePrice"
               filterField="attributes.purchasePrice"
               header="Закупка"
@@ -560,6 +514,22 @@ function getProduct (id) {
                 </div>
               </template>
             </Column>
+            <Column
+              field="attributes.Price"
+              filterField="attributes.Price"
+              header="Цена"
+              class="text-sm"
+              sortable
+            >
+              <template #body="slotProps">
+                <div class="flex items-center gap-2">
+                  <span class="truncate"
+                    >{{ slotProps.data.attributes.Price }} ₽</span
+                  >
+                </div>
+              </template>
+            </Column>
+            
             <Column
               header="Остатки"
               field="attributes.Ostatki"
