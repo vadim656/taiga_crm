@@ -1,16 +1,12 @@
 <script setup>
-import { RouterLink } from 'vue-router'
-import { userInfo, sessionInfo } from '@/store'
-const store2 = sessionInfo()
+import { userInfo } from '@/store'
 const store = userInfo()
-const dayjs = useDayjs()
-let activeLink = ref(null)
-
-const userMenu = ref(true)
+const route = useRoute()
+const activeLink = ref(0)
 
 function getToggle (x) {
   if (activeLink.value == x) {
-    activeLink.value = null
+    activeLink.value = 0
   } else {
     activeLink.value = x
   }
@@ -22,15 +18,21 @@ const getLink = link => {
   router.push('/' + link)
 }
 
+const { logout: SLogout } = useStrapiAuth()
+const { onLogout: LogoutAppolo } = useApollo()
+
 function logout () {
+  SLogout()
+  LogoutAppolo()
+  store.logout()
+
   router.push('/auth/login')
 }
+const visible = ref(false)
 
-const date = ref()
-const date2 = dayjs(new Date()).format('DD/MM/YYYY ')
 onMounted(() => {
-  setInterval(() => {
-    date.value = dayjs(new Date()).format('HH:mm:ss')
+  setTimeout(() => {
+    visible.value = true
   }, 1000)
 })
 </script>
@@ -48,11 +50,11 @@ onMounted(() => {
               />
               <span
                 class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap"
-                >TAIGA</span
-              >
+                >TAIGA
+              </span>
               <span
                 class="bg-green-400 py-2 px-3 rounded-md text-gray-800 ml-12"
-                >{{ store.role }}</span
+                >{{ store.role.usersPermissionsUser.data.attributes.role.data.attributes.name }} -- {{ route.name }}</span
               >
             </NuxtLink>
           </div>
@@ -63,7 +65,6 @@ onMounted(() => {
               <IconsICalendar />
               <b>5 записей</b>сегодня
             </div>
-            <span class="text-sm font-bold text-gray-400">{{ date }}</span>
             <IconsIVopros />
             <IconsICog />
             <IconsINotification />
@@ -108,34 +109,6 @@ onMounted(() => {
               >
             </button>
           </li>
-          <!-- <li>
-            <button
-              @click="getLink('services')"
-              type="button"
-              class="flex items-center w-full p-2 text-sm font-normal text-white transition duration-75 rounded-lg group hover:bg-gray-700"
-              aria-controls="dropdown-example"
-              data-collapse-toggle="dropdown-example"
-            >
-              <svg
-                aria-hidden="true"
-                class="flex-shrink-0 w-6 h-6 transition duration-75 group-hover:text-[#1E1E1E] text-gray-400"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z"
-                  clip-rule="evenodd"
-                ></path>
-              </svg>
-              <span
-                class="flex-1 ml-3 text-left whitespace-nowrap"
-                sidebar-toggle-item
-                >Товары / Услуги</span
-              >
-            </button>
-          </li> -->
           <li>
             <button
               @click="getLink('clients')"
@@ -269,12 +242,12 @@ onMounted(() => {
               <IconsIArrow :class="[activeLink == 2 ? 'rotate-180' : '']" />
             </button>
             <ul v-show="activeLink == 2" class="link-active">
-              <RouterLink to="/worker/master" class="link group"
-                >Мастера</RouterLink
+              <NuxtLink to="/worker/master" class="link group"
+                >Мастера</NuxtLink
               >
 
-              <RouterLink to="/worker/admins" class="link group"
-                >Администраторы</RouterLink
+              <NuxtLink to="/worker/admins" class="link group"
+                >Администраторы</NuxtLink
               >
             </ul>
           </li>
@@ -304,10 +277,6 @@ onMounted(() => {
                   />
                 </svg>
               </button>
-
-              <!-- <span v-if="user"
-                  >{{ user.getInfo.username }} || {{ role }}</span
-                > -->
             </div>
           </div>
         </div>

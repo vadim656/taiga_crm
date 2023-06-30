@@ -17,7 +17,7 @@
         <div class="grid grid-cols-1 gap-4 w-full text-sm">
           <CabinetsCabinet
             class="blockT"
-            v-for="cabinet in allNotesCabinets"
+            v-for="cabinet in allNotesCabinets || []"
             :key="cabinet.id"
             :data="cabinet.attributes"
           />
@@ -82,20 +82,22 @@
       </div>
 
       <template #footer>
-        <Button
-          label="Отменить"
-          icon="pi pi-times"
-          @click="editDay = false"
-          text
-          class="!bg-red-500 !text-white"
-        />
-        <Button
-          label="Создать"
-          icon="pi pi-check"
-          @click="handlerSendNote()"
-          autofocus
-          class="!bg-green-500 !text-white"
-        />
+        <div>
+          <Button
+            label="Отменить"
+            icon="pi pi-times"
+            @click="editDay = false"
+            text
+            class="!bg-red-500 !text-white"
+          />
+          <Button
+            label="Создать"
+            icon="pi pi-check"
+            @click="handlerSendNote()"
+            autofocus
+            class="!bg-green-500 !text-white"
+          />
+        </div>
       </template>
     </Dialog>
     <Dialog
@@ -155,20 +157,22 @@
       </div>
 
       <template #footer>
-        <Button
-          label="Отменить"
-          icon="pi pi-times"
-          @click="eventDay = false"
-          text
-          class="!bg-red-500 !text-white"
-        />
-        <Button
-          label="Создать"
-          icon="pi pi-check"
-          @click="handlerSendNote()"
-          autofocus
-          class="!bg-green-500 !text-white"
-        />
+        <div>
+          <Button
+            label="Отменить"
+            icon="pi pi-times"
+            @click="eventDay = false"
+            text
+            class="!bg-red-500 !text-white"
+          />
+          <Button
+            label="Создать"
+            icon="pi pi-check"
+            @click="handlerSendNote()"
+            autofocus
+            class="!bg-green-500 !text-white"
+          />
+        </div>
       </template>
     </Dialog>
   </div>
@@ -178,7 +182,7 @@ import {
   CREATE_CLIENT_NOTE,
   ALL_CLIENT_NOTES,
   ALL_CABINETS_NOTES
-} from '../gql/query/DASHBOARD'
+} from '@/gql/query/DASHBOARD'
 import { v4 as uuidv4 } from 'uuid'
 import { useToast } from 'primevue/usetoast'
 
@@ -186,23 +190,14 @@ useHead({
   title: 'TAIGA CRM - Главная'
 })
 definePageMeta({
-  middleware: 'auth'
+  middleware: 'auth',
+  layout: 'default'
 })
 
+const visible = ref(false)
 const toast = useToast()
-
+const route = useRoute()
 const selectedServices = ref()
-const selectedCabinet = ref()
-const {
-  pending: pendingServices,
-  data: services,
-  refresh: refreshServices
-} = await useFetch('/api/entity/bundle', {
-  method: 'GET',
-  headers: {
-    Authorization: 'Basic YWRtaW5AbW1wY2FwaXRhbDE6ZjkzZWMzMmVlYQ=='
-  }
-})
 
 const allCabinet = ref([
   { name: '1 - Хамам', code: '1' },
@@ -212,10 +207,8 @@ const allCabinet = ref([
   { name: '5 - Стандартный', code: '5' }
 ])
 
-const fio = ref('')
-
 const allServices = computed(() => {
-  return services.value?.rows ?? []
+  return []
 })
 
 const {
@@ -269,36 +262,36 @@ const note = ref({
 })
 
 const noteTimeCheked = ref()
-const noteTime = reactive([
-  { name: '10:00', code: '' },
-  { name: '10:30', code: '' },
-  { name: '11:00', code: '' },
-  { name: '11:30', code: '' },
-  { name: '12:00', code: '' },
-  { name: '12:30', code: '' },
-  { name: '13:00', code: '' },
-  { name: '13:30', code: '' },
-  { name: '14:00', code: '' },
-  { name: '14:30', code: '' },
-  { name: '13:30', code: '' },
-  { name: '15:00', code: '' },
-  { name: '15:30', code: '' },
-  { name: '16:00', code: '' },
-  { name: '16:30', code: '' },
-  { name: '17:00', code: '' },
-  { name: '17:30', code: '' },
-  { name: '18:00', code: '' },
-  { name: '18:30', code: '' },
-  { name: '19:00', code: '' },
-  { name: '19:30', code: '' },
-  { name: '20:00', code: '' },
-  { name: '20:30', code: '' },
-  { name: '21:00', code: '' },
-  { name: '21:30', code: '' }
+const noteTime = ref([
+  { name: '10:00', code: '1' },
+  { name: '10:30', code: '2' },
+  { name: '11:00', code: '3' },
+  { name: '11:30', code: '4' },
+  { name: '12:00', code: '5' },
+  { name: '12:30', code: '6' },
+  { name: '13:00', code: '7' },
+  { name: '13:30', code: '8' },
+  { name: '14:00', code: '9' },
+  { name: '14:30', code: '10' },
+  { name: '13:30', code: '11' },
+  { name: '15:00', code: '12' },
+  { name: '15:30', code: '13' },
+  { name: '16:00', code: '15' },
+  { name: '16:30', code: '16' },
+  { name: '17:00', code: '17' },
+  { name: '17:30', code: '18' },
+  { name: '18:00', code: '19' },
+  { name: '18:30', code: '20' },
+  { name: '19:00', code: '21' },
+  { name: '19:30', code: '22' },
+  { name: '20:00', code: '23' },
+  { name: '20:30', code: '24' },
+  { name: '21:00', code: '25' },
+  { name: '21:30', code: '26' }
 ])
 
 const noteTimeFree = computed(() => {
-  return noteTime
+  return noteTime.value
 })
 
 const eventDay = ref(false)
@@ -319,12 +312,14 @@ function clickEvent (event) {
 }
 
 watch(eventDay, () => {
-  if (eventDay.value == false) {
-    eventDay.value = null
+  if (
+    eventDay.value == false &&
+    visible.value == true &&
+    route.name == 'index'
+  ) {
+    eventDay.value = true
   }
 })
-
-const userNotes = ref([])
 
 const { mutate: sendNote, onDone: sendNoteDone } =
   useMutation(CREATE_CLIENT_NOTE)
@@ -363,6 +358,9 @@ getRoleRes(() => {
 
 onMounted(() => {
   UID.value = uuidv4()
+  setTimeout(() => {
+    visible.value = true
+  }, 500)
 })
 onUnmounted(() => {
   note.value = {

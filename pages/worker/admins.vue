@@ -14,7 +14,7 @@ import ADMINS_USERS from '@/gql/query/ADMINS_USERS.gql'
 
 const visible = ref(false)
 
-const { data: admins } = await useAsyncQuery(ADMINS_USERS)
+const { result: admins } = useQuery(ADMINS_USERS)
 
 if (admins.value.usersPermissionsUsers) {
   visible.value = true

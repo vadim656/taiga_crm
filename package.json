@@ -17,7 +17,7 @@
     "dayjs-nuxt": "^1.1.2",
     "graphql": "^16.6.0",
     "graphql-tag": "^2.12.6",
-    "nuxt": "^3.4.3",
+    "nuxt": "^3.6.1",
     "nuxt-security": "^0.13.0",
     "postcss": "^8.4.23",
     "primevue": "3.22.4",

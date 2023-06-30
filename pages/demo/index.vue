@@ -71,21 +71,27 @@
             <ClientOnly>
               <Calendar v-model="date" inline showWeek>
                 <template #date="slotProps">
-                  <strong
-                    v-if="slotProps.date.day > 10 && slotProps.date.day < 15"
-                    class="text-green-500 relative text-sm"
-                    >{{ slotProps.date.day }}
-                    <span
-                      class="text-[9px] text-gray-500 absolute -top-3 -right-[4px] text-right"
-                      >20</span
-                    ></strong
-                  >
+                  <div v-if="slotProps.date.day > 10 && slotProps.date.day < 15">
+                    <strong
+                      
+                      class="text-green-500 relative text-sm"
+                      >{{ slotProps.date.day }}
+                      <span
+                        class="text-[9px] text-gray-500 absolute -top-3 -right-[4px] text-right"
+                        >20</span
+                      ></strong
+                    >
+                  </div>
+
                   <template v-else>
+                  <div>
                     <strong
                       v-if="slotProps.date.day > 10 && slotProps.date.day < 15"
                       class="text-sm"
                       >{{ slotProps.date.day }}</strong
                     >
+                  </div>
+                   
                   </template>
                 </template>
               </Calendar>

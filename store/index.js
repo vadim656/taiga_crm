@@ -1,4 +1,6 @@
-import { defineStore } from 'pinia'
+import { defineStore, acceptHMRUpdate } from 'pinia'
+
+
 
 export const userInfo = defineStore('user', {
   state: () => {
@@ -8,18 +10,22 @@ export const userInfo = defineStore('user', {
     }
   },
   actions: {
-    setUserId (data) {
+    setUserId(data) {
       this.data = data
     },
-    setUserRole (role) {
+    setUserRole(role) {
       this.role = role
+    },
+
+    logout() {
+      this.data = {}
     }
   },
   getters: {
     userID: state => state.id
   },
   persist: {
-    storage: persistedState.sessionStorage
+    storage: persistedState.localStorage
   }
 })
 
@@ -27,18 +33,18 @@ export const sessionInfo = defineStore('session', {
   state: () => {
     return {
       retailshift: 'zxczxc',
-      sessionID: null
+      sessionID: ''
     }
   },
   actions: {
-    activeRetail (id) {
+    activeRetail(id) {
       this.retailshift = id
     },
-    openShift (id) {
+    openShift(id) {
       this.sessionID = id
     },
-    closeShift () {
-      console.log('this.sessionID = null');
+    closeShift() {
+      console.log('this.sessionID = ничего');
     }
   },
   getters: {
@@ -48,3 +54,9 @@ export const sessionInfo = defineStore('session', {
     storage: persistedState.localStorage
   }
 })
+
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(userInfo, import.meta.hot))
+  import.meta.hot.accept(acceptHMRUpdate(sessionInfo, import.meta.hot))
+}

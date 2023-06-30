@@ -23,12 +23,14 @@ const bgButton = computed(() => {
 })
 </script>
 <template>
-  <button type="button" :class="[bgButton]" class="flex cc gap-2">
-    <IconsIPlus class="w-4 h-4" v-if="props.icon == 'plus'" />
-    <IconsIEdit class="w-4 h-4" v-else-if="props.icon == 'edit'" />
-    <IconsIDelete class="w-4 h-4" v-else-if="props.icon == 'del'" />
-    <slot></slot>
-  </button>
+  <div>
+    <button type="button" :class="[bgButton]" class="flex cc gap-2">
+      <IconsIPlus class="w-4 h-4" v-if="props.icon == 'plus'" />
+      <IconsIEdit class="w-4 h-4" v-else-if="props.icon == 'edit'" />
+      <IconsIDelete class="w-4 h-4" v-else-if="props.icon == 'del'" />
+      <slot></slot>
+    </button>
+  </div>
 </template>
 
 <style scoped>

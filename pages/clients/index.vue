@@ -150,20 +150,22 @@
       </div>
 
       <template #footer>
-        <Button
-          label="Отменить"
-          icon="pi pi-times"
-          @click="addUserView = false"
-          text
-          class="!bg-red-500 !text-white"
-        />
-        <Button
-          label="Создать"
-          icon="pi pi-check"
-          @click="createUser()"
-          autofocus
-          class="!bg-green-500 !text-white"
-        />
+        <div>
+          <Button
+            label="Отменить"
+            icon="pi pi-times"
+            @click="addUserView = false"
+            text
+            class="!bg-red-500 !text-white"
+          />
+          <Button
+            label="Создать"
+            icon="pi pi-check"
+            @click="createUser()"
+            autofocus
+            class="!bg-green-500 !text-white"
+          />
+        </div>
       </template>
     </Dialog>
   </div>

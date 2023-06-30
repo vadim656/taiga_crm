@@ -1,7 +1,7 @@
 <template>
   <div>
     возврат
-    <ClientOnly placeholder="Загрузка...">
+   
       <DataTable
         :value="dataV.Сounters"
         class="rounded-t-md overflow-hidden w-full"
@@ -19,7 +19,7 @@
           class="text-sm w-[50%]"
         ></Column>
       </DataTable>
-    </ClientOnly>
+  
     <pre>{{ dataV }}</pre>
   </div>
 </template>

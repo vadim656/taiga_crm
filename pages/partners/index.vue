@@ -60,7 +60,7 @@ const add = () => {
           <input
             type="text"
             id="table-search-users"
-            class="block p-2 pl-10 text-sm border  rounded-lg w-80 border-gray-600 placeholder-gray-400 text-white"
+            class="block p-2 pl-10 text-sm border rounded-lg w-80 border-gray-600 placeholder-gray-400 text-white"
             placeholder="Поиск по парнерам"
           />
         </div>
@@ -72,14 +72,14 @@ const add = () => {
         class="w-full text-sm text-left text-gray-500 text-gray-400"
         v-if="partners && partners.partners.data"
       >
-        <thead class="text-xs text-gray-700 uppercase  text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase text-gray-400">
           <tr>
             <th scope="col" class="p-4">
               <div class="flex items-center">
                 <input
                   id="checkbox-all-search"
                   type="checkbox"
-                  class="w-4 h-4 text-blue-600 bg-gray-100  rounded focus:ring-blue-500 focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2  border-gray-600"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 rounded focus:ring-blue-500 focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 border-gray-600"
                 />
                 <label for="checkbox-all-search" class="sr-only"
                   >checkbox</label
@@ -103,147 +103,6 @@ const add = () => {
       </table>
       <span v-else>Загрузка...</span>
 
-      <ModalsModalEdit ref="modals" key="edit">
-        <template #title>
-          <span v-if="dataModal"
-            >Редактировать
-            <span class="underline underline-offset-4">{{
-              dataModal.attributes.FIO
-            }}</span>
-          </span>
-        </template>
-        <template #body>
-          <div class="grid grid-cols-6 gap-6">
-            <div class="col-span-6 sm:col-span-3">
-              <label
-                for="first-name"
-                class="block mb-2 text-sm font-medium text-white"
-                >Имя</label
-              >
-              <input
-                type="text"
-                name="first-name"
-                id="first-name"
-                class="shadow-sm border  text-sm rounded-lg block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
-                placeholder="Bonnie"
-                required=""
-              />
-            </div>
-            <div class="col-span-6 sm:col-span-3">
-              <label
-                for="last-name"
-                class="block mb-2 text-sm font-medium text-white"
-                >Телефон</label
-              >
-              <input
-                type="text"
-                name="last-name"
-                id="last-name"
-                class="shadow-sm border  text-sm rounded-lg block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
-                placeholder="Green"
-                required=""
-              />
-            </div>
-            <div class="col-span-6 sm:col-span-3">
-              <label
-                for="email"
-                class="block mb-2 text-sm font-medium text-white"
-                >Активность</label
-              >
-              <DropdownsDropDefault />
-            </div>
-
-            <div class="col-span-6 sm:col-span-3">
-              <label
-                for="company"
-                class="block mb-2 text-sm font-medium text-white"
-                >Компания</label
-              >
-              <input
-                type="number"
-                name="company"
-                id="company"
-                class="shadow-sm border  text-sm rounded-lg block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
-                placeholder="123456"
-                required=""
-              />
-            </div>
-          </div>
-        </template>
-        <template #footer> <ButtonsBDelete>Добавить</ButtonsBDelete></template>
-      </ModalsModalEdit>
-      <ModalsModalEdit ref="modalsAdd" key="add">
-        <template #title>
-          <span>Добавить партнера </span>
-        </template>
-        <template #body>
-          <div class="grid grid-cols-6 gap-6">
-            <div class="col-span-6 sm:col-span-3">
-              <label
-                for="first-name"
-                class="block mb-2 text-sm font-medium text-white"
-                >Имя</label
-              >
-              <input
-                type="text"
-                name="first-name"
-                id="first-name"
-                class="shadow-sm border  text-sm rounded-lg block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
-                placeholder="Иван"
-                required=""
-                v-model="fio"
-              />
-            </div>
-            <div class="col-span-6 sm:col-span-3">
-              <label
-                for="last-name"
-                class="block mb-2 text-sm font-medium text-white"
-                >Телефон</label
-              >
-              <input
-                type="text"
-                name="last-name"
-                id="last-name"
-                class="shadow-sm border  text-sm rounded-lg block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
-                placeholder="Green"
-                required=""
-                v-model="phone"
-              />
-            </div>
-            <div class="col-span-6 sm:col-span-3">
-              <div class="flex items-center mb-4">
-                <label
-                  for="default-checkbox"
-                  class="ml-2 text-sm font-medium text-gray-300"
-                  >Активный</label
-                >
-                <DropdownsDropDefault />
-              </div>
-            </div>
-
-            <div class="col-span-6 sm:col-span-3">
-              <label
-                for="company"
-                class="block mb-2 text-sm font-medium text-white"
-                >Компания</label
-              >
-              <input
-                type="number"
-                name="company"
-                id="company"
-                class="shadow-sm border  text-sm rounded-lg block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
-                placeholder="123456"
-                required=""
-              />
-            </div>
-          </div>
-        </template>
-        <template #footer>
-          <ButtonsBDelete @click="addPartner"
-            >Добавить</ButtonsBDelete
-          ></template
-        >
-      </ModalsModalEdit>
     </div>
   </div>
 </template>

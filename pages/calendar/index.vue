@@ -29,9 +29,9 @@ export default {
     
     <div class="w-full gap-4">
 
-      <ClientOnly>
+    
         <FullCalendar :options="calendarOptions"  />
-      </ClientOnly>
+      
     </div>
   </div>
 </template>

@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div v-if="visible">
     <Toast position="bottom-right" />
     <div class="grid grid-cols-3 gap-4 mt-3">
       <button
@@ -24,7 +25,7 @@
         >
           Смена
           <div class="flex items-center justify-center gap-4">
-            <span v-if="storeShift.sessionID == null">
+            <span v-if="storeShift.sessionID == ''">
               Закрыта ( при нажатии откроется)
             </span>
             <span v-else>Открыта ( при нажатии закроется)</span>
@@ -68,7 +69,7 @@
             v-if="productToPay.length >= 1"
             class="flex flex-col bg-neutral-800"
           >
-            <ClientOnly placeholder="Загрузка...">
+         
               <DataTable
                 :value="productToPay"
                 class="rounded-t-md overflow-hidden w-full"
@@ -132,12 +133,12 @@
                   </template>
                 </Column>
               </DataTable>
-            </ClientOnly>
+            
             <div
               class="p-4 flex justify-end text-right text-xl font-bold gap-12"
             >
-            <span class="hidden">{{ itogo }} </span>
-              Итого:  {{ itogoFixed }} ₽
+              <span class="hidden">{{ itogo }} </span>
+              Итого: {{ itogoFixed }} ₽
             </div>
           </div>
           <div class="flex flex-col gap-6">
@@ -210,7 +211,7 @@
             label="Оплатить"
             icon="pi pi-check"
             @click="getPay"
-            autofocus
+            
           />
           <Button
             v-else-if="payType == false"
@@ -218,7 +219,7 @@
             label="Оплатить карта"
             icon="pi pi-check"
             @click="getPayCart"
-            autofocus
+            
           />
         </template>
       </Dialog>
@@ -230,7 +231,7 @@
       >
         <div class="flex flex-col gap-4">
           <div class="w-full flex items-center justify-between">
-            <ClientOnly placeholder="Загрузка...">
+          
               <DataTable
                 :value="allProducts"
                 stripedRows
@@ -324,7 +325,7 @@
                   </template>
                 </Column>
               </DataTable>
-            </ClientOnly>
+           
           </div>
         </div>
         <template #footer>
@@ -333,7 +334,7 @@
             label="Готово"
             icon="pi pi-check"
             @click="addProduct = false"
-            autofocus
+            
           />
         </template>
       </Dialog>
@@ -363,7 +364,7 @@
             label="Внести"
             icon="pi pi-check"
             @click="PaymentCash"
-            autofocus
+            
           />
         </template>
       </Dialog>
@@ -393,7 +394,7 @@
             label="Изъять"
             icon="pi pi-check"
             @click="DepositingCash"
-            autofocus
+            
           />
         </template>
       </Dialog>
@@ -419,12 +420,15 @@
             label="Закрыть"
             icon="pi pi-check"
             @click="closeShift"
-            autofocus
+            
           />
         </template>
       </Dialog>
     </div>
   </div>
+  <span>Загрузка...</span>
+  </div>
+ 
 </template>
 
 <script setup>
@@ -438,8 +442,10 @@ useHead({
   title: 'TAIGA - Касса'
 })
 definePageMeta({
-  middleware: 'auth'
+  middleware: 'auth',
+  layout: 'default'
 })
+const visible = ref(false)
 const router = useRouter()
 const storeShift = sessionInfo()
 const toast = useToast()
@@ -448,7 +454,7 @@ const toast = useToast()
 const sessionView = ref(false)
 
 function sessionSwith () {
-  if (storeShift.sessionID == null) {
+  if (storeShift.sessionID == '') {
     openShift()
   } else {
     sessionView.value = true
@@ -501,8 +507,6 @@ watch(selectedCupon, newPrice => {
   } else {
     itogoFixed.value = itogoFixed.value - newPrice.code
   }
-  
-  
 })
 
 async function openShift () {
@@ -626,7 +630,6 @@ function addKol (product, val) {
 const itogoFixed = ref(0)
 
 const itogo = computed(() => {
-  
   const data = productToPay.value.map(x => x.amount)
 
   const sumWithInitial = data.reduce((a, b) => a + b, 0)
@@ -934,6 +937,13 @@ async function GetDataKKT () {
 function getUrl (url) {
   router.push(url)
 }
+onMounted(() => {
+  
+  setTimeout(() => {
+    visible.value = true
+  }, 200)
+})
+
 </script>
 
 <style scoped>
