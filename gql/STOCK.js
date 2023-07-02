@@ -22,6 +22,7 @@ export const ALL_PRODUCTS = gql`
         }
         Ostatki
         Unit
+        UnitValue
         Type
       }
     }

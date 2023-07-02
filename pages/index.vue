@@ -41,10 +41,25 @@
             v-model="selectedServices"
             :options="allServices"
             showClear
-            optionLabel="name"
+            optionLabel="attributes.Name"
             placeholder="Выберите услугу"
             class="w-full md:w-14rem"
-          />
+          >
+            <template #value="slotProps">
+              <div v-if="slotProps.value" class="flex align-items-center">
+                <div>{{ slotProps.value.attributes.Name }}</div>
+              </div>
+            </template>
+            <template #option="slotProps">
+              <div class="flex items-center justify-between">
+                <div>{{ slotProps.option.attributes.Name }}</div>
+                <div class="flex flex-col items-end">
+                  <span>{{ slotProps.option.attributes.UnitValue }} мин</span
+                  ><span>{{ slotProps.option.attributes.Price }} ₽</span>
+                </div>
+              </div>
+            </template>
+          </Dropdown>
           <div class="grid grid-cols-3 gap-4 w-full">
             <Dropdown
               filter
@@ -115,7 +130,7 @@
               v-model="selectedServices"
               :options="allServices"
               showClear
-              optionLabel="name"
+              optionLabel="attributes.Name"
               placeholder="Выберите услугу"
               class="w-full md:w-14rem"
             />
@@ -183,6 +198,7 @@ import {
   ALL_CLIENT_NOTES,
   ALL_CABINETS_NOTES
 } from '@/gql/query/DASHBOARD'
+import { ALL_PRODUCTS, ALL_GROUPS } from '@/gql/STOCK'
 import { v4 as uuidv4 } from 'uuid'
 import { useToast } from 'primevue/usetoast'
 
@@ -207,8 +223,11 @@ const allCabinet = ref([
   { name: '5 - Стандартный', code: '5' }
 ])
 
+const { result: allProducts } = useQuery(ALL_PRODUCTS)
+const allProductsCom = computed(() => allProducts.value?.products.data ?? [])
+
 const allServices = computed(() => {
-  return []
+  return allProductsCom.value.filter(x => x.attributes.Type == true)
 })
 
 const {
@@ -327,21 +346,24 @@ const { mutate: sendNote, onDone: sendNoteDone } =
 const UID = ref()
 
 function handlerSendNote () {
+  let time = noteTimeCheked.value
   let minutes = new Date(note.value.time)
-  let h1 = minutes.getHours()
+  let h1 = time.split(':')
   let m1 = minutes.getMinutes()
   let timer = new Date(dataDay.value)
 
-  timer.setHours(h1)
+  timer.setHours(Number(h1[0]))
   timer.setMinutes(m1)
-
-  sendNote({
-    DATE: timer,
-    NAME: note.value.title
-  })
+  console.log('timer', timer)
+  console.log('time', time.name)
+  // sendNote({
+  //   DATE: timer,
+  //   NAME: note.value.title
+  // })
 }
 
 sendNoteDone(() => {
+  console.log(res)
   editDay.value = false
   toast.add({
     severity: 'info',
