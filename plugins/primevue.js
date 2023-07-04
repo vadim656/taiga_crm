@@ -19,6 +19,7 @@ import ConfirmationService from 'primevue/confirmationservice';
 import Dropdown from 'primevue/dropdown';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
+import Checkbox from 'primevue/checkbox';
 
 export default defineNuxtPlugin(nuxtApp => {
   nuxtApp.vueApp.use(PrimeVue, {
@@ -179,6 +180,7 @@ export default defineNuxtPlugin(nuxtApp => {
   nuxtApp.vueApp.use(ToastService)
   nuxtApp.vueApp.directive('tooltip', Tooltip)
   nuxtApp.vueApp.component('Button', Button)
+  nuxtApp.vueApp.component('Checkbox', Checkbox)
   nuxtApp.vueApp.component('InputText', InputText)
   nuxtApp.vueApp.component('Toast', Toast)
   nuxtApp.vueApp.component('DataTable', DataTable)

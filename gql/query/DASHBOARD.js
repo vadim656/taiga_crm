@@ -12,16 +12,16 @@ export const CREATE_DEAL = gql`
         }
       }
     }
-    services {
-      data {
-        id
-        attributes {
-          Name
-          ART
-          Price
-        }
-      }
-    }
+    # services {
+    #   data {
+    #     id
+    #     attributes {
+    #       Name
+    #       ART
+    #       Price
+    #     }
+    #   }
+    # }
   }
 `
 
@@ -70,8 +70,18 @@ export const DELETE_USER_NOTES = gql`
 `
 
 export const CREATE_CLIENT_NOTE = gql`
-  mutation CREATE_CLIENT_NOTE($DATE: DateTime, $NAME: String) {
-    createUserRecord(data: { Time: $DATE, Name: $NAME }) {
+  mutation CREATE_CLIENT_NOTE($DATE: DateTime, $DATEEND: DateTime, $NAME: String, $MASTER: ID, $CABINET: ID, $PHONE: String, $FIO:String, $SERVICES: [ID] ,$NOTE: String) {
+    createUserRecord(data: { 
+    Time: $DATE, 
+    Name: $NAME,
+    TimeEnd: $DATEEND,
+    tovary_i_uslugis: $SERVICES,
+    FIO: $FIO,
+    Note: $NOTE,
+    Phone: $PHONE,
+    crm_cabinet : $CABINET,
+    users_permissions_user: $MASTER
+  }) {
       data {
         id
       }
@@ -86,17 +96,36 @@ export const ALL_CLIENT_NOTES = gql`
         attributes {
           Name
           Time
+          TimeEnd
           Note
           FIO
           Phone
           Status
-          services {
+          tovary_i_uslugis {
             data {
               attributes {
                 Name
+                Price
+                UnitValue
               }
             }
           }
+          users_permissions_user {
+          data {
+            id
+            attributes {
+              FIO
+            }
+          }
+        }
+        crm_cabinet{
+          data{
+            id
+            attributes{
+              Name
+            }
+          }
+        }
         }
       }
     }
@@ -122,14 +151,13 @@ export const ALL_CABINETS_NOTES = gql`
                     Name
                     Time
                     TimeEnd
-                    services {
-                      data {
-                        id
-                        attributes {
-                          Name
-                        }
-                      }
-                    }
+                    tovary_i_uslugis {
+            data {
+              attributes {
+                Name
+              }
+            }
+          }
                   }
                 }
               }

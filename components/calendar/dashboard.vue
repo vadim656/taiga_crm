@@ -7,14 +7,20 @@
           :class="status(arg.event.extendedProps.status)"
         >
           <p class="text-gray-400">{{ arg.event.title }}</p>
+          <p
+            class="text-gray-400 w-30 truncate"
+            :title="arg.event.extendedProps.descOrder"
+          >
+            {{ arg.event.extendedProps.descOrder.Name }}
+          </p>
           <!-- <p class="text-gray-400 text-xs flex items-center gap-1">
               <IconsIPhone class="!w-3 !h-3" />
               {{ arg.event.extendedProps.phone }}
             </p> -->
           <p class="text-gray-400 text-xs flex items-center gap-1">
             <IconsITime class="!w-3 !h-3" />
-            {{ arg.event.extendedProps.timeStart }} -
-            {{ arg.event.extendedProps.timeEnd }}
+            {{ setTimeNote(arg.event.extendedProps.timeStart) }} -
+            {{ setTimeNote(arg.event.extendedProps.timeEnd) }}
           </p>
         </div>
       </template>
@@ -67,7 +73,8 @@ export default {
         locale: ruLocale,
         events: [],
         dateClick: this.handleDateClick,
-        eventClick: this.handleEventClick
+        eventClick: this.handleEventClick,
+        mouseEnterInfo : this.hoveringDate
       }
     }
   },
@@ -83,20 +90,32 @@ export default {
     setTimeNote: function (time) {
       const x = new Date(time)
       return x.toLocaleString('ru', options)
+    },
+    hoveringDate: function (arg){
+      console.log('hoveringDate! ' + arg)
     }
   },
   mounted () {
     const data = this.notes
+    console.log(data)
     data.forEach(element => {
+      const tS = element.attributes.Time
+      const tE = element.attributes.TimeEnd
       const t = {
-        title: element.attributes.Name,
+        title: element.attributes.FIO,
         date: element.attributes.Time,
         phone: element.attributes.Phone,
-        timeStart: '10:00',
-        timeEnd: '12:00',
-        desc: this.setTimeNote(element.attributes.Time),
-        status: element.attributes.Status
+        timeStart: tS,
+        timeEnd: tE,
+        desc: element.attributes.FIO,
+        descOrder:
+          element.attributes.tovary_i_uslugis?.data[0]?.attributes ||
+          'Нет услуги',
+        status: element.attributes.Status,
+        master: element.attributes.users_permissions_user.data,
+        cabinet: element.attributes.crm_cabinet.data
       }
+      console.log('element', element)
       this.calendarOptions.events.push(t)
     })
 

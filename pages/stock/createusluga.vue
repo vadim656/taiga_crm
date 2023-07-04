@@ -25,18 +25,112 @@
       </span>
       <span class="p-float-label">
         <InputText id="username" v-model="dataProduct.time" />
-        <label for="username">Длительность</label>
+        <label for="username">Продолжительность</label>
       </span>
     </div>
-    <div class="w-full grid grid-cols-2 gap-4">
-      <div class="border border-neutral-500 p-4 rounded-md flex flex-col gap-4">
-        <span>Все товары</span>
+    <!-- программа -->
+    <div class="flex flex-col gap-4 border rounded-md p-4 border-neutral-500">
+      <span>Программы</span>
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-wrap gap-4">
+          <div
+            v-for="(item, i) in allProgramsCom"
+            :key="i"
+            class="bg-neutral-800 p-4 rounded-md flex items-center gap-2"
+          >
+            <span>{{ item }}</span>
+            <IconsIDelete
+              @click="deleteProgram(item)"
+              class="w-5 h-5 cursor-pointer"
+            />
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <div>
+            <span class="p-float-label w-full">
+              <InputText
+                id="username"
+                v-model="programmName"
+                class="w-[400px]"
+              />
+              <label for="username">Добавить программу</label>
+            </span>
+          </div>
+          <IconsIPlus @click="setProgramm" class="w-6 h-6 cursor-pointer" />
+        </div>
+      </div>
+    </div>
+    <!-- компоненты -->
+    <div class="flex flex-col gap-4 border rounded-md p-4 border-neutral-500">
+      <span>Компоненты</span>
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-wrap gap-4">
+          <div
+            v-for="(item, i) in allComponentsCom"
+            :key="i"
+            class="bg-neutral-800 p-4 rounded-md flex items-center gap-2"
+          >
+            <span>{{ item }}</span>
+            <IconsIDelete
+              @click="deleteComponent(item)"
+              class="w-5 h-5 cursor-pointer"
+            />
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <div>
+            <span class="p-float-label w-full">
+              <InputText
+                id="username"
+                v-model="ComponentsName"
+                class="w-[400px]"
+              />
+              <label for="username">Добавить программу</label>
+            </span>
+          </div>
+          <IconsIPlus @click="setComponent" class="w-6 h-6 cursor-pointer" />
+        </div>
+      </div>
+    </div>
+    <!-- комната -->
+    <div class="flex flex-col gap-4 border rounded-md p-4 border-neutral-500">
+      Кабинеты
+      <div class="grid grid-cols-4 gap-4">
+        <div class="flex items-center">
+          <Checkbox v-model="cabinet" inputId="1" name="1" value="1" />
+          <label for="1" class="ml-2"> 1 - Хамам </label>
+        </div>
+        <div class="flex items-center">
+          <Checkbox v-model="cabinet" inputId="2" name="2" value="2" />
+          <label for="2" class="ml-2"> 2 - Стандартный </label>
+        </div>
+        <div class="flex items-center">
+          <Checkbox v-model="cabinet" inputId="3" name="3" value="3" />
+          <label for="3" class="ml-2"> 3 - Стандартный </label>
+        </div>
+        <div class="flex items-center">
+          <Checkbox v-model="cabinet" inputId="4" name="4" value="4" />
+          <label for="4" class="ml-2"> 4 - Ванна</label>
+        </div>
+        <div class="flex items-center">
+          <Checkbox v-model="cabinet" inputId="5" name="5" value="5" />
+          <label for="5" class="ml-2"> 5 - Стандартный</label>
+        </div>
+      </div>
+    </div>
+    <!-- мастера -->
+
+    <div
+      class="w-full grid grid-cols-2 divide-x divide-neutral-500 gap-4 border border-neutral-500 rounded-md"
+    >
+      <div class="p-4 flex flex-col gap-4">
+        <span>Состав услуги</span>
         <div>
           <ClientOnly placeholder="Загрузка...">
             <DataTable
               :value="allProductsCom"
               stripedRows
-              v-model:filters="filters"
+              :filters="filters"
               :globalFilterFields="[
                 'attributes.Name',
                 'attributes.group.data.attributes.Name'
@@ -88,10 +182,12 @@
                 <template #body="slotProps">
                   <div class="flex items-center justify-end gap-2">
                     <button
+                      :key="slotProps.data.id"
                       @click="addToProduct(slotProps.data)"
                       class="flex items-center gap-2 bg-green-600 rounded-md px-3 py-2"
                     >
-                      <IconsIPlus class="w-5 h-5 text-white" /> Добавить
+                      Добавить
+                      <IconsIArrow class="w-5 h-5 text-white -rotate-90" />
                     </button>
                   </div>
                 </template>
@@ -100,7 +196,7 @@
           </ClientOnly>
         </div>
       </div>
-      <div class="border border-neutral-500 p-4 rounded-md flex flex-col gap-4">
+      <div class="p-4 flex flex-col gap-4">
         <span>Добавлено</span>
         <div v-if="allProductsComAddDone.length >= 1">
           <ClientOnly placeholder="Загрузка...">
@@ -108,7 +204,7 @@
               :value="allProductsComAddDone"
               stripedRows
               removableSort
-              v-model:filters="filters"
+              :filters="filters"
               :globalFilterFields="[
                 'attributes.Name',
                 'attributes.group.data.attributes.Name'
@@ -137,7 +233,7 @@
                   <div class="flex items-center gap-2">
                     <input
                       type="number"
-                      min="1"
+                      min="0.1"
                       step="0.1"
                       :max="slotProps.data.attributes.Ostatki"
                       :key="slotProps.data"
@@ -145,6 +241,8 @@
                       class="w-16 p-2 bg-transparent border border-neutral-700 rounded-md"
                       @change="addKol(slotProps.data.id, $event.target.value)"
                     />
+                    <span>{{ slotProps.data.valueKol }} мл</span>
+                    
                   </div>
                 </template>
               </Column>
@@ -163,7 +261,9 @@
             </DataTable>
           </ClientOnly>
         </div>
-        <span v-else>Пока пусто...</span>
+        <span v-else class="text-sm text-neutral-500 w-full text-center"
+          >Пока пусто...</span
+        >
       </div>
     </div>
   </div>
@@ -171,13 +271,61 @@
 
 <script setup>
 import { FilterMatchMode } from 'primevue/api'
-import { ALL_PRODUCTS, ALL_GROUPS } from '@/gql/STOCK'
+import { ALL_PRODUCTS, ALL_GROUPS, ALL_MASTERS } from '@/gql/STOCK'
 useHead({
   title: 'Создание услуги'
 })
 definePageMeta({
   middleware: 'auth'
 })
+
+const cabinet = ref()
+
+const masters = ref()
+
+const { result: allM } = useQuery(ALL_MASTERS)
+const allMasters = computed(() => allM.value?.usersPermissionsUsers?.data ?? [])
+
+//programm
+
+const allPrograms = ref([])
+const allProgramsCom = computed(() => {
+  return allPrograms.value
+})
+
+const programmName = ref('')
+
+function setProgramm () {
+  allPrograms.value.push(programmName.value)
+  programmName.value = ''
+}
+
+function deleteProgram (item) {
+  console.log(item)
+  const data = allPrograms.value.filter(x => x !== item)
+  allPrograms.value = data
+}
+
+//components
+
+const allComponents = ref([])
+const allComponentsCom = computed(() => {
+  return allComponents.value
+})
+
+const ComponentsName = ref('')
+
+function setComponent () {
+  allComponents.value.push(ComponentsName.value)
+  ComponentsName.value = ''
+}
+
+function deleteComponent (item) {
+  console.log(item)
+  const data = allComponents.value.filter(x => x !== item)
+  allComponents.value = data
+}
+
 const dataProduct = ref({
   name: '',
   price: '',
@@ -194,7 +342,23 @@ const { result: allProducts } = useQuery(ALL_PRODUCTS)
 const allProductsCom = computed(() => allProducts.value?.products.data ?? [])
 
 function addToProduct (item) {
-  allProductsComAdd.value.push(item)
+  const data = {
+    ...item,
+    valueKol: 1
+  }
+  allProductsComAdd.value.push(data)
+}
+
+function addKol (item, val) {
+  
+  allProductsComAddDone.value.forEach(element => {
+
+    if (element.id == item) {
+      console.log(element.attributes.Name);
+    }
+  });
+  // allProductsComAdd.value[0].valueKol = val
+  console.log(item, val)
 }
 
 function deleteProduct (item) {

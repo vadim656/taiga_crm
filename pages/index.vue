@@ -71,6 +71,15 @@
               class="w-full md:w-14rem"
             />
             <Dropdown
+              filter
+              v-model="master"
+              :options="allMasters"
+              showClear
+              optionLabel="attributes.FIO"
+              placeholder="Мастер"
+              class="w-full md:w-14rem"
+            />
+            <Dropdown
               v-model="selectedCabinet"
               :options="allCabinet"
               showClear
@@ -83,12 +92,12 @@
               <label for="username">Имя</label>
             </span>
             <span class="p-float-label">
-              <InputText id="username" v-model="note.user" class="w-full" />
+              <InputText id="username" v-model="note.phone" class="w-full" />
               <label for="username">Телефон</label>
             </span>
             <div class="col-span-2">
               <span class="p-float-label">
-                <InputText id="username" v-model="note.user" class="w-full" />
+                <InputText id="username" v-model="note.desc" class="w-full" />
                 <label for="username">Примечания</label>
               </span>
             </div>
@@ -116,56 +125,56 @@
       </template>
     </Dialog>
     <Dialog
-      v-model:visible="eventDay"
+      v-model:visible="eventDayVisible"
       modal
       header="Запись"
-      class="w-full max-w-[800px]"
+      class="w-full max-w-[400px]"
     >
       <div class="py-2 w-full">
-        <pre class="text-xs"> {{ eventDay }}</pre>
-        <div class="py-2 w-full">
-          <div class="w-full flex flex-col gap-4">
-            <Dropdown
-              filter
-              v-model="selectedServices"
-              :options="allServices"
-              showClear
-              optionLabel="attributes.Name"
-              placeholder="Выберите услугу"
-              class="w-full md:w-14rem"
-            />
-            <div class="grid grid-cols-3 gap-4 w-full">
-              <span class="p-float-label">
-                <Calendar
-                  id="calendar-timeonly"
-                  v-model="note.time"
-                  timeOnly
-                  class="w-full"
-                />
-                <label for="username">Время</label>
+        <!-- <pre class="text-xs"> {{ eventDay }}</pre> -->
+        <div class="py-2 w-full flex flex-col gap-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="w-full flex flex-col gap-2">
+              <span>Клиент: </span>
+              <span class="font-bold"
+                >{{ eventDay.extendedProps.desc }} -
+                {{ eventDay.extendedProps.phone }}</span
+              >
+            </div>
+            <div class="w-full flex flex-col gap-2">
+              <span>Мастер: </span>
+              <span class="font-bold">{{
+                eventDay.extendedProps.master.attributes.FIO
+              }}</span>
+            </div>
+          </div>
+
+          <div class="w-full flex flex-col gap-2">
+            <span>Услуга: </span>
+            <span class="font-bold flex flex-col gap-2">
+              <span class="p-2 rounded-md bg-neutral-700 text-center">{{
+                eventDay.extendedProps.descOrder.Name
+              }}</span>
+              <span class="p-2 rounded-md bg-neutral-700 text-center">
+                {{ eventDay.extendedProps.descOrder.Price }} ₽
               </span>
-              <Dropdown
-                v-model="selectedCabinet"
-                :options="allCabinet"
-                showClear
-                optionLabel="name"
-                placeholder="Выберите кабинет"
-                class="w-full md:w-14rem"
-              />
-              <span class="p-float-label">
-                <InputText id="username" v-model="note.user" class="w-full" />
-                <label for="username">Имя</label>
+              <span class="p-2 rounded-md bg-neutral-700 text-center">
+                {{ eventDay.extendedProps.descOrder.UnitValue }} мин
               </span>
-              <span class="p-float-label">
-                <InputText id="username" v-model="note.user" class="w-full" />
-                <label for="username">Телефон</label>
-              </span>
-              <div class="col-span-2">
-                <span class="p-float-label">
-                  <InputText id="username" v-model="note.user" class="w-full" />
-                  <label for="username">Примечания</label>
-                </span>
-              </div>
+            </span>
+          </div>
+          <div class="flex gap-4">
+            <div class="w-full flex flex-col gap-2">
+              <span>Начало / Окончание </span>
+              <span class="font-bold"
+                >{{ setTimeNote(eventDay.extendedProps.timeStart) }} -
+                {{ setTimeNote(eventDay.extendedProps.timeEnd) }}</span
+              >
+            </div>
+            <div class="w-full flex flex-col gap-2">
+              <span>Кабинет: </span>
+              <span class="font-bold">{{ eventDay.extendedProps.cabinet.attributes.Name }} </span
+              >
             </div>
           </div>
         </div>
@@ -174,18 +183,18 @@
       <template #footer>
         <div>
           <Button
-            label="Отменить"
+            label="Закрыть"
             icon="pi pi-times"
-            @click="eventDay = false"
+            @click="eventDayVisible = false"
             text
-            class="!bg-red-500 !text-white"
+            class="!bg-neutral-500 !text-white"
           />
           <Button
-            label="Создать"
+            label="Отменить запись"
             icon="pi pi-check"
             @click="handlerSendNote()"
             autofocus
-            class="!bg-green-500 !text-white"
+            class="!bg-red-500 !text-white"
           />
         </div>
       </template>
@@ -198,7 +207,7 @@ import {
   ALL_CLIENT_NOTES,
   ALL_CABINETS_NOTES
 } from '@/gql/query/DASHBOARD'
-import { ALL_PRODUCTS, ALL_GROUPS } from '@/gql/STOCK'
+import { ALL_PRODUCTS, ALL_MASTERS } from '@/gql/STOCK'
 import { v4 as uuidv4 } from 'uuid'
 import { useToast } from 'primevue/usetoast'
 
@@ -209,6 +218,19 @@ definePageMeta({
   middleware: 'auth',
   layout: 'default'
 })
+
+let options = {
+  // year: 'numeric',
+  // month: 'numeric',
+  // day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric'
+}
+
+function setTimeNote (time) {
+  const x = new Date(time)
+  return x.toLocaleString('ru', options)
+}
 
 const visible = ref(false)
 const toast = useToast()
@@ -238,7 +260,7 @@ const {
   ALL_CLIENT_NOTES,
   null,
   {
-    pollInterval: 5000
+    pollInterval: 15000
   },
   {
     fetchPolicy: 'cache-and-network'
@@ -257,7 +279,7 @@ const {
   ALL_CABINETS_NOTES,
   null,
   {
-    pollInterval: 5000
+    pollInterval: 15000
   },
   {
     fetchPolicy: 'cache-and-network'
@@ -272,12 +294,19 @@ const editDay = ref(false)
 
 const dataDay = ref()
 
+const master = ref()
+
+const { result: allM } = useQuery(ALL_MASTERS)
+const allMasters = computed(() => allM.value?.usersPermissionsUsers?.data ?? [])
+
 const note = ref({
   title: '',
   time: '',
   user: '',
   service: '',
-  price: ''
+  price: '',
+  phone: '',
+  desc: ''
 })
 
 const noteTimeCheked = ref()
@@ -309,12 +338,14 @@ const noteTime = ref([
   { name: '21:30', code: '26' }
 ])
 
+const selectedCabinet = ref()
+
 const noteTimeFree = computed(() => {
   return noteTime.value
 })
 
-const eventDay = ref(false)
-
+const eventDayVisible = ref(false)
+const eventDay = ref()
 function createEvent (params) {
   // UID.value = uuidv4()
   dataDay.value = params
@@ -332,11 +363,11 @@ function clickEvent (event) {
 
 watch(eventDay, () => {
   if (
-    eventDay.value == false &&
+    eventDayVisible.value == false &&
     visible.value == true &&
     route.name == 'index'
   ) {
-    eventDay.value = true
+    eventDayVisible.value = true
   }
 })
 
@@ -346,23 +377,55 @@ const { mutate: sendNote, onDone: sendNoteDone } =
 const UID = ref()
 
 function handlerSendNote () {
-  let time = noteTimeCheked.value
-  let minutes = new Date(note.value.time)
-  let h1 = time.split(':')
-  let m1 = minutes.getMinutes()
-  let timer = new Date(dataDay.value)
+  // start
+  let time1 = noteTimeCheked.value
+  let h1 = String(time1.name).split(':')[0]
+  let m1 = String(time1.name).split(':')[1]
+  let timer1 = new Date(dataDay.value)
+  timer1.setHours(Number(h1))
+  timer1.setMinutes(Number(m1))
+  // end
 
-  timer.setHours(Number(h1[0]))
-  timer.setMinutes(m1)
-  console.log('timer', timer)
-  console.log('time', time.name)
-  // sendNote({
-  //   DATE: timer,
-  //   NAME: note.value.title
-  // })
+  let timer2 = new Date(dataDay.value)
+  let valueService = selectedServices.value.attributes.UnitValue
+
+  let hourService = parseInt(valueService / 60)
+
+  let minService = Number(valueService - hourService * 60)
+
+  timer2.setHours(Number(hourService) + Number(h1))
+  timer2.setMinutes(Number(minService) + Number(m1))
+
+  const servicesInNote = []
+  servicesInNote.push(Number(selectedServices.value.id))
+  // console.log('valueService', ` ${minService}`)
+  // console.log('start', timer1)
+  // console.log('end', timer2)
+  const noteData = {
+    DATE: timer1,
+    NOTE: note.value.desc,
+    DATEEND: timer2,
+    SERVICES: servicesInNote,
+    FIO: note.value.user,
+    PHONE: note.value.phone,
+    CABINET: Number(selectedCabinet.value.code),
+    MASTER: Number(master.value.id)
+  }
+  console.log('note', noteData)
+
+  sendNote({
+    DATE: timer1,
+    NOTE: note.value.desc,
+    DATEEND: timer2,
+    SERVICES: servicesInNote,
+    FIO: note.value.user,
+    PHONE: note.value.phone,
+    CABINET: Number(selectedCabinet.value.code),
+    MASTER: Number(master.value.id)
+  })
 }
 
-sendNoteDone(() => {
+sendNoteDone(res => {
   console.log(res)
   editDay.value = false
   toast.add({

@@ -48,3 +48,24 @@ export const ALL_GROUPS = gql`
     }
   }
 }`
+
+export const ALL_MASTERS = gql`
+  query ALL_MASTERS {
+    usersPermissionsUsers(filters: { role: { description: { eq: "Master" } } }) {
+    data {
+      id
+      attributes {
+        FIO
+        Speciality
+        role {
+          data {
+            attributes {
+              description
+            }
+          }
+        }
+      }
+    }
+  }
+  }
+`

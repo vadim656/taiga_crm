@@ -681,7 +681,7 @@ async function getPay () {
     PrintSlipForCashier: true,
 
     CheckStrings: [...products, { PrintText: { Text: '<<->>' } }],
-    Cash: Number(sumWithInitial * 2).toFixed(2)
+    Cash: Number(sumWithInitial).toFixed(2)
   }
 
   await useFetch(() => 'http://localhost:5894/Execute', {
