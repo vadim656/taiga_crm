@@ -74,7 +74,7 @@ export default {
         events: [],
         dateClick: this.handleDateClick,
         eventClick: this.handleEventClick,
-        mouseEnterInfo : this.hoveringDate
+        mouseEnterInfo: this.hoveringDate
       }
     }
   },
@@ -91,7 +91,7 @@ export default {
       const x = new Date(time)
       return x.toLocaleString('ru', options)
     },
-    hoveringDate: function (arg){
+    hoveringDate: function (arg) {
       console.log('hoveringDate! ' + arg)
     }
   },
@@ -108,6 +108,7 @@ export default {
         timeStart: tS,
         timeEnd: tE,
         desc: element.attributes.FIO,
+        idOrder: element.id,
         descOrder:
           element.attributes.tovary_i_uslugis?.data[0]?.attributes ||
           'Нет услуги',

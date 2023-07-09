@@ -155,105 +155,11 @@ const dateCom = computed(() => {
   return datestring
 })
 
-const dataProductPrihod = async () => {
-  let enter = {
-    name: uuidv4(),
-    organization: {
-      meta: {
-        href: 'https://online.moysklad.ru/api/remap/1.2/entity/organization/804b181a-fc63-11ed-0a80-000d00187fc7',
-        metadataHref:
-          'https://online.moysklad.ru/api/remap/1.2/entity/organization/metadata',
-        type: 'organization',
-        mediaType: 'application/json'
-      }
-    },
-    store: {
-      meta: {
-        href: 'https://online.moysklad.ru/api/remap/1.2/entity/store/804c5356-fc63-11ed-0a80-000d00187fcf',
-        metadataHref:
-          'https://online.moysklad.ru/api/remap/1.2/entity/store/metadata',
-        type: 'store',
-        mediaType: 'application/json'
-      }
-    },
-    positions: [
-      {
-        quantity: value2.value,
-        assortment: {
-          meta: {
-            href: `https://online.moysklad.ru/api/remap/1.2/entity/product/${idProduct.value}`,
-            metadataHref:
-              'https://online.moysklad.ru/api/remap/1.2/entity/product/metadata',
-            type: 'product',
-            mediaType: 'application/json'
-          }
-        }
-      }
-    ],
-    description: `Дата документа: ${dateCom.value}`,
-    reason: `Обновленная причина ${document.value}`
-  }
-
-  await useFetch('/api/entity/enter', {
-    method: 'POST',
-    headers: {
-      Authorization: 'Basic YWRtaW5AbW1wY2FwaXRhbDE6ZjkzZWMzMmVlYQ==',
-      'Content-Type': 'application/json;charset=utf-8',
-      Accept: 'application/json;charset=utf-8'
-    },
-    body: JSON.stringify(enter),
-    credentials: 'omit'
-  })
-    .then(() => {
-      setTimeout(() => {
-        prihodProduct.value = false
-        toast.add({
-          severity: 'info',
-          summary: 'Успешно',
-          detail: `Приход создан`,
-          life: 2000
-        })
-      }, 500)
-      refreshServices()
-    })
-    .catch(err => {
-      console.log(err)
-      toast.add({
-        severity: 'error',
-        summary: 'Неудача',
-        detail: 'Что то пошло не так',
-        life: 2000
-      })
-    })
-}
-
 // history
 
 const modalViewHistory = ref(false)
 
 const historyData = ref()
-
-const modalViewHistoryOpen = async id => {
-  console.log('prihod history', id)
-  await useFetch(
-    `/api/entity/enter?filter=assortment=https://online.moysklad.ru/api/remap/1.2/entity/product/${id}`,
-    {
-      method: 'GET',
-      headers: {
-        Authorization: 'Basic YWRtaW5AbW1wY2FwaXRhbDE6ZjkzZWMzMmVlYQ==',
-        'Content-Type': 'application/json;charset=utf-8',
-        Accept: 'application/json;charset=utf-8'
-      }
-    }
-  )
-    .then(res => {
-      historyData.value = res.data.value.rows
-      modalViewHistory.value = true
-    })
-    .catch(err => {
-      console.log(err)
-    })
-}
 
 const modalViewHistoryOne = ref(false)
 
@@ -270,354 +176,366 @@ function getProduct (id) {
   router.push('/stock/product/' + id)
 }
 
-function getURL(url) {
+function getURL (url) {
   router.push(url)
-  
 }
+
+const visible = ref(false)
+onMounted(() => {
+  setTimeout(() => {
+    visible.value = true
+  }, 1000)
+})
 </script>
 <template>
   <div>
     <Toast position="bottom-right" />
     <ConfirmPopup></ConfirmPopup>
-    <TabView class="w-full">
+    <TabView v-if="visible" class="w-full">
       <TabPanel header="Услуги">
-        <ClientOnly placeholder="Загрузка...">
-          <DataTable
-            :value="allProductsComService"
-            stripedRows
-            removableSort
-            v-model:filters="filters"
-            :globalFilterFields="[
-              'attributes.Name',
-              'attributes.group.data.attributes.Name'
-            ]"
-            class="rounded-t-md overflow-hidden"
-            paginator
-            :rows="10"
-            :rowsPerPageOptions="[10, 20, 50]"
-            filterDisplay="menu"
-          >
-            <template #header>
-              <div class="flex justify-between gap-4">
-                <InputText
-                  v-model="filters['global'].value"
-                  placeholder="Поиск по услугам"
-                  class="w-full"
-                />
+        <DataTable
+          :value="allProductsComService"
+          stripedRows
+          removableSort
+          v-model:filters="filters"
+          :globalFilterFields="[
+            'attributes.Name',
+            'attributes.group.data.attributes.Name'
+          ]"
+          class="rounded-t-md overflow-hidden"
+          paginator
+          :rows="8"
+          :rowsPerPageOptions="[8, 20, 50]"
+          filterDisplay="menu"
+        >
+          <template #header>
+            <div class="flex justify-between gap-4">
+              <InputText
+                v-model="filters['global'].value"
+                placeholder="Поиск по услугам"
+                class="w-full"
+              />
 
-                <ButtonsBDelete @click="getURL('/stock/createusluga')" icon="plus" type="add"
-                  >Добавить</ButtonsBDelete
+              <ButtonsBDelete
+                @click="getURL('/stock/createusluga')"
+                icon="plus"
+                type="add"
+                >Добавить</ButtonsBDelete
+              >
+            </div>
+          </template>
+          <Column
+            field="attributes.group.data.attributes.Name"
+            filterField="attributes.group.data.attributes.Name"
+            header="Наименование"
+            style="width: 30%"
+            class="text-sm"
+            sortable
+          >
+            <template #body="slotProps">
+              <div class="flex items-center gap-2">
+                <span class="">{{ slotProps.data.attributes.Name }}</span>
+              </div>
+            </template>
+          </Column>
+          <Column
+            field="attributes.group.data.attributes.Name"
+            filterField="attributes.group.data.attributes.Name"
+            header="Группа"
+            class="text-sm"
+            sortable
+          >
+            <template #body="slotProps">
+              <div class="flex items-center gap-2">
+                <span class="truncate"
+                  >{{ slotProps.data.attributes.group.data.attributes.Name }}
+                </span>
+              </div>
+            </template>
+          </Column>
+          <Column
+            field="attributes.Unit"
+            filterField="attributes.Unit"
+            header="Длительность"
+            class="text-sm"
+            sortable
+          >
+            <template #body="slotProps">
+              <div class="flex items-center gap-2">
+                <span
+                  v-if="slotProps.data.attributes.Unit == 'Millilitr'"
+                  class=""
+                  >Мл.
+                </span>
+                <span
+                  v-else-if="slotProps.data.attributes.Unit == 'Shtuka'"
+                  class=""
+                  >Шт.
+                </span>
+                <span
+                  v-else-if="slotProps.data.attributes.Unit == 'Gramm'"
+                  class=""
+                  >Гр.
+                </span>
+                <span
+                  v-else-if="slotProps.data.attributes.Unit == 'Minuta'"
+                  class=""
+                  >Мин.
+                </span>
+              </div>
+            </template>
+          </Column>
+          <Column
+            field="attributes.Price"
+            filterField="attributes.Price"
+            header="Цена"
+            class="text-sm"
+            sortable
+          >
+            <template #body="slotProps">
+              <div class="flex items-center gap-2">
+                <span class="truncate"
+                  >{{ slotProps.data.attributes.Price }} ₽</span
                 >
               </div>
             </template>
-            <Column
-              field="attributes.group.data.attributes.Name"
-              filterField="attributes.group.data.attributes.Name"
-              header="Наименование"
-              style="width: 30%"
-              class="text-sm"
-              sortable
-            >
-              <template #body="slotProps">
-                <div class="flex items-center gap-2">
-                  <span class="">{{ slotProps.data.attributes.Name }}</span>
-                </div>
-              </template>
-            </Column>
-            <Column
-              field="attributes.group.data.attributes.Name"
-              filterField="attributes.group.data.attributes.Name"
-              header="Группа"
-              class="text-sm"
-              sortable
-            >
-              <template #body="slotProps">
-                <div class="flex items-center gap-2">
-                  <span class="truncate"
-                    >{{ slotProps.data.attributes.group.data.attributes.Name }}
-                  </span>
-                </div>
-              </template>
-            </Column>
-            <Column
-              field="attributes.Unit"
-              filterField="attributes.Unit"
-              header="Длительность"
-              class="text-sm"
-              sortable
-            >
-              <template #body="slotProps">
-                <div class="flex items-center gap-2">
-                  <span
-                    v-if="slotProps.data.attributes.Unit == 'Millilitr'"
-                    class=""
-                    >Мл.
-                  </span>
-                  <span
-                    v-else-if="slotProps.data.attributes.Unit == 'Shtuka'"
-                    class=""
-                    >Шт.
-                  </span>
-                  <span
-                    v-else-if="slotProps.data.attributes.Unit == 'Gramm'"
-                    class=""
-                    >Гр.
-                  </span>
-                  <span
-                    v-else-if="slotProps.data.attributes.Unit == 'Minuta'"
-                    class=""
-                    >Мин.
-                  </span>
-                </div>
-              </template>
-            </Column>
-            <Column
-              field="attributes.Price"
-              filterField="attributes.Price"
-              header="Цена"
-              class="text-sm"
-              sortable
-            >
-              <template #body="slotProps">
-                <div class="flex items-center gap-2">
-                  <span class="truncate"
-                    >{{ slotProps.data.attributes.Price }} ₽</span
-                  >
-                </div>
-              </template>
-            </Column>
-            <Column field="id" header="" class="text-sm">
-              <template #body="slotProps">
-                <div class="flex items-center gap-2">
-                  <button
-                    @click="getProduct(slotProps.data.id)"
-                    v-tooltip.left="'Редактировать'"
-                    class="flex items-center gap-2 p2-3 py-2"
-                  >
-                    <IconsIEdit class="w-5 h-5 text-blue-600" />
-                  </button>
-                  <button
-                    @click="modalViewHistoryOpen(slotProps.data.id)"
-                    class="flex items-center gap-2 bg-green-600 rounded-md px-3 py-2"
-                  >
-                    <IconsIPlus class="w-5 h-5 text-white" /> История
-                  </button>
-                </div>
-              </template>
-            </Column>
-          </DataTable>
-        </ClientOnly>
+          </Column>
+          <Column field="id" header="" class="text-sm">
+            <template #body="slotProps">
+              <div class="flex items-center gap-2">
+                <button
+                  @click="getProduct(slotProps.data.id)"
+                  v-tooltip.left="'Редактировать'"
+                  class="flex items-center p-2"
+                >
+                  <IconsIEdit class="w-5 h-5 text-blue-600" />
+                </button>
+                <button
+                  @click="modalViewHistoryOpen(slotProps.data.id)"
+                  v-tooltip.left="'История'"
+                  class="flex items-center p-2"
+                >
+                  <IconsIHistory class="w-5 h-5 text-blue-600" />
+                </button>
+              </div>
+            </template>
+          </Column>
+        </DataTable>
       </TabPanel>
       <TabPanel header="Товары">
-        <ClientOnly placeholder="Загрузка...">
-          <DataTable
-            :value="allProductsCom"
-            stripedRows
-            removableSort
-            v-model:filters="filters"
-            :globalFilterFields="[
-              'attributes.Name',
-              'attributes.group.data.attributes.Name'
-            ]"
-            class="rounded-t-md overflow-hidden"
-            paginator
-            :rows="10"
-            :rowsPerPageOptions="[10, 20, 50]"
-            filterDisplay="menu"
-          >
-            <template #header>
-              <div class="flex justify-between gap-4">
-                <InputText
-                  v-model="filters['global'].value"
-                  placeholder="Поиск по услугам"
-                  class="w-full"
-                />
+        <DataTable
+          :value="allProductsCom"
+          stripedRows
+          removableSort
+          v-model:filters="filters"
+          :globalFilterFields="[
+            'attributes.Name',
+            'attributes.group.data.attributes.Name'
+          ]"
+          class="rounded-t-md overflow-hidden"
+          paginator
+          :rows="8"
+          :rowsPerPageOptions="[8, 20, 50]"
+          filterDisplay="menu"
+        >
+          <template #header>
+            <div class="flex justify-between gap-4">
+              <InputText
+                v-model="filters['global'].value"
+                placeholder="Поиск по услугам"
+                class="w-full"
+              />
 
-                <ButtonsBDelete @click="addProduct" icon="plus" type="add"
-                  >Добавить</ButtonsBDelete
+              <ButtonsBDelete @click="addProduct" icon="plus" type="add"
+                >Добавить</ButtonsBDelete
+              >
+            </div>
+          </template>
+          <Column
+            field="attributes.group.data.attributes.Name"
+            filterField="attributes.group.data.attributes.Name"
+            header="Наименование"
+            style="width: 30%"
+            class="text-sm"
+            sortable
+          >
+            <template #body="slotProps">
+              <div class="flex items-center gap-2">
+                <span class="">{{ slotProps.data.attributes.Name }}</span>
+              </div>
+            </template>
+          </Column>
+          <Column
+            field="attributes.group.data.attributes.Name"
+            filterField="attributes.group.data.attributes.Name"
+            header="Группа"
+            class="text-sm"
+            sortable
+          >
+            <template #body="slotProps">
+              <div class="flex items-center gap-2">
+                <span class="truncate"
+                  >{{ slotProps.data.attributes.group.data.attributes.Name }}
+                </span>
+              </div>
+            </template>
+          </Column>
+          <Column
+            field="attributes.Unit"
+            filterField="attributes.Unit"
+            header="Ед."
+            class="text-sm"
+            sortable
+          >
+            <template #body="slotProps">
+              <div class="flex items-center gap-2">
+                <span
+                  v-if="slotProps.data.attributes.Unit == 'Millilitr'"
+                  class=""
+                  >Мл.
+                </span>
+                <span
+                  v-else-if="slotProps.data.attributes.Unit == 'Shtuka'"
+                  class=""
+                  >Шт.
+                </span>
+                <span
+                  v-else-if="slotProps.data.attributes.Unit == 'Gramm'"
+                  class=""
+                  >Гр.
+                </span>
+                <span
+                  v-else-if="slotProps.data.attributes.Unit == 'Minuta'"
+                  class=""
+                  >Мин.
+                </span>
+              </div>
+            </template>
+          </Column>
+          <Column
+            field="attributes.purchasePrice"
+            filterField="attributes.purchasePrice"
+            header="Закупка"
+            class="text-sm"
+            sortable
+          >
+            <template #body="slotProps">
+              <div class="flex items-center gap-2">
+                <span class="truncate"
+                  >{{ slotProps.data.attributes.purchasePrice }} ₽</span
                 >
               </div>
             </template>
-            <Column
-              field="attributes.group.data.attributes.Name"
-              filterField="attributes.group.data.attributes.Name"
-              header="Наименование"
-              style="width: 30%"
-              class="text-sm"
-              sortable
-            >
-              <template #body="slotProps">
-                <div class="flex items-center gap-2">
-                  <span class="">{{ slotProps.data.attributes.Name }}</span>
-                </div>
-              </template>
-            </Column>
-            <Column
-              field="attributes.group.data.attributes.Name"
-              filterField="attributes.group.data.attributes.Name"
-              header="Группа"
-              class="text-sm"
-              sortable
-            >
-              <template #body="slotProps">
-                <div class="flex items-center gap-2">
-                  <span class="truncate"
-                    >{{ slotProps.data.attributes.group.data.attributes.Name }}
-                  </span>
-                </div>
-              </template>
-            </Column>
-            <Column
-              field="attributes.Unit"
-              filterField="attributes.Unit"
-              header="Ед."
-              class="text-sm"
-              sortable
-            >
-              <template #body="slotProps">
-                <div class="flex items-center gap-2">
-                  <span
-                    v-if="slotProps.data.attributes.Unit == 'Millilitr'"
-                    class=""
-                    >Мл.
-                  </span>
-                  <span
-                    v-else-if="slotProps.data.attributes.Unit == 'Shtuka'"
-                    class=""
-                    >Шт.
-                  </span>
-                  <span
-                    v-else-if="slotProps.data.attributes.Unit == 'Gramm'"
-                    class=""
-                    >Гр.
-                  </span>
-                  <span
-                    v-else-if="slotProps.data.attributes.Unit == 'Minuta'"
-                    class=""
-                    >Мин.
-                  </span>
-                </div>
-              </template>
-            </Column>
-            <Column
-              field="attributes.purchasePrice"
-              filterField="attributes.purchasePrice"
-              header="Закупка"
-              class="text-sm"
-              sortable
-            >
-              <template #body="slotProps">
-                <div class="flex items-center gap-2">
-                  <span class="truncate"
-                    >{{ slotProps.data.attributes.purchasePrice }} ₽</span
-                  >
-                </div>
-              </template>
-            </Column>
-            <Column
-              field="attributes.Price"
-              filterField="attributes.Price"
-              header="Цена"
-              class="text-sm"
-              sortable
-            >
-              <template #body="slotProps">
-                <div class="flex items-center gap-2">
-                  <span class="truncate"
-                    >{{ slotProps.data.attributes.Price }} ₽</span
-                  >
-                </div>
-              </template>
-            </Column>
-            
-            <Column
-              header="Остатки"
-              field="attributes.Ostatki"
-              filterField="attributes.Ostatki"
-              sortable
-              class="text-sm"
-              ><template #body="slotProps">
-                <div class="flex items-center gap-2">
-                  <span
-                    class="font-bold"
-                    :class="[
-                      slotProps.data.attributes.Ostatki >= 2
-                        ? 'text-green-400'
-                        : 'text-red-400'
-                    ]"
-                    >{{ slotProps.data.attributes.Ostatki }}</span
-                  >
-                </div>
-              </template>
-            </Column>
+          </Column>
+          <Column
+            field="attributes.Price"
+            filterField="attributes.Price"
+            header="Цена"
+            class="text-sm"
+            sortable
+          >
+            <template #body="slotProps">
+              <div class="flex items-center gap-2">
+                <span class="truncate"
+                  >{{ slotProps.data.attributes.Price }} ₽</span
+                >
+              </div>
+            </template>
+          </Column>
 
-            <Column field="id" header="" class="text-sm">
-              <template #body="slotProps">
-                <div class="flex items-center gap-2">
-                  <button
-                    @click="modalViewHistoryOpen(slotProps.data.id)"
-                    class="flex items-center gap-2 bg-green-600 rounded-md px-3 py-2"
-                  >
-                    <IconsIPlus class="w-5 h-5 text-white" /> История
-                  </button>
-                </div>
-              </template>
-            </Column>
-          </DataTable>
-        </ClientOnly>
+          <Column
+            header="Остатки"
+            field="attributes.Ostatki"
+            filterField="attributes.Ostatki"
+            sortable
+            class="text-sm"
+            ><template #body="slotProps">
+              <div class="flex items-center gap-2">
+                <span
+                  class="font-bold"
+                  :class="[
+                    slotProps.data.attributes.Ostatki >= 2
+                      ? 'text-green-400'
+                      : 'text-red-400'
+                  ]"
+                  >{{ slotProps.data.attributes.Ostatki }}</span
+                >
+              </div>
+            </template>
+          </Column>
+
+          <Column field="id" header="" class="text-sm">
+            <template #body="slotProps">
+              <div class="flex items-center gap-2">
+                <button
+                  @click="modalViewHistoryOpen(slotProps.data.id)"
+                  class="flex items-center gap-2 p-2"
+                   v-tooltip.left="'Редактировать'"
+                >
+                <IconsIEdit class="w-5 h-5 text-blue-600" />
+                </button>
+                <button
+                  @click="modalViewHistoryOpen(slotProps.data.id)"
+                  class="flex items-center gap-2 p-2"
+                   v-tooltip.left="'История'"
+                >
+                <IconsIHistory class="w-5 h-5 text-blue-600" />
+                </button>
+              </div>
+            </template>
+          </Column>
+        </DataTable>
       </TabPanel>
       <TabPanel header="Группы">
-        <ClientOnly placeholder="Загрузка...">
-          <DataTable
-            :value="allGroupsCom"
-            stripedRows
-            removableSort
-            v-model:filters="filters"
-            :globalFilterFields="['attributes.Name', 'attributes']"
-            class="rounded-t-md overflow-hidden"
-            paginator
-            :rows="10"
-            :rowsPerPageOptions="[10, 20, 50]"
-            filterDisplay="menu"
-          >
-            <template #header>
-              <div class="flex justify-between gap-4">
-                <InputText
-                  v-model="filters['global'].value"
-                  placeholder="Поиск по услугам"
-                  class="w-full"
-                />
+        <DataTable
+          :value="allGroupsCom"
+          stripedRows
+          removableSort
+          v-model:filters="filters"
+          :globalFilterFields="['attributes.Name', 'attributes']"
+          class="rounded-t-md overflow-hidden"
+          paginator
+          :rows="8"
+          :rowsPerPageOptions="[8, 20, 50]"
+          filterDisplay="menu"
+        >
+          <template #header>
+            <div class="flex justify-between gap-4">
+              <InputText
+                v-model="filters['global'].value"
+                placeholder="Поиск по услугам"
+                class="w-full"
+              />
 
-                <ButtonsBDelete @click="addProduct" icon="plus" type="add"
-                  >Добавить</ButtonsBDelete
-                >
+              <ButtonsBDelete @click="addProduct" icon="plus" type="add"
+                >Добавить</ButtonsBDelete
+              >
+            </div>
+          </template>
+          <Column
+            field="attributes.Name"
+            filterField="attributes.Name"
+            header="Наименование"
+            style="width: 30%"
+            class="text-sm"
+            sortable
+          >
+            <template #body="slotProps">
+              <div class="flex items-center gap-2">
+                <span class="">{{ slotProps.data.attributes.Name }}</span>
               </div>
             </template>
-            <Column
-              field="attributes.Name"
-              filterField="attributes.Name"
-              header="Наименование"
-              style="width: 30%"
-              class="text-sm"
-              sortable
-            >
-              <template #body="slotProps">
-                <div class="flex items-center gap-2">
-                  <span class="">{{ slotProps.data.attributes.Name }}</span>
-                </div>
-              </template>
-            </Column>
-            <Column field="id" header="Товаров / Услуг" class="text-sm">
-              <template #body="slotProps">
-                <div class="flex items-center gap-2">
-                  <span>{{
-                    slotProps.data.attributes.products.data.length
-                  }}</span>
-                </div>
-              </template>
-            </Column>
-          </DataTable>
-        </ClientOnly>
+          </Column>
+          <Column field="id" header="Товаров / Услуг" class="text-sm">
+            <template #body="slotProps">
+              <div class="flex items-center gap-2">
+                <span>{{
+                  slotProps.data.attributes.products.data.length
+                }}</span>
+              </div>
+            </template>
+          </Column>
+        </DataTable>
       </TabPanel>
     </TabView>
 

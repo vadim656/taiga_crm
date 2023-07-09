@@ -46,6 +46,22 @@ export const USER_NOTES = gql`
     }
   }
 `
+
+export const USER_NOTES_COUNT = gql`
+ query USER_NOTES_COUNT($START: DateTime, $END: DateTime){
+  userRecords(
+    filters: {
+      Time: { gte: $START, lte: $END}
+    }
+  ) {
+    data {
+      id
+    }
+  }
+}
+
+`
+
 export const CREATE_USER_NOTES = gql`
   mutation CREATE_USER_NOTES($ID: ID, $DESC: String) {
     createUserNote(data: { Desc: $DESC, users_permissions_user: $ID }) {
@@ -89,10 +105,21 @@ export const CREATE_CLIENT_NOTE = gql`
   }
 `
 
+export const DELETE_CLIENT_NOTE = gql`
+  mutation DELETE_CLIENT_NOTE($ID: ID!) {
+    deleteUserRecord(id: $ID) {
+      data {
+        id
+      }
+    }
+  }
+`
+
 export const ALL_CLIENT_NOTES = gql`
   query {
     userRecords(pagination: { limit: 1000 }) {
       data {
+        id
         attributes {
           Name
           Time

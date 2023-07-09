@@ -1,17 +1,19 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: false,
+  vite: {
+    build: {
+      target: "esnext",
+    },
+  },
   nitro: {
-    devProxy: {
-      "/api": {
-        target: "https://online.moysklad.ru/api/remap/1.2",
-        changeOrigin: true,
-        prependPath: true,
+    esbuild: {
+      options: {
+        target: "esnext",
       },
     },
-
-    routeRules: {
-      "/api/**": { proxy: "https://online.moysklad.ru/api/remap/1.2/**" },
+    prerender: {
+      crawlLinks: true,
     },
   },
   app: {
@@ -102,9 +104,5 @@ export default defineNuxtConfig({
 
   build: {
     transpile: ["primevue"],
-  },
-
-  devtools: {
-    enabled: true,
   },
 });

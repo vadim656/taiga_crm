@@ -69,6 +69,11 @@ export const ALL_USER = gql`
           email
           DateRozhdenia
           createdAt
+          user_records{
+            data{
+              id
+            }
+          }
           user_notes {
             data {
               id

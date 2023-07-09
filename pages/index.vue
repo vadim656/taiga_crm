@@ -173,8 +173,9 @@
             </div>
             <div class="w-full flex flex-col gap-2">
               <span>Кабинет: </span>
-              <span class="font-bold">{{ eventDay.extendedProps.cabinet.attributes.Name }} </span
-              >
+              <span class="font-bold"
+                >{{ eventDay.extendedProps.cabinet.attributes.Name }}
+              </span>
             </div>
           </div>
         </div>
@@ -192,7 +193,7 @@
           <Button
             label="Отменить запись"
             icon="pi pi-check"
-            @click="handlerSendNote()"
+            @click="handlerDeleteNote(eventDay.extendedProps.idOrder)"
             autofocus
             class="!bg-red-500 !text-white"
           />
@@ -205,7 +206,8 @@
 import {
   CREATE_CLIENT_NOTE,
   ALL_CLIENT_NOTES,
-  ALL_CABINETS_NOTES
+  ALL_CABINETS_NOTES,
+  DELETE_CLIENT_NOTE
 } from '@/gql/query/DASHBOARD'
 import { ALL_PRODUCTS, ALL_MASTERS } from '@/gql/STOCK'
 import { v4 as uuidv4 } from 'uuid'
@@ -260,7 +262,7 @@ const {
   ALL_CLIENT_NOTES,
   null,
   {
-    pollInterval: 15000
+    pollInterval: 5000
   },
   {
     fetchPolicy: 'cache-and-network'
@@ -434,7 +436,29 @@ sendNoteDone(res => {
     detail: 'Запись создана',
     life: 2000
   })
+
   getRoleRef()
+})
+
+const { mutate: deleteNote, onDone: deleteNoteDone } =
+  useMutation(DELETE_CLIENT_NOTE)
+
+function handlerDeleteNote (id) {
+  const idOrder = Number(id)
+  deleteNote({
+    ID: idOrder
+  })
+  eventDayVisible.value = false
+  toast.add({
+    severity: 'info',
+    summary: 'Успешно',
+    detail: 'Запись удалена',
+    life: 2000
+  })
+}
+
+deleteNoteDone(() => {
+  console.log('delete', id)
 })
 
 getRoleRes(() => {

@@ -126,140 +126,135 @@
       <div class="p-4 flex flex-col gap-4">
         <span>Состав услуги</span>
         <div>
-          <ClientOnly placeholder="Загрузка...">
-            <DataTable
-              :value="allProductsCom"
-              stripedRows
-              :filters="filters"
-              :globalFilterFields="[
-                'attributes.Name',
-                'attributes.group.data.attributes.Name'
-              ]"
-              class="rounded-t-md overflow-hidden"
-              paginator
-              :rows="10"
-              :rowsPerPageOptions="[10, 20, 50]"
-              filterDisplay="menu"
+          <DataTable
+            :value="allProductsCom"
+            stripedRows
+            :filters="filters"
+            :globalFilterFields="[
+              'attributes.Name',
+              'attributes.group.data.attributes.Name'
+            ]"
+            class="rounded-t-md overflow-hidden"
+            paginator
+            :rows="10"
+            :rowsPerPageOptions="[10, 20, 50]"
+            filterDisplay="menu"
+          >
+            <template #header>
+              <div class="flex justify-between gap-4">
+                <InputText
+                  v-model="filters['global'].value"
+                  placeholder="Поиск по товарам"
+                  class="w-full"
+                />
+              </div>
+            </template>
+            <Column
+              field="attributes.group.data.attributes.Name"
+              filterField="attributes.group.data.attributes.Name"
+              header="Наименование"
+              class="text-xs"
+              sortable
             >
-              <template #header>
-                <div class="flex justify-between gap-4">
-                  <InputText
-                    v-model="filters['global'].value"
-                    placeholder="Поиск по товарам"
-                    class="w-full"
-                  />
+              <template #body="slotProps">
+                <div class="flex items-center gap-2 text-xs">
+                  <span class="">{{ slotProps.data.attributes.Name }}</span>
                 </div>
               </template>
-              <Column
-                field="attributes.group.data.attributes.Name"
-                filterField="attributes.group.data.attributes.Name"
-                header="Наименование"
-                class="text-xs"
-                sortable
-              >
-                <template #body="slotProps">
-                  <div class="flex items-center gap-2 text-xs">
-                    <span class="">{{ slotProps.data.attributes.Name }}</span>
-                  </div>
-                </template>
-              </Column>
-              <Column
-                field="attributes.Price"
-                filterField="attributes.Price"
-                header="Цена"
-                class="text-xs"
-                sortable
-              >
-                <template #body="slotProps">
-                  <div class="flex items-center gap-2">
-                    <span class="truncate"
-                      >{{ slotProps.data.attributes.Price }} ₽</span
-                    >
-                  </div>
-                </template>
-              </Column>
-              <Column field="id" header="" class="text-sm">
-                <template #body="slotProps">
-                  <div class="flex items-center justify-end gap-2">
-                    <button
-                      :key="slotProps.data.id"
-                      @click="addToProduct(slotProps.data)"
-                      class="flex items-center gap-2 bg-green-600 rounded-md px-3 py-2"
-                    >
-                      Добавить
-                      <IconsIArrow class="w-5 h-5 text-white -rotate-90" />
-                    </button>
-                  </div>
-                </template>
-              </Column>
-            </DataTable>
-          </ClientOnly>
+            </Column>
+            <Column
+              field="attributes.Price"
+              filterField="attributes.Price"
+              header="Цена"
+              class="text-xs"
+              sortable
+            >
+              <template #body="slotProps">
+                <div class="flex items-center gap-2">
+                  <span class="truncate"
+                    >{{ slotProps.data.attributes.Price }} ₽</span
+                  >
+                </div>
+              </template>
+            </Column>
+            <Column field="id" header="" class="text-sm">
+              <template #body="slotProps">
+                <div class="flex items-center justify-end gap-2">
+                  <button
+                    :key="slotProps.data.id"
+                    @click="addToProduct(slotProps.data)"
+                    class="flex items-center gap-2 bg-green-600 rounded-md px-3 py-2"
+                  >
+                    Добавить
+                    <IconsIArrow class="w-5 h-5 text-white -rotate-90" />
+                  </button>
+                </div>
+              </template>
+            </Column>
+          </DataTable>
         </div>
       </div>
       <div class="p-4 flex flex-col gap-4">
         <span>Добавлено</span>
         <div v-if="allProductsComAddDone.length >= 1">
-          <ClientOnly placeholder="Загрузка...">
-            <DataTable
-              :value="allProductsComAddDone"
-              stripedRows
-              removableSort
-              :filters="filters"
-              :globalFilterFields="[
-                'attributes.Name',
-                'attributes.group.data.attributes.Name'
-              ]"
-              class="rounded-t-md overflow-hidden"
+          <DataTable
+            :value="allProductsComAddDone"
+            stripedRows
+            removableSort
+            :filters="filters"
+            :globalFilterFields="[
+              'attributes.Name',
+              'attributes.group.data.attributes.Name'
+            ]"
+            class="rounded-t-md overflow-hidden"
+          >
+            <Column
+              field="attributes.group.data.attributes.Name"
+              filterField="attributes.group.data.attributes.Name"
+              header="Наименование"
+              class="text-sm"
             >
-              <Column
-                field="attributes.group.data.attributes.Name"
-                filterField="attributes.group.data.attributes.Name"
-                header="Наименование"
-                class="text-sm"
-              >
-                <template #body="slotProps">
-                  <div class="flex items-center gap-2 text-xs">
-                    <span class="">{{ slotProps.data.attributes.Name }}</span>
-                  </div>
-                </template>
-              </Column>
-              <Column
-                field="attributes.Price"
-                filterField="attributes.Price"
-                header="Кол-во"
-                class="text-xs"
-              >
-                <template #body="slotProps">
-                  <div class="flex items-center gap-2">
-                    <input
-                      type="number"
-                      min="0.1"
-                      step="0.1"
-                      :max="slotProps.data.attributes.Ostatki"
-                      :key="slotProps.data"
-                      value="1"
-                      class="w-16 p-2 bg-transparent border border-neutral-700 rounded-md"
-                      @change="addKol(slotProps.data.id, $event.target.value)"
-                    />
-                    <span>{{ slotProps.data.valueKol }} мл</span>
-                    
-                  </div>
-                </template>
-              </Column>
-              <Column field="id" header="" class="text-sm">
-                <template #body="slotProps">
-                  <div class="flex items-center justify-end gap-2">
-                    <button
-                      @click="deleteProduct(slotProps.data)"
-                      class="px-2 py-2"
-                    >
-                      <IconsIDelete class="w-4 h-4" />
-                    </button>
-                  </div>
-                </template>
-              </Column>
-            </DataTable>
-          </ClientOnly>
+              <template #body="slotProps">
+                <div class="flex items-center gap-2 text-xs">
+                  <span class="">{{ slotProps.data.attributes.Name }}</span>
+                </div>
+              </template>
+            </Column>
+            <Column
+              field="attributes.Price"
+              filterField="attributes.Price"
+              header="Кол-во"
+              class="text-xs"
+            >
+              <template #body="slotProps">
+                <div class="flex items-center gap-2">
+                  <input
+                    type="number"
+                    min="0.1"
+                    step="0.1"
+                    :max="slotProps.data.attributes.Ostatki"
+                    :key="slotProps.data"
+                    value="1"
+                    class="w-16 p-2 bg-transparent border border-neutral-700 rounded-md"
+                    @change="addKol(slotProps.data.id, $event.target.value)"
+                  />
+                  <span>{{ slotProps.data.valueKol }} мл</span>
+                </div>
+              </template>
+            </Column>
+            <Column field="id" header="" class="text-sm">
+              <template #body="slotProps">
+                <div class="flex items-center justify-end gap-2">
+                  <button
+                    @click="deleteProduct(slotProps.data)"
+                    class="px-2 py-2"
+                  >
+                    <IconsIDelete class="w-4 h-4" />
+                  </button>
+                </div>
+              </template>
+            </Column>
+          </DataTable>
         </div>
         <span v-else class="text-sm text-neutral-500 w-full text-center"
           >Пока пусто...</span
@@ -350,13 +345,11 @@ function addToProduct (item) {
 }
 
 function addKol (item, val) {
-  
   allProductsComAddDone.value.forEach(element => {
-
     if (element.id == item) {
-      console.log(element.attributes.Name);
+      console.log(element.attributes.Name)
     }
-  });
+  })
   // allProductsComAdd.value[0].valueKol = val
   console.log(item, val)
 }
@@ -379,8 +372,13 @@ const initFilters = () => {
     }
   }
 }
-
-initFilters()
+const visible = ref(false)
+onMounted(() => {
+  setTimeout(() => {
+    visible.value = true
+  }, 1000);
+  initFilters()
+})
 </script>
 
 <style lang="scss" scoped></style>

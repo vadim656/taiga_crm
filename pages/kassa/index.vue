@@ -1,75 +1,79 @@
 <template>
   <div>
     <div v-if="visible">
-    <Toast position="bottom-right" />
-    <div class="grid grid-cols-3 gap-4 mt-3">
-      <button
-        @click="pay = true"
-        class="block_button_kassa col-span-3 bg-green-400 hover:bg-green-500"
-      >
-        <span class="button_kassa !text-4xl" type="">Продажа</span>
-      </button>
-      <button
-        @click="getUrl('/kassa/vozvrat')"
-        class="block_button_kassa bg_kassa"
-      >
-        <span class="button_kassa" type="">Возврат</span>
-      </button>
-      <div
-        @click="sessionSwith"
-        class="block_button_kassa bg_kassa flex-col gap-4"
-      >
-        <div
-          class="button_kassa flex items-center justify-center gap-4"
-          type=""
+      <Toast position="bottom-right" />
+      <div class="grid grid-cols-3 gap-4 mt-3">
+        <button
+          @click="pay = true"
+          class="block_button_kassa col-span-3 bg-green-400 hover:bg-green-500"
         >
-          Смена
-          <div class="flex items-center justify-center gap-4">
-            <span v-if="storeShift.sessionID == ''">
-              Закрыта ( при нажатии откроется)
-            </span>
-            <span v-else>Открыта ( при нажатии закроется)</span>
+          <span class="button_kassa !text-4xl" type="">Продажа</span>
+        </button>
+        <button
+          @click="getUrl('/kassa/vozvrat')"
+          class="block_button_kassa bg_kassa"
+        >
+          <span class="button_kassa" type="">Возврат</span>
+        </button>
+        <div
+          @click="openShift()"
+          class="block_button_kassa bg_kassa flex-col gap-4"
+        >
+          <div
+            class="button_kassa flex items-center justify-center gap-4"
+            type=""
+          >
+            Открыть смену
           </div>
         </div>
-      </div>
-      <button @click="XReport" class="block_button_kassa bg_kassa">
-        <span class="button_kassa" type="">X - отчет</span>
-      </button>
-      <button
-        @click="PaymentCashView = true"
-        class="block_button_kassa bg_kassa"
-      >
-        <span class="button_kassa" type="">Внесение</span>
-      </button>
-      <button
-        @click="DepositingCashView = true"
-        class="block_button_kassa bg_kassa"
-      >
-        <span class="button_kassa" type="">Изъятие</span>
-      </button>
-    </div>
-    <div>
-      <Dialog
-        v-model:visible="pay"
-        modal
-        header="Продажа"
-        :style="{ width: '60vw' }"
-      >
-        <div class="flex flex-col gap-12">
-          <button
-            @click="addProduct = true"
-            class="w-full flex items-center justify-between border p-4 rounded-md"
-          >
-            <span class="w-full text-center" type="">
-              Добавить товар / Услугу
-            </span>
-          </button>
-
+        <div
+          @click="closeShift()"
+          class="block_button_kassa bg_kassa flex-col gap-4"
+        >
           <div
-            v-if="productToPay.length >= 1"
-            class="flex flex-col bg-neutral-800"
+            class="button_kassa flex items-center justify-center gap-4"
+            type=""
           >
-         
+            Закрыть смену
+          </div>
+        </div>
+        <button @click="XReport" class="block_button_kassa bg_kassa">
+          <span class="button_kassa" type="">X - отчет</span>
+        </button>
+        <button
+          @click="PaymentCashView = true"
+          class="block_button_kassa bg_kassa"
+        >
+          <span class="button_kassa" type="">Внесение</span>
+        </button>
+        <button
+          @click="DepositingCashView = true"
+          class="block_button_kassa bg_kassa"
+        >
+          <span class="button_kassa" type="">Изъятие</span>
+        </button>
+      </div>
+      <div>
+        <Dialog
+          v-model:visible="pay"
+          modal
+          header="Продажа"
+          :style="{ width: '60vw' }"
+        >
+          <div class="flex flex-col gap-12">
+            <button
+              @click="addProduct = true"
+              class="w-full flex items-center justify-between border p-4 rounded-md"
+            >
+              <span class="w-full text-center" type="">
+                Добавить товар / Услугу
+              </span>
+            </button>
+
+            <div
+              v-if="productToPay.length >= 1"
+              class="flex flex-col bg-neutral-800"
+            >
               <DataTable
                 :value="productToPay"
                 class="rounded-t-md overflow-hidden w-full"
@@ -133,105 +137,123 @@
                   </template>
                 </Column>
               </DataTable>
-            
-            <div
-              class="p-4 flex justify-end text-right text-xl font-bold gap-12"
-            >
-              <span class="hidden">{{ itogo }} </span>
-              Итого: {{ itogoFixed }} ₽
-            </div>
-          </div>
-          <div class="flex flex-col gap-6">
-            <span>Клиент</span>
-            <button
-              @click="addProduct = true"
-              class="w-full flex items-center justify-between border p-4 rounded-md"
-            >
-              <span class="w-full text-center" type="">
-                Выбрать / Создать клиента
-              </span>
-            </button>
-          </div>
-          <div class="flex flex-col gap-6">
-            <span>Тип оплаты</span>
-            <div
-              class="flex items-center divide-x divide-neutral-500 rounded-md overflow-hidden border border-neutral-500"
-            >
+
               <div
-                @click="payType = !payType"
-                class="p-4 cursor-pointer w-1/2 text-center flex items-center justify-center gap-2"
-                :class="payType == true ? 'bg-neutral-700' : 'bg-transparent'"
+                class="p-4 flex justify-end text-right text-xl font-bold gap-12"
               >
-                Наличными
-              </div>
-              <div
-                @click="payType = !payType"
-                class="p-4 cursor-pointer w-1/2 text-center flex items-center justify-center gap-2"
-                :class="payType == false ? 'bg-neutral-700' : 'bg-transparent'"
-              >
-                Картой
+                <span class="hidden">{{ itogo }} </span>
+                Итого: {{ itogoFixed }} ₽
               </div>
             </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div class="p-float-label my-4">
-                <Dropdown
-                  v-model="selectedCupon"
-                  inputId="dd-city"
-                  :options="Cupons"
-                  optionLabel="name"
-                  class="w-1/2 text-sm"
-                />
-                <label for="dd-city">Выбрать купон</label>
-              </div>
-              <div v-if="payType == true" class="flex items-center gap-12">
-                <span class="p-float-label">
-                  <InputText
-                    id="username"
-                    v-model="inputMoney"
-                    class="w-full"
-                  />
-                  <label for="username">Внесено</label>
+            <div class="flex flex-col gap-6">
+              <span>Клиент</span>
+              <button
+                @click="addClient"
+                class="w-full flex items-center justify-between border p-4 rounded-md"
+              >
+                <span class="w-full text-center" type="">
+                  Выбрать клиента
                 </span>
-                <span> Сдача : {{ inputMoney }} </span>
+              </button>
+            </div>
+            <div
+              v-if="activeClient"
+              class="w-full flex justify-between p-4 rounded-md bg-neutral-800"
+            >
+              <div class="flex flex-col gap-2">
+                <span class="font-bold">{{ activeClient.attributes.FIO }}</span>
+                <span>{{ activeClient.attributes.username }}</span>
+                <span>{{ activeClient.attributes.email }}</span>
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <span class="font-bold">Бонусы</span>
+                <span>{{ activeClient.attributes.Bonus }} ₽</span>
+                <div>
+                  <button type="" class="px-3 py-2 bg-green-500 text-white rounded-md">Списать</button>
+                </div>
+              </div>
+            </div>
+            <pre>{{ activeClient }}</pre>
+            <div class="flex flex-col gap-6">
+              <span>Тип оплаты</span>
+              <div
+                class="flex items-center divide-x divide-neutral-500 rounded-md overflow-hidden border border-neutral-500"
+              >
+                <div
+                  @click="payType = !payType"
+                  class="p-4 cursor-pointer w-1/2 text-center flex items-center justify-center gap-2"
+                  :class="payType == true ? 'bg-neutral-700' : 'bg-transparent'"
+                >
+                  Наличными
+                </div>
+                <div
+                  @click="payType = !payType"
+                  class="p-4 cursor-pointer w-1/2 text-center flex items-center justify-center gap-2"
+                  :class="
+                    payType == false ? 'bg-neutral-700' : 'bg-transparent'
+                  "
+                >
+                  Картой
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="p-float-label my-4">
+                  <Dropdown
+                    v-model="selectedCupon"
+                    inputId="dd-city"
+                    :options="Cupons"
+                    optionLabel="name"
+                    class="w-1/2 text-sm"
+                  />
+                  <label for="dd-city">Выбрать купон</label>
+                </div>
+                <div v-if="payType == true" class="flex items-center gap-12">
+                  <span class="p-float-label">
+                    <InputText
+                      id="username"
+                      v-model="inputMoney"
+                      class="w-full"
+                    />
+                    <label for="username">Внесено</label>
+                  </span>
+                  <span> Сдача : {{ sdacha }}</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <template #footer>
-          <Button
-            class="!bg-red-500 !text-white"
-            label="Отмена"
-            icon="pi pi-times"
-            @click="pay = false"
-            text
-          />
-          <Button
-            v-if="payType == true"
-            class="!bg-green-500 !text-white"
-            label="Оплатить"
-            icon="pi pi-check"
-            @click="getPay"
-            
-          />
-          <Button
-            v-else-if="payType == false"
-            class="!bg-green-500 !text-white"
-            label="Оплатить карта"
-            icon="pi pi-check"
-            @click="getPayCart"
-            
-          />
-        </template>
-      </Dialog>
-      <Dialog
-        v-model:visible="addProduct"
-        modal
-        header="Добавить Товар / Услугу"
-        :style="{ width: '60vw' }"
-      >
-        <div class="flex flex-col gap-4">
-          <div class="w-full flex items-center justify-between">
-          
+          <template #footer>
+            <Button
+              class="!bg-red-500 !text-white"
+              label="Отмена"
+              icon="pi pi-times"
+              @click="pay = false"
+              text
+            />
+            <Button
+              v-if="payType == true"
+              class="!bg-green-500 !text-white"
+              label="Оплатить"
+              icon="pi pi-check"
+              @click="getPay"
+            />
+            <Button
+              v-else-if="payType == false"
+              class="!bg-green-500 !text-white"
+              label="Оплатить карта"
+              icon="pi pi-check"
+              @click="getPayCart"
+            />
+          </template>
+        </Dialog>
+        <Dialog
+          v-model:visible="addProduct"
+          modal
+          header="Добавить Товар / Услугу"
+          :style="{ width: '60vw' }"
+        >
+          <div class="flex flex-col gap-4">
+            <div class="w-full flex items-center justify-between">
               <DataTable
                 :value="allProducts"
                 stripedRows
@@ -325,118 +347,190 @@
                   </template>
                 </Column>
               </DataTable>
-           
+            </div>
           </div>
-        </div>
-        <template #footer>
-          <Button
-            class="!bg-green-500 !text-white"
-            label="Готово"
-            icon="pi pi-check"
-            @click="addProduct = false"
-            
-          />
-        </template>
-      </Dialog>
-      <Dialog
-        v-model:visible="PaymentCashView"
-        modal
-        header="Внесение наличных"
-        :style="{ width: '30vw' }"
-      >
-        <div class="flex flex-col gap-12">
-          <InputNumber
-            v-model="PaymentCashValue"
-            inputId="withoutgrouping"
-            :useGrouping="false"
-          />
-        </div>
-        <template #footer>
-          <Button
-            class="!bg-red-500 !text-white"
-            label="Отмена"
-            icon="pi pi-times"
-            @click="PaymentCashView = false"
-            text
-          />
-          <Button
-            class="!bg-green-500 !text-white"
-            label="Внести"
-            icon="pi pi-check"
-            @click="PaymentCash"
-            
-          />
-        </template>
-      </Dialog>
-      <Dialog
-        v-model:visible="DepositingCashView"
-        modal
-        header="Изъятие наличных"
-        :style="{ width: '30vw' }"
-      >
-        <div class="flex flex-col gap-12">
-          <InputNumber
-            v-model="DepositingCashValue"
-            inputId="withoutgrouping"
-            :useGrouping="false"
-          />
-        </div>
-        <template #footer>
-          <Button
-            class="!bg-red-500 !text-white"
-            label="Отмена"
-            icon="pi pi-times"
-            @click="DepositingCashView = false"
-            text
-          />
-          <Button
-            class="!bg-green-500 !text-white"
-            label="Изъять"
-            icon="pi pi-check"
-            @click="DepositingCash"
-            
-          />
-        </template>
-      </Dialog>
-      <Dialog
-        v-model:visible="sessionView"
-        modal
-        header="Закрытие смены"
-        :style="{ width: '30vw' }"
-      >
-        <div class="flex flex-col gap-12">
-          <span class="text-xl">В кассе {{ kktData }} ₽</span>
-        </div>
-        <template #footer>
-          <Button
-            class="!bg-red-500 !text-white"
-            label="Отмена"
-            icon="pi pi-times"
-            @click="sessionView = false"
-            text
-          />
-          <Button
-            class="!bg-green-500 !text-white"
-            label="Закрыть"
-            icon="pi pi-check"
-            @click="closeShift"
-            
-          />
-        </template>
-      </Dialog>
+          <template #footer>
+            <Button
+              class="!bg-green-500 !text-white"
+              label="Готово"
+              icon="pi pi-check"
+              @click="addProduct = false"
+            />
+          </template>
+        </Dialog>
+        <Dialog
+          v-model:visible="addClientView"
+          modal
+          header="Добавить Клиента"
+          :style="{ width: '40vw' }"
+        >
+          <div class="flex flex-col gap-4">
+            <div class="w-full flex items-center justify-between">
+              <!-- <pre>{{ allUsers }}</pre> -->
+              <DataTable
+                :value="allUsers"
+                stripedRows
+                removableSort
+                v-model:filters="filters"
+                :globalFilterFields="['attributes.FIO', 'attributes.username']"
+                class="rounded-t-md overflow-hidden w-full"
+                paginator
+                :rows="6"
+                :rowsPerPageOptions="[6, 20, 50]"
+              >
+                <template #header>
+                  <div class="flex justify-between w-full">
+                    <InputText
+                      v-model="filters['global'].value"
+                      placeholder="Поиск по клиентам"
+                      class="w-full"
+                    />
+                  </div>
+                </template>
+
+                <Column
+                  field="attributes.FIO"
+                  filterField="attributes.FIO"
+                  header="ФИО"
+                  class="text-sm"
+                ></Column>
+                <Column
+                  field="attributes.username"
+                  filterField="attributes.username"
+                  header="Телефон"
+                  class="text-sm"
+                ></Column>
+                <Column
+                  field="attributes.user_records.data"
+                  filterField="attributes.user_records.data"
+                  header="Заказов"
+                  class="text-sm"
+                >
+                  <template #body="slotProps">
+                    <div class="flex items-center gap-2 justify-start">
+                      {{ slotProps.data.attributes.user_records.data.length }}
+                    </div>
+                  </template>
+                </Column>
+                <Column header="" class="text-sm">
+                  <template #body="slotProps">
+                    <div class="flex items-center gap-2 justify-start">
+                      <button @click="setClient(slotProps.data)" type="">
+                        set
+                      </button>
+                    </div>
+                  </template>
+                </Column>
+              </DataTable>
+            </div>
+          </div>
+          <template #footer>
+            <Button
+              class="!bg-green-500 !text-white"
+              label="Готово"
+              icon="pi pi-check"
+              @click="addClientView = false"
+            />
+          </template>
+        </Dialog>
+        <Dialog
+          v-model:visible="PaymentCashView"
+          modal
+          header="Внесение наличных"
+          :style="{ width: '30vw' }"
+        >
+          <div class="flex flex-col gap-12">
+            <InputNumber
+              v-model="PaymentCashValue"
+              inputId="withoutgrouping"
+              :useGrouping="false"
+            />
+          </div>
+          <template #footer>
+            <Button
+              class="!bg-red-500 !text-white"
+              label="Отмена"
+              icon="pi pi-times"
+              @click="PaymentCashView = false"
+              text
+            />
+            <Button
+              class="!bg-green-500 !text-white"
+              label="Внести"
+              icon="pi pi-check"
+              @click="PaymentCash"
+            />
+          </template>
+        </Dialog>
+        <Dialog
+          v-model:visible="DepositingCashView"
+          modal
+          header="Изъятие наличных"
+          :style="{ width: '30vw' }"
+        >
+          <div class="flex flex-col gap-12">
+            <InputNumber
+              v-model="DepositingCashValue"
+              inputId="withoutgrouping"
+              :useGrouping="false"
+            />
+          </div>
+          <template #footer>
+            <Button
+              class="!bg-red-500 !text-white"
+              label="Отмена"
+              icon="pi pi-times"
+              @click="DepositingCashView = false"
+              text
+            />
+            <Button
+              class="!bg-green-500 !text-white"
+              label="Изъять"
+              icon="pi pi-check"
+              @click="DepositingCash"
+            />
+          </template>
+        </Dialog>
+        <Dialog
+          v-model:visible="sessionView"
+          modal
+          header="Закрытие смены"
+          :style="{ width: '30vw' }"
+        >
+          <div class="flex flex-col gap-12">
+            <span class="text-xl">В кассе {{ kktData }} ₽</span>
+          </div>
+          <template #footer>
+            <Button
+              class="!bg-red-500 !text-white"
+              label="Отмена"
+              icon="pi pi-times"
+              @click="sessionView = false"
+              text
+            />
+            <Button
+              class="!bg-green-500 !text-white"
+              label="Закрыть"
+              icon="pi pi-check"
+              @click="closeShift"
+            />
+          </template>
+        </Dialog>
+      </div>
     </div>
+
+    <span v-else>Загрузка...</span>
+    <pre>{{ storeUser.data.FIO }}</pre>
   </div>
-  <span>Загрузка...</span>
-  </div>
- 
 </template>
 
 <script setup>
 import { FilterMatchMode } from 'primevue/api'
 import { useToast } from 'primevue/usetoast'
 import { ALL_PRODUCTS } from '@/gql/KASSA'
+import { ALL_USER } from '@/gql/query/USERS'
 import { v4 as uuidv4 } from 'uuid'
-import { sessionInfo } from '@/store'
+import { sessionInfo, userInfo } from '@/store'
 
 useHead({
   title: 'TAIGA - Касса'
@@ -448,6 +542,7 @@ definePageMeta({
 const visible = ref(false)
 const router = useRouter()
 const storeShift = sessionInfo()
+const storeUser = userInfo()
 const toast = useToast()
 
 //shift
@@ -515,7 +610,7 @@ async function openShift () {
     InnKkm: '4217204110',
     NumDevice: 0,
     IdDevice: '',
-    CashierName: 'Броваренко В. Д.',
+    CashierName: storeUser.data.FIO,
     NotPrint: false,
     IdCommand: uuidv4()
   }
@@ -555,7 +650,7 @@ async function closeShift () {
     InnKkm: '4217204110',
     NumDevice: 0,
     IdDevice: '',
-    CashierName: 'Броваренко В. Д.',
+    CashierName: storeUser.data.FIO,
     NotPrint: false,
     IdCommand: uuidv4()
   }
@@ -637,6 +732,11 @@ const itogo = computed(() => {
   return sumWithInitial.toFixed(2)
 })
 
+const sdacha = computed(() => {
+  const x = itogo.value
+  return inputMoney.value - x
+})
+
 //pay
 const inputMoney = ref(0)
 const pay = ref(false)
@@ -674,7 +774,7 @@ async function getPay () {
     TypeCheck: 0,
     NotPrint: false,
     NumberCopies: 0,
-    CashierName: 'Броваренко В. Д.',
+    CashierName: storeUser.data.FIO,
     TaxVariant: '',
     NumDeviceByProcessing: null,
     PrintSlipAfterCheck: false,
@@ -744,7 +844,7 @@ async function getPayCart () {
     TypeCheck: 0,
     NotPrint: false,
     NumberCopies: 0,
-    CashierName: 'Броваренко В. Д.',
+    CashierName: storeUser.data.FIO,
     TaxVariant: '',
     NumDeviceByProcessing: null,
     PrintSlipAfterCheck: false,
@@ -827,7 +927,7 @@ async function DepositingCash () {
     InnKkm: '4217204110',
     NumDevice: 0,
     IdDevice: '',
-    CashierName: 'Kазакова Н.А.',
+    CashierName: storeUser.data.FIO,
     Amount: DepositingCashValue.value.toFixed(2),
     IdCommand: uuidv4()
   }
@@ -868,7 +968,7 @@ async function PaymentCash () {
     InnKkm: '4217204110',
     NumDevice: 0,
     IdDevice: '',
-    CashierName: 'Kазакова Н.А.',
+    CashierName: storeUser.data.FIO,
     Amount: PaymentCashValue.value.toFixed(2),
     IdCommand: uuidv4()
   }
@@ -934,16 +1034,37 @@ async function GetDataKKT () {
     })
 }
 
+// add client
+
+const { result: users } = useQuery(ALL_USER, null, {
+  fetchPolicy: 'no-cache'
+})
+
+const allUsers = computed(() => users.value?.usersPermissionsUsers?.data ?? [])
+
+const addClientView = ref(false)
+function addClient () {
+  addClientView.value = true
+}
+
+const activeClient = ref()
+
+function setClient (data) {
+  activeClient.value = data
+  addClientView.value = false
+  console.log(data)
+}
+
+//////
+
 function getUrl (url) {
   router.push(url)
 }
 onMounted(() => {
-  
   setTimeout(() => {
     visible.value = true
   }, 200)
 })
-
 </script>
 
 <style scoped>

@@ -1,5 +1,7 @@
 <script setup>
 import { userInfo } from '@/store'
+import { USER_NOTES_COUNT } from '@/gql/query/DASHBOARD'
+import { v4 as uuidv4 } from 'uuid'
 const store = userInfo()
 const route = useRoute()
 const activeLink = ref(0)
@@ -11,6 +13,28 @@ function getToggle (x) {
     activeLink.value = x
   }
 }
+
+const dataDay = ref({
+  start: '',
+  end: ''
+})
+
+const enableQ = ref(false)
+
+const { result: dayOrders, onResult: dateRes } = useQuery(
+  USER_NOTES_COUNT,
+  () => ({
+    START: dataDay.value.start,
+    END: dataDay.value.end
+  }),
+  () => ({
+    enabled: enableQ.value
+  }),
+  {
+    pollInterval: 5000
+  }
+)
+const allDayCom = computed(() => dayOrders.value?.userRecords.data ?? [])
 
 const router = useRouter()
 
@@ -30,10 +54,59 @@ function logout () {
 }
 const visible = ref(false)
 
+
+const kktData = ref()
+
+const kktDataCOM = computed(() => {
+  return kktData
+})
+
+async function GetDataKKT () {
+  const data = {
+    Command: 'GetDataKKT',
+    InnKkm: '4217204110',
+    NumDevice: 0,
+    IdDevice: '',
+    IdCommand: uuidv4()
+  }
+  await useFetch(() => 'http://localhost:5894/Execute', {
+    method: 'POST',
+    headers: {
+      Authorization: 'Basic QWRtaW46RHJvcGVzdHJva2UwMDEzIQ==',
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify(data),
+    credentials: 'omit'
+  })
+    .then(res => {
+      kktData.value = res.data.value
+    })
+    .catch(err => {
+      toast.add({
+        severity: 'error',
+        summary: 'Неудача',
+        detail: 'Что то пошло не так',
+        life: 4000
+      })
+    })
+}
+
+
 onMounted(() => {
+  const start = new Date()
+  start.setHours(0, 0, 0)
+  const d = new Date(start)
+  d.setDate(d.getDate() + 1)
+  d.setHours(0, 0, 0)
+  dataDay.value.start = new Date(start)
+  dataDay.value.end = d
   setTimeout(() => {
     visible.value = true
+    enableQ.value = true
   }, 1000)
+  setInterval(() => {
+    GetDataKKT()
+  }, 5000);
 })
 </script>
 <template>
@@ -54,16 +127,25 @@ onMounted(() => {
               </span>
               <span
                 class="bg-green-400 py-2 px-3 rounded-md text-gray-800 ml-12"
-                >{{ store.role.usersPermissionsUser.data.attributes.role.data.attributes.name }} -- {{ route.name }}</span
+                >{{
+                  store.role.usersPermissionsUser.data.attributes.role.data
+                    .attributes.name
+                }}
+                -- {{ route.name }}</span
               >
             </NuxtLink>
           </div>
-          <div class="flex items-center gap-3">
+          <div>Статус ККТ :{{ kktDataCOM }}</div>
+          <div
+            @click="getLink('')"
+            class="flex items-center gap-3 cursor-pointer"
+          >
             <div
-              class="bg-gray-700 px-3 py-2 rounded-full flex items-center gap-3 text-sm mr-6"
+              class="bg-gray-700 hover:bg-gray-600 anime px-3 py-2 rounded-full flex items-center gap-3 text-sm mr-6"
             >
               <IconsICalendar />
-              <b>5 записей</b>сегодня
+
+              <b>{{ allDayCom.length }} записей</b>сегодня
             </div>
             <IconsIVopros />
             <IconsICog />
@@ -93,7 +175,7 @@ onMounted(() => {
                 viewBox="0 0 24 24"
                 stroke-width="1.5"
                 stroke="currentColor"
-                class="flex-shrink-0 w-6 h-6 transition duration-75 group-hover:text-[#1E1E1E] text-gray-400"
+                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-gray-300"
               >
                 <path
                   stroke-linecap="round"
@@ -116,7 +198,7 @@ onMounted(() => {
             >
               <svg
                 aria-hidden="true"
-                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] group-hover:"
+                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-gray-300"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -136,7 +218,7 @@ onMounted(() => {
               class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg hover:bg-gray-700"
             >
               <IconsICube
-                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] group-hover:"
+                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-gray-300"
               />
               <span class="ml-3">Склад</span>
             </button>
@@ -147,12 +229,17 @@ onMounted(() => {
               class="flex w-full justify-start items-center p-2 text-sm font-normal rounded-lg hover:bg-gray-700"
             >
               <IconsICube
-                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] group-hover:"
+                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-gray-300"
               />
               <span class="ml-3">Сертификаты</span>
             </button>
           </li>
-          <li v-if="store.role == 'Admin'">
+          <li
+            v-if="
+              store.role.usersPermissionsUser.data.attributes.role.data
+                .attributes.name == 'Admin'
+            "
+          >
             <button
               @click="getToggle(1)"
               type="button"
@@ -160,7 +247,7 @@ onMounted(() => {
             >
               <svg
                 aria-hidden="true"
-                class="w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] group-hover:"
+                class="w-6 h-6 transition duration-75 text-gray-400 group-hover:text-gray-300 "
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -185,22 +272,21 @@ onMounted(() => {
               </li>
             </ul>
           </li>
-          <li v-if="store.role == 'Admin'">
+          <li
+            v-if="
+              store.role.usersPermissionsUser.data.attributes.role.data
+                .attributes.name == 'Admin'
+            "
+          >
             <button
               @click="getToggle(3)"
               href="#"
               class="flex items-center w-full p-2 text-sm font-normal text-text-white transition duration-75 rounded-lg group hover:bg-gray-700"
             >
-              <svg
-                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E]"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-                ></path>
-              </svg>
+              <IconsIMoney
+                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-gray-300"
+              />
+
               <span class="flex-1 ml-3 text-left whitespace-nowrap"
                 >Финансы</span
               >
@@ -210,32 +296,28 @@ onMounted(() => {
               <NuxtLink to="/finance/zp" class="link group">ЗП</NuxtLink>
               <NuxtLink to="/" class="link group">Расходы</NuxtLink>
               <NuxtLink to="/" class="link group">Ком-услуги</NuxtLink>
-              <NuxtLink to="/" class="link group">Касса</NuxtLink>
+              <!-- <NuxtLink to="/" class="link group">Касса</NuxtLink> -->
               <NuxtLink to="/finance/prihod" class="link group"
                 >Приходы</NuxtLink
               >
             </ul>
           </li>
 
-          <li v-if="store.role == 'Admin'">
+          <li
+            v-if="
+              store.role.usersPermissionsUser.data.attributes.role.data
+                .attributes.name == 'Admin'
+            "
+          >
             <button
               @click="getToggle(2)"
               type="button"
               class="flex items-center w-full p-2 text-sm font-normal text-white transition duration-75 rounded-lg group hover:bg-gray-700"
             >
-              <svg
-                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-[#1E1E1E] group-hover:"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z"
-                ></path>
-                <path
-                  d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"
-                ></path>
-              </svg>
+              <IconsIUsers
+                class="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-400 group-hover:text-gray-300"
+              />
+
               <span class="flex-1 ml-3 text-left whitespace-nowrap"
                 >Сотрудники</span
               >
@@ -248,6 +330,9 @@ onMounted(() => {
 
               <NuxtLink to="/worker/admins" class="link group"
                 >Администраторы</NuxtLink
+              >
+              <NuxtLink to="/worker/admins" class="link group"
+                >Прочие</NuxtLink
               >
             </ul>
           </li>
