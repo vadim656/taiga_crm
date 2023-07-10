@@ -14,6 +14,8 @@ function getToggle (x) {
   }
 }
 
+
+
 const dataDay = ref({
   start: '',
   end: ''
@@ -54,11 +56,10 @@ function logout () {
 }
 const visible = ref(false)
 
-
 const kktData = ref()
 
 const kktDataCOM = computed(() => {
-  return kktData
+  return kktData.value
 })
 
 async function GetDataKKT () {
@@ -91,7 +92,6 @@ async function GetDataKKT () {
     })
 }
 
-
 onMounted(() => {
   const start = new Date()
   start.setHours(0, 0, 0)
@@ -106,7 +106,7 @@ onMounted(() => {
   }, 1000)
   setInterval(() => {
     GetDataKKT()
-  }, 5000);
+  }, 5000)
 })
 </script>
 <template>
@@ -131,11 +131,11 @@ onMounted(() => {
                   store.role.usersPermissionsUser.data.attributes.role.data
                     .attributes.name
                 }}
-                -- {{ route.name }}</span
+               </span
               >
             </NuxtLink>
           </div>
-          <div>Статус ККТ :{{ kktDataCOM }}</div>
+          <div v-if="kktDataCOM">Статус ККТ :{{ kktDataCOM.SessionNumber }}</div>
           <div
             @click="getLink('')"
             class="flex items-center gap-3 cursor-pointer"
@@ -247,7 +247,7 @@ onMounted(() => {
             >
               <svg
                 aria-hidden="true"
-                class="w-6 h-6 transition duration-75 text-gray-400 group-hover:text-gray-300 "
+                class="w-6 h-6 transition duration-75 text-gray-400 group-hover:text-gray-300"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -331,9 +331,7 @@ onMounted(() => {
               <NuxtLink to="/worker/admins" class="link group"
                 >Администраторы</NuxtLink
               >
-              <NuxtLink to="/worker/admins" class="link group"
-                >Прочие</NuxtLink
-              >
+              <NuxtLink to="/worker/admins" class="link group">Прочие</NuxtLink>
             </ul>
           </li>
         </ul>

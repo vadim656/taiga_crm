@@ -165,16 +165,17 @@
                 <span>{{ activeClient.attributes.username }}</span>
                 <span>{{ activeClient.attributes.email }}</span>
               </div>
-
+              <div></div>
+<!-- 
               <div class="flex flex-col gap-2">
                 <span class="font-bold">Бонусы</span>
                 <span>{{ activeClient.attributes.Bonus }} ₽</span>
                 <div>
                   <button type="" class="px-3 py-2 bg-green-500 text-white rounded-md">Списать</button>
                 </div>
-              </div>
+              </div> -->
             </div>
-            <pre>{{ activeClient }}</pre>
+            <!-- <pre>{{ activeClient }}</pre> -->
             <div class="flex flex-col gap-6">
               <span>Тип оплаты</span>
               <div
@@ -416,7 +417,7 @@
                   <template #body="slotProps">
                     <div class="flex items-center gap-2 justify-start">
                       <button @click="setClient(slotProps.data)" type="">
-                        set
+                        Выбрать
                       </button>
                     </div>
                   </template>
@@ -527,7 +528,7 @@
 <script setup>
 import { FilterMatchMode } from 'primevue/api'
 import { useToast } from 'primevue/usetoast'
-import { ALL_PRODUCTS } from '@/gql/KASSA'
+import { ALL_PRODUCTS, UPDATE_SERT } from '@/gql/KASSA'
 import { ALL_USER } from '@/gql/query/USERS'
 import { v4 as uuidv4 } from 'uuid'
 import { sessionInfo, userInfo } from '@/store'
@@ -742,6 +743,22 @@ const inputMoney = ref(0)
 const pay = ref(false)
 const payType = ref(true)
 
+const { mutate: updateSert, onDone: sertDone } = useMutation(UPDATE_SERT)
+
+function getPay_CRM(data) {
+    console.log('getPay_CRM', data);
+    updateSert({
+      ID: data
+    })
+}
+
+function getPay_cart_CRM(data) {
+    console.log('getPay_CRM', data);
+    updateSert({
+      ID: data
+    })
+}
+
 async function getPay () {
   const prices = []
   const products = []
@@ -760,6 +777,7 @@ async function getPay () {
     }
     prices.push(prices.push(Number(e.amount)))
     products.push(element)
+    getPay_CRM(e.id)
   })
   const sumWithInitial = prices.reduce((a, b) => a + b, 0)
 
@@ -830,6 +848,7 @@ async function getPayCart () {
     }
     prices.push(Number(e.amount))
     products.push(element)
+    getPay_cart_CRM(e.id)
   })
   const sumWithInitial = prices.reduce((a, b) => a + b, 0)
 
@@ -1022,7 +1041,7 @@ async function GetDataKKT () {
     credentials: 'omit'
   })
     .then(res => {
-      kktData.value = res.data.value.Info.BalanceCash
+      kktData.value = res.data.value
     })
     .catch(err => {
       toast.add({

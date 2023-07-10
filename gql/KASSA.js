@@ -25,3 +25,14 @@ export const ALL_PRODUCTS = gql`
 }
 
 `
+
+export const UPDATE_SERT = gql`
+  mutation UPDATE_SERT($ID: ID!){
+    updateProduct(id: $ID, data: { sertActive: true }) {
+    data {
+      id
+    }
+  }
+}
+
+`

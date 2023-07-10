@@ -3,13 +3,14 @@ import gql from 'graphql-tag'
 
 export const ALL_SERT = gql`
   query ALL_SERT{
-    products(filters: { group: { id: { eq: 129 } } }) {
+    products(filters: { group: { id: { eq: 129 } } }, pagination : {limit: 1000}, sort:  "createdAt:desc") {
     data {
         id
       attributes {
         Name
         Price
         ART
+        sertActive
       }
     }
   }
