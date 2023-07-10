@@ -69,3 +69,16 @@ export const ALL_MASTERS = gql`
   }
   }
 `
+
+export const ALL_CABINETS = gql`
+  query ALL_CABINETS {
+    crmCabinets(sort: "Name:asc"){
+    data{
+      id
+      attributes{
+        Name
+      }
+    }
+  }
+  }
+`

@@ -3,7 +3,7 @@
     <div class="flex items-center justify-between">
       <span class="text-xl w-full mb-4">Создание услуги</span>
       <button
-        @click="modalViewHistoryOpen(slotProps.data.id)"
+        @click="createProduct"
         class="flex items-center gap-2 bg-blue-600 rounded-md px-3 py-2 text-sm"
       >
         <IconsIPlus class="w-5 h-5 text-white" /> Сохранить
@@ -96,11 +96,16 @@
     <div class="flex flex-col gap-4 border rounded-md p-4 border-neutral-500">
       Кабинеты
       <div class="grid grid-cols-4 gap-4">
-        <div class="flex items-center">
-          <Checkbox v-model="cabinet" inputId="1" name="1" value="1" />
-          <label for="1" class="ml-2"> 1 - Хамам </label>
+        <div v-for="cab in allCabinets" :key="cab.id" class="flex items-center">
+          <Checkbox
+            v-model="cabinet"
+            :inputId="cab.id"
+            :name="cab.id"
+            :value="cab.id"
+          />
+          <label for="1" class="ml-2"> {{ cab.attributes.Name }}</label>
         </div>
-        <div class="flex items-center">
+        <!-- <div class="flex items-center">
           <Checkbox v-model="cabinet" inputId="2" name="2" value="2" />
           <label for="2" class="ml-2"> 2 - Стандартный </label>
         </div>
@@ -115,7 +120,7 @@
         <div class="flex items-center">
           <Checkbox v-model="cabinet" inputId="5" name="5" value="5" />
           <label for="5" class="ml-2"> 5 - Стандартный</label>
-        </div>
+        </div> -->
       </div>
     </div>
     <!-- мастера -->
@@ -183,9 +188,8 @@
                   <button
                     :key="slotProps.data.id"
                     @click="addToProduct(slotProps.data)"
-                    class="flex items-center gap-2 bg-green-600 rounded-md px-3 py-2"
+                    class="flex items-center gap-2 bg-green-600 rounded-md p-2"
                   >
-                    Добавить
                     <IconsIArrow class="w-5 h-5 text-white -rotate-90" />
                   </button>
                 </div>
@@ -224,7 +228,7 @@
               field="attributes.Price"
               filterField="attributes.Price"
               header="Кол-во"
-              class="text-xs"
+              class="text-xs !w-12"
             >
               <template #body="slotProps">
                 <div class="flex items-center gap-2">
@@ -238,7 +242,15 @@
                     class="w-16 p-2 bg-transparent border border-neutral-700 rounded-md"
                     @change="addKol(slotProps.data.id, $event.target.value)"
                   />
-                  <span>{{ slotProps.data.valueKol }} мл</span>
+                  <span
+                    >{{
+                      getConvertVakue(
+                        slotProps.data.attributes.UnitValue,
+                        slotProps.data.valueKol
+                      )
+                    }}
+                    мл</span
+                  >
                 </div>
               </template>
             </Column>
@@ -266,7 +278,12 @@
 
 <script setup>
 import { FilterMatchMode } from 'primevue/api'
-import { ALL_PRODUCTS, ALL_GROUPS, ALL_MASTERS } from '@/gql/STOCK'
+import {
+  ALL_PRODUCTS,
+  ALL_GROUPS,
+  ALL_MASTERS,
+  ALL_CABINETS
+} from '@/gql/STOCK'
 useHead({
   title: 'Создание услуги'
 })
@@ -277,6 +294,10 @@ definePageMeta({
 const cabinet = ref()
 
 const masters = ref()
+// cabinet
+
+const { result: allC } = useQuery(ALL_CABINETS)
+const allCabinets = computed(() => allC.value?.crmCabinets?.data ?? [])
 
 const { result: allM } = useQuery(ALL_MASTERS)
 const allMasters = computed(() => allM.value?.usersPermissionsUsers?.data ?? [])
@@ -344,10 +365,16 @@ function addToProduct (item) {
   allProductsComAdd.value.push(data)
 }
 
+function getConvertVakue (a, b) {
+  const x = (a * b).toFixed(0)
+  return x
+}
+
 function addKol (item, val) {
-  allProductsComAddDone.value.forEach(element => {
+  allProductsComAddDone.value.forEach((element, i) => {
     if (element.id == item) {
       console.log(element.attributes.Name)
+      allProductsComAdd.value[i].valueKol = val
     }
   })
   // allProductsComAdd.value[0].valueKol = val
@@ -372,13 +399,19 @@ const initFilters = () => {
     }
   }
 }
+
+function createProduct() {
+  console.log('createProduct');
+}
+
+
 const visible = ref(false)
 onMounted(() => {
   setTimeout(() => {
     visible.value = true
-  }, 1000);
-  initFilters()
+  }, 1000)
 })
+initFilters()
 </script>
 
 <style lang="scss" scoped></style>
