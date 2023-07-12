@@ -14,8 +14,6 @@ function getToggle (x) {
   }
 }
 
-
-
 const dataDay = ref({
   start: '',
   end: ''
@@ -104,10 +102,11 @@ onMounted(() => {
     visible.value = true
     enableQ.value = true
   }, 1000)
-  setInterval(() => {
-    GetDataKKT()
-  }, 5000)
 })
+
+setInterval(() => {
+  GetDataKKT()
+}, 2000)
 </script>
 <template>
   <div class="relative overflow-x-auto inset-0">
@@ -131,11 +130,12 @@ onMounted(() => {
                   store.role.usersPermissionsUser.data.attributes.role.data
                     .attributes.name
                 }}
-               </span
-              >
+              </span>
             </NuxtLink>
           </div>
-          <div v-if="kktDataCOM">Статус ККТ :{{ kktDataCOM.SessionNumber }}</div>
+          <div v-if="kktDataCOM">
+            Статус ККТ :{{ kktDataCOM.SessionNumber }}
+          </div>
           <div
             @click="getLink('')"
             class="flex items-center gap-3 cursor-pointer"

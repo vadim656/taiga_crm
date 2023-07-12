@@ -411,6 +411,19 @@ watch(eventDay, () => {
 const { mutate: sendNote, onDone: sendNoteDone } =
   useMutation(CREATE_CLIENT_NOTE)
 
+  sendNoteDone(res => {
+  console.log(res)
+  editDay.value = false
+  toast.add({
+    severity: 'info',
+    summary: 'Успешно',
+    detail: 'Запись создана',
+    life: 2000
+  })
+
+  getRoleRef()
+})
+
 function UID (params) {
   return uuidv4()
 }

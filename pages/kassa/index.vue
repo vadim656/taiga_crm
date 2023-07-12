@@ -166,7 +166,7 @@
                 <span>{{ activeClient.attributes.email }}</span>
               </div>
               <div></div>
-<!-- 
+              <!-- 
               <div class="flex flex-col gap-2">
                 <span class="font-bold">Бонусы</span>
                 <span>{{ activeClient.attributes.Bonus }} ₽</span>
@@ -532,6 +532,7 @@ import { ALL_PRODUCTS, UPDATE_SERT } from '@/gql/KASSA'
 import { ALL_USER } from '@/gql/query/USERS'
 import { v4 as uuidv4 } from 'uuid'
 import { sessionInfo, userInfo } from '@/store'
+import gql from 'graphql-tag'
 
 useHead({
   title: 'TAIGA - Касса'
@@ -745,19 +746,29 @@ const payType = ref(true)
 
 const { mutate: updateSert, onDone: sertDone } = useMutation(UPDATE_SERT)
 
-function getPay_CRM(data) {
-    console.log('getPay_CRM', data);
-    updateSert({
-      ID: data
-    })
+function getPay_CRM (data) {
+  console.log('getPay_CRM', data)
+  updateSert({
+    ID: data
+  })
 }
 
-function getPay_cart_CRM(data) {
-    console.log('getPay_CRM', data);
-    updateSert({
-      ID: data
-    })
+function getPay_cart_CRM (data) {
+  console.log('getPay_CRM', data)
+  updateSert({
+    ID: data
+  })
 }
+
+const { mutate: createHistoryPay } = useMutation(gql`
+  mutation createHistoryPay($DATA: JSON) {
+    createHistoryPay(data: { dataJ: $DATA }) {
+      data {
+        id
+      }
+    }
+  }
+`)
 
 async function getPay () {
   const prices = []
@@ -801,7 +812,9 @@ async function getPay () {
     CheckStrings: [...products, { PrintText: { Text: '<<->>' } }],
     Cash: Number(sumWithInitial).toFixed(2)
   }
-
+  createHistoryPay({
+    DATA: JSON.stringify(data)
+  })
   await useFetch(() => 'http://localhost:5894/Execute', {
     method: 'POST',
     headers: {
@@ -871,7 +884,9 @@ async function getPayCart () {
     CheckStrings: [...products, { PrintText: { Text: '<<->>' } }],
     Amount: Number(sumWithInitial).toFixed(2)
   }
-
+  createHistoryPay({
+    DATA: JSON.stringify(data)
+  })
   await useFetch(() => 'http://localhost:5894/Execute', {
     method: 'POST',
     headers: {
