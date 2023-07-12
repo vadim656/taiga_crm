@@ -792,7 +792,7 @@ async function getPay () {
   })
   const sumWithInitial = prices.reduce((a, b) => a + b, 0)
 
-  const data = {
+  const dataC = {
     Command: 'RegisterCheck',
     InnKkm: '4217204110',
     NumDevice: 0,
@@ -812,21 +812,24 @@ async function getPay () {
     CheckStrings: [...products, { PrintText: { Text: '<<->>' } }],
     Cash: Number(sumWithInitial).toFixed(2)
   }
-  createHistoryPay({
-    DATA: JSON.stringify(data)
-  })
+
   await useFetch(() => 'http://localhost:5894/Execute', {
     method: 'POST',
     headers: {
       Authorization: 'Basic QWRtaW46RHJvcGVzdHJva2UwMDEzIQ==',
       'Content-Type': 'application/json;charset=utf-8'
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(dataC),
     credentials: 'omit'
   })
     .then(res => {
       console.log('kkm', res.data.value)
-
+      createHistoryPay({
+        DATA: {
+          check: res.data.value,
+          dataCheck: dataC
+        }
+      })
       toast.add({
         severity: 'info',
         summary: 'Успешно',
@@ -865,7 +868,7 @@ async function getPayCart () {
   })
   const sumWithInitial = prices.reduce((a, b) => a + b, 0)
 
-  const data = {
+  const dataC = {
     Command: 'PayByPaymentCard',
     InnKkm: '4217204110',
     NumDevice: 0,
@@ -884,21 +887,24 @@ async function getPayCart () {
     CheckStrings: [...products, { PrintText: { Text: '<<->>' } }],
     Amount: Number(sumWithInitial).toFixed(2)
   }
-  createHistoryPay({
-    DATA: JSON.stringify(data)
-  })
+
   await useFetch(() => 'http://localhost:5894/Execute', {
     method: 'POST',
     headers: {
       Authorization: 'Basic QWRtaW46RHJvcGVzdHJva2UwMDEzIQ==',
       'Content-Type': 'application/json;charset=utf-8'
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(dataC),
     credentials: 'omit'
   })
     .then(res => {
       console.log('kkm', res.data.value)
-
+      createHistoryPay({
+        DATA: {
+          check: res.data.value,
+          dataCheck: dataC
+        }
+      })
       toast.add({
         severity: 'info',
         summary: 'Успешно',
