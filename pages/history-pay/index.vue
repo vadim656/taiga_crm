@@ -28,13 +28,55 @@ const { result: allH } = useQuery(gql`
 `)
 const allHCom = computed(() => allH.value?.historyPays.data ?? [])
 
-function vozvrat (ckeckData) {
+const { mutate: createHistoryPay } = useMutation(gql`
+  mutation createHistoryPay($DATA: JSON) {
+    createHistoryPay(data: { dataJ: $DATA }) {
+      data {
+        id
+      }
+    }
+  }
+`)
+
+async function vozvrat (ckeckData) {
   const dataC = {
     ...ckeckData.dataJ.dataCheck
   }
   dataC['IdCommand'] = uuidv4()
   dataC['TypeCheck'] = 1
   console.log(dataC)
+  await useFetch(() => 'http://localhost:5894/Execute', {
+    method: 'POST',
+    headers: {
+      Authorization: 'Basic QWRtaW46RHJvcGVzdHJva2UwMDEzIQ==',
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify(dataC),
+    credentials: 'omit'
+  })
+    .then(res => {
+      console.log('kkm', res.data.value)
+      createHistoryPay({
+        DATA: {
+          check: res.data.value,
+          dataCheck: dataC
+        }
+      })
+      toast.add({
+        severity: 'info',
+        summary: 'Успешно',
+        detail: `Продажа успешно`,
+        life: 4000
+      })
+    })
+    .catch(err => {
+      toast.add({
+        severity: 'error',
+        summary: 'Неудача',
+        detail: 'Что то пошло не так',
+        life: 4000
+      })
+    })
 }
 
 onMounted(() => {
