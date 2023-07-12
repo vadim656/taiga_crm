@@ -2,13 +2,14 @@
   <div class="flex items-center justify-between w-full">
     <Toast position="bottom-right" />
     <TabView class="w-full">
-      <TabPanel header="Даты">
+      <TabPanel header="Записи">
         <div>
           <!-- <pre class="text-xs">{{ noteTime }}</pre> -->
           <CalendarDashboard
             @createEvent="createEvent"
             @clickEvent="clickEvent"
-            :key="UID"
+            @selectMasterCalendar="selectMasterCalendar"
+            :key="UID()"
             :notes="allNotes"
           />
         </div>
@@ -24,7 +25,7 @@
           <!-- <pre class="text-xs">{{ allNotesCabinets }}</pre> -->
         </div>
       </TabPanel>
-      <TabPanel header="Сводка">
+      <TabPanel header="Мастера">
         <p>3</p>
       </TabPanel>
     </TabView>
@@ -136,16 +137,27 @@
           <div class="grid grid-cols-2 gap-4">
             <div class="w-full flex flex-col gap-2">
               <span>Клиент: </span>
-              <span class="font-bold"
-                >{{ eventDay.extendedProps.desc }} -
+              <span class="font-bold">
+                {{ eventDay.extendedProps.desc }} -
                 {{ eventDay.extendedProps.phone }}</span
               >
             </div>
+
             <div class="w-full flex flex-col gap-2">
               <span>Мастер: </span>
               <span class="font-bold">{{
                 eventDay.extendedProps.master.attributes.FIO
               }}</span>
+            </div>
+            <div class="w-full flex flex-col gap-2 col-span-2">
+              <span>Примечание: </span>
+              <p
+                v-if="eventDay.extendedProps.viewNote.length"
+                class="font-bold"
+              >
+                {{ eventDay.extendedProps.viewNote }}
+              </p>
+              <p v-else class="font-bold">Пусто...</p>
             </div>
           </div>
 
@@ -156,11 +168,34 @@
                 eventDay.extendedProps.descOrder.Name
               }}</span>
               <span class="p-2 rounded-md bg-neutral-700 text-center">
-                {{ eventDay.extendedProps.descOrder.Price }} ₽
-              </span>
-              <span class="p-2 rounded-md bg-neutral-700 text-center">
+                {{ eventDay.extendedProps.descOrder.Price }} ₽ /
                 {{ eventDay.extendedProps.descOrder.UnitValue }} мин
               </span>
+
+              <p
+                v-if="eventDay.extendedProps.status == 'Ожидается'"
+                class="bg-yellow-500 text-white text-sm gap-1 p-2 rounded-md my-1 text-center w-full"
+              >
+                {{ eventDay.extendedProps.status }}
+              </p>
+              <p
+                v-else-if="eventDay.extendedProps.status == 'Завершен'"
+                class="bg-green-500 text-white text-sm gap-1 p-2 rounded-md my-1 text-center w-full"
+              >
+                {{ eventDay.extendedProps.status }}
+              </p>
+              <p
+                v-else-if="eventDay.extendedProps.status == 'Отменен'"
+                class="bg-red-500 text-white text-sm gap-1 p-2 rounded-md my-1 text-center w-full"
+              >
+                {{ eventDay.extendedProps.status }}
+              </p>
+              <p
+                v-else-if="eventDay.extendedProps.status == 'В работе'"
+                class="bg-blue-500 text-white text-sm gap-1 p-2 rounded-md my-1 text-center w-full"
+              >
+                {{ eventDay.extendedProps.status }}
+              </p>
             </span>
           </div>
           <div class="flex gap-4">
@@ -191,10 +226,10 @@
             class="!bg-neutral-500 !text-white"
           />
           <Button
+            v-if="eventDay.extendedProps.status !== 'Завершен'"
             label="Отменить запись"
             icon="pi pi-check"
             @click="handlerDeleteNote(eventDay.extendedProps.idOrder)"
-            autofocus
             class="!bg-red-500 !text-white"
           />
         </div>
@@ -376,7 +411,9 @@ watch(eventDay, () => {
 const { mutate: sendNote, onDone: sendNoteDone } =
   useMutation(CREATE_CLIENT_NOTE)
 
-const UID = ref()
+function UID (params) {
+  return uuidv4()
+}
 
 function handlerSendNote () {
   // start
@@ -465,6 +502,10 @@ getRoleRes(() => {
   UID.value = uuidv4()
 })
 
+function selectMasterCalendar() {
+  console.log('rabotaet');
+}
+
 onMounted(() => {
   UID.value = uuidv4()
   setTimeout(() => {
@@ -480,6 +521,10 @@ onUnmounted(() => {
     price: ''
   }
 })
+
+
+
+
 </script>
 <style>
 .block {

@@ -3,25 +3,58 @@
     <FullCalendar :options="calendarOptions">
       <template v-slot:eventContent="arg">
         <div
-          class="flex flex-col gap-1 px-2 py-1 rounded-sm w-full !border-none"
+          class="flex flex-col gap-1 px-2 py-1 rounded-sm w-full !border-none h-full"
           :class="status(arg.event.extendedProps.status)"
         >
-          <p class="text-gray-400">{{ arg.event.title }}</p>
-          <p
-            class="text-gray-400 w-30 truncate"
-            :title="arg.event.extendedProps.descOrder"
-          >
-            {{ arg.event.extendedProps.descOrder.Name }}
-          </p>
-          <!-- <p class="text-gray-400 text-xs flex items-center gap-1">
-              <IconsIPhone class="!w-3 !h-3" />
-              {{ arg.event.extendedProps.phone }}
-            </p> -->
           <p class="text-gray-400 text-xs flex items-center gap-1">
             <IconsITime class="!w-3 !h-3" />
             {{ setTimeNote(arg.event.extendedProps.timeStart) }} -
             {{ setTimeNote(arg.event.extendedProps.timeEnd) }}
           </p>
+          <p class="text-gray-400">{{ arg.event.title }}</p>
+          <!-- <p
+            class="text-gray-400 w-30 truncate"
+            :title="arg.event.extendedProps.descOrder"
+          >
+            {{ arg.event.extendedProps.descOrder.Name }}
+          </p> -->
+          <!-- <p class="text-gray-400 text-xs flex items-center gap-1">
+              <IconsIPhone class="!w-3 !h-3" />
+              {{ arg.event.extendedProps.phone }}
+            </p> -->
+
+          <div class="flex flex-wrap">
+            <p
+              v-if="arg.event.extendedProps.status == 'Ожидается'"
+              class="bg-yellow-600 text-white text-[10px] gap-1 px-2 py-1 rounded-md my-1 text-center"
+            >
+              {{ arg.event.extendedProps.status }}
+            </p>
+            <p
+              v-else-if="arg.event.extendedProps.status == 'Завершен'"
+              class="bg-green-600 text-white text-[10px] gap-1 px-2 py-1 rounded-md my-1 text-center"
+            >
+              {{ arg.event.extendedProps.status }}
+            </p>
+            <p
+              v-else-if="arg.event.extendedProps.status == 'Отменен'"
+              class="bg-red-600 text-white text-[10px] gap-1 px-2 py-1 rounded-md my-1 text-center"
+            >
+              {{ arg.event.extendedProps.status }}
+            </p>
+            <p
+              v-else-if="arg.event.extendedProps.status == 'В работе'"
+              class="bg-blue-600 text-white text-[10px] gap-1 px-2 py-1 rounded-md my-1 text-center"
+            >
+              {{ arg.event.extendedProps.status }}
+            </p>
+            <p
+              v-else
+              class="bg-neutral-600 text-white text-[10px] gap-1 px-2 py-1 rounded-md my-1 text-center"
+            >
+            Не выбран
+            </p>
+          </div>
         </div>
       </template>
     </FullCalendar>
@@ -60,10 +93,24 @@ export default {
           multiMonthPlugin,
           dayGridPlugin
         ],
+        // customButtons: {
+        //   selectMaster: {
+        //     text: 'Выбрать мастера',
+        //     click: this.selectMasterSet
+        //   }
+        // },
+
         headerToolbar: {
           left: 'prev,next',
           center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay' // user can switch between the two
+          right: 'dayGridMonth,testDay' // user can switch between the two
+        },
+        views: {
+          testDay: {
+            type: 'timeGrid',
+            duration: { days: 1 },
+            buttonText: 'Сегодня'
+          }
         },
         initialView: 'dayGridMonth',
         nowIndicator: true,
@@ -79,6 +126,9 @@ export default {
     }
   },
   methods: {
+    // selectMasterSet: function () {
+    //   this.$emit('selectMasterCalendar')
+    // },
     handleDateClick: function (arg) {
       this.$emit('createEvent', arg.date)
       console.log('date click! ' + arg)
@@ -114,7 +164,8 @@ export default {
           'Нет услуги',
         status: element.attributes.Status,
         master: element.attributes.users_permissions_user.data,
-        cabinet: element.attributes.crm_cabinet.data
+        cabinet: element.attributes.crm_cabinet.data,
+        viewNote: element.attributes.Note
       }
       console.log('element', element)
       this.calendarOptions.events.push(t)
@@ -150,11 +201,17 @@ export default {
 
 .fc-v-event {
   background-color: transparent !important;
-  border: none !important;
+  /* border: none !important; */
 }
 
 .fc .fc-daygrid-day.fc-day-today,
 .fc .fc-timegrid-col.fc-day-today {
+  margin: 4px !important;
   background-color: rgba(118, 118, 118, 0.15) !important;
+  height: auto;
+}
+
+.fc .fc-timegrid-slot {
+  height: 4.5em !important;
 }
 </style>
